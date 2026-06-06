@@ -7,7 +7,7 @@ spring:
     # (cómodos para desarrollo local con la base de datos en Docker).
     url: ${DB_URL:jdbc:postgresql://localhost:5432/hikariforge}
     username: ${DB_USER:hikariforge}
-    password: ${DB_PASSWORD:hikariforge}
+    password: ${DB_PASSWORD:hikari1234}
 
   jpa:
     hibernate:

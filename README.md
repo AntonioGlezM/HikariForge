@@ -1,6 +1,6 @@
 # HikariForge
 
-**HikariForge** es una tienda online de periféricos (ratones, teclados, auriculares,
+**HikariForge** es mi tienda online de periféricos (ratones, teclados, auriculares,
 alfombrillas...). La he construido con **Spring Boot** y está pensada para que la
 consuma un frontend SPA independiente (React). Incluye catálogo de productos,
 registro/login de usuarios con **JWT**, control de roles (cliente/admin) y
@@ -110,5 +110,5 @@ Las instrucciones están en [`frontend/README.md`](frontend/README.md).
 
 ## Documentación del proyecto
 
-En la raíz incluyo un .md con la explicación detallada del stack, la justificación
-de cada decisión técnica y un manual de uso paso a paso.
+En la raíz incluyo el documento [`DOCUMENTACION.md`](DOCUMENTACION.md) con la explicación
+detallada del stack, la justificación de cada decisión técnica y un manual de uso paso a paso.
