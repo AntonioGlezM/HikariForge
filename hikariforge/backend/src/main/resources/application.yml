@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: hikariforge
+
+  datasource:
+    # Los valores se leen de variables de entorno; entre llaves van los valores por defecto
+    # (cómodos para desarrollo local con la base de datos en Docker).
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/hikariforge}
+    username: ${DB_USER:hikariforge}
+    password: ${DB_PASSWORD:hikariforge}
+
+  jpa:
+    hibernate:
+      # 'validate': Hibernate NO toca el esquema, solo comprueba que coincide con las entidades.
+      # Quien crea/actualiza las tablas es Flyway (control de versiones del esquema).
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+# Configuración propia de la aplicación (clave JWT y caducidad del token).
+app:
+  jwt:
+    # IMPORTANTE: en producción esta clave debe venir de una variable de entorno, nunca en el código.
+    secret: ${JWT_SECRET:cambia-esta-clave-secreta-por-una-larga-y-aleatoria-de-al-menos-32-bytes}
+    expiration-ms: 86400000 # 24 horas
+
+# Ruta de Swagger UI: http://localhost:8080/swagger-ui.html
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

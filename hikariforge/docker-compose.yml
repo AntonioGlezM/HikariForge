@@ -1,0 +1,35 @@
+# Levanta la base de datos PostgreSQL y la API con un solo comando: docker compose up
+services:
+  db:
+    image: postgres:16
+    container_name: hikariforge-db
+    environment:
+      POSTGRES_DB: hikariforge
+      POSTGRES_USER: hikariforge
+      POSTGRES_PASSWORD: hikariforge
+    ports:
+      - "5432:5432"          # expuesto para poder conectarte con pgAdmin/DBeaver
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hikariforge"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: ./backend
+    container_name: hikariforge-api
+    depends_on:
+      db:
+        condition: service_healthy   # la API espera a que la BD esté lista
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/hikariforge
+      DB_USER: hikariforge
+      DB_PASSWORD: hikariforge
+      JWT_SECRET: cambia-esta-clave-secreta-por-una-larga-y-aleatoria-de-al-menos-32-bytes
+    ports:
+      - "8080:8080"
+
+volumes:
+  pgdata:   # los datos sobreviven aunque borres el contenedor

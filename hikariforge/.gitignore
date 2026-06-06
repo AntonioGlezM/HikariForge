@@ -1,0 +1,17 @@
+# Java / Maven
+backend/target/
+*.class
+
+# Entorno
+.env
+*.log
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
