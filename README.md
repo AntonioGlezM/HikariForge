@@ -110,5 +110,5 @@ Las instrucciones están en [`frontend/README.md`](frontend/README.md).
 
 ## Documentación del proyecto
 
-En la raíz incluyo un PDF con la explicación detallada del stack, la justificación
+En la raíz incluyo un .md con la explicación detallada del stack, la justificación
 de cada decisión técnica y un manual de uso paso a paso.
