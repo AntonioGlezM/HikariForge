@@ -3,6 +3,7 @@ package com.hikariforge.store.controller;
 import com.hikariforge.store.dto.*;
 import com.hikariforge.store.service.ProductoService;
 import jakarta.validation.Valid;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.*;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.*;
@@ -21,9 +22,11 @@ public class ProductoController {
         this.productoService = productoService;
     }
 
-    // GET /api/productos?page=0&size=10 -> catálogo paginado
+    // GET /api/productos?page=0&size=10 -> catálogo paginado.
+    // @ParameterObject hace que Swagger muestre page/size/sort como campos sueltos (query),
+    // en vez de un único objeto JSON.
     @GetMapping
-    public Page<ProductoResponse> listar(@PageableDefault(size = 10) Pageable pageable) {
+    public Page<ProductoResponse> listar(@ParameterObject @PageableDefault(size = 10) Pageable pageable) {
         return productoService.listar(pageable);
     }
 
