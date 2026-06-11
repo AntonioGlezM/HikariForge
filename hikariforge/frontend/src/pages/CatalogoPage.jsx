@@ -9,7 +9,7 @@ const TAM_PAGINA = 8;
 // Catálogo paginado contra la API. Admite ?cat=Nombre para filtrar por categoría
 // (filtro en cliente de momento; pasará al backend cuando exista el endpoint).
 export default function CatalogoPage() {
-  const { tr } = useSettings();
+  const { tr, trCat } = useSettings();
   const [params] = useSearchParams();
   const cat = params.get("cat");
 
@@ -35,7 +35,7 @@ export default function CatalogoPage() {
     <main className="hf-wrap hf-section">
       <div className="hf-section-head">
         <span className="hf-eyebrow">{tr.navCatalog}</span>
-        <h2 className="hf-h2">{cat ?? tr.catalogTitle}</h2>
+        <h2 className="hf-h2">{cat ? trCat(cat) : tr.catalogTitle}</h2>
         <p className="hf-sub">{tr.catalogSub}</p>
       </div>
 

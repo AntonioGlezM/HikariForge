@@ -300,3 +300,15 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
 /* Iconos gamer como separadores de la marquesina */
 .hf-marquee-track .dot{margin:0 22px;}
 .hf-marquee-track .dot i{font-size:1rem;vertical-align:-2px;}
+
+/* Selector de idioma: botón con bandera + desplegable */
+.hf-langsel{position:relative;}
+.hf-lang-btn{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:999px;padding:9px 14px;background:transparent;color:var(--ink);font-weight:900;font-size:.86rem;letter-spacing:.04em;transition:.2s;}
+.hf-lang-btn:hover{border-color:var(--accent);color:var(--accent);}
+.hf-lang-btn .flag{font-size:1.05rem;line-height:1;}
+.hf-lang-btn i{font-size:.85rem;}
+.hf-lang-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:170px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px;box-shadow:var(--shadow);display:none;z-index:120;}
+.hf-lang-menu.open{display:block;}
+.hf-lang-menu button{display:flex;align-items:center;gap:9px;width:100%;padding:10px 12px;background:none;border:none;border-radius:10px;color:var(--ink);font-weight:800;font-size:.9rem;transition:.2s;}
+.hf-lang-menu button:hover{background:var(--accent-soft);color:var(--accent);}
+.hf-lang-menu .flag{font-size:1.05rem;line-height:1;}

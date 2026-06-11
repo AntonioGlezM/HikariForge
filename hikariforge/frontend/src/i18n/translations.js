@@ -2,6 +2,8 @@
 // vienen de la base de datos y se muestran tal cual.
 export const I18N = {
   es: {
+    flag: "🇪🇸", langName: "Español",
+    catMap: {},
     heroBadge: "Nueva colección disponible",
     heroTitle: ["Periféricos forjados con ", "precisión"],
     heroSub: "Ratones, teclados y audio de alto rendimiento, elegidos con cuidado para quien busca precisión.",
@@ -50,6 +52,9 @@ export const I18N = {
     chatReplies: { ship: "Enviamos a toda España en 24-48h, con seguimiento incluido.", warranty: "Todos nuestros productos tienen 2 años de garantía.", price: "Tienes los precios en cada ficha de producto. ¿Buscas algo en concreto?", hi: "¡Hola! ¿Qué estás buscando hoy?", cat: "Tenemos varias opciones en esa categoría. Echa un vistazo al catálogo.", def: "Gracias por tu mensaje. Un agente te responderá lo antes posible. (demo)" },
   },
   en: {
+    flag: "🇬🇧", langName: "English",
+    // Las categorías vienen de la base de datos en español; aquí se traducen para la interfaz.
+    catMap: { "Ratones": "Mice", "Teclados": "Keyboards", "Auriculares": "Headsets", "Audio": "Audio", "Alfombrillas": "Mousepads", "Vídeo": "Video", "Micrófonos": "Microphones" },
     heroBadge: "New collection available",
     heroTitle: ["Peripherals forged with ", "precision"],
     heroSub: "High-performance mice, keyboards and audio, carefully picked for those who demand precision.",

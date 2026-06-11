@@ -6,7 +6,7 @@ import { useProductos } from "../context/ProductosContext";
 // Panel lateral de búsqueda: sin texto muestra sugerencias agrupadas por categoría;
 // al escribir, filtra en vivo.
 export default function SearchDrawer({ open, onClose }) {
-  const { tr } = useSettings();
+  const { tr, trCat } = useSettings();
   const { productos } = useProductos();
   const [q, setQ] = useState("");
   const inputRef = useRef(null);
@@ -53,7 +53,7 @@ export default function SearchDrawer({ open, onClose }) {
           {filtrados === null ? (
             Object.entries(grupos).map(([cat, lista]) => (
               <div key={cat} className="hf-search-group">
-                <span className="glbl">{cat}</span>
+                <span className="glbl">{trCat(cat)}</span>
                 {lista.map(fila)}
               </div>
             ))

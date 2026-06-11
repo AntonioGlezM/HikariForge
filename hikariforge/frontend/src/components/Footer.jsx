@@ -3,7 +3,7 @@ import { useSettings } from "../context/SettingsContext";
 import { useProductos } from "../context/ProductosContext";
 
 export default function Footer() {
-  const { tr } = useSettings();
+  const { tr, trCat } = useSettings();
   const { categorias } = useProductos();
 
   return (
@@ -20,7 +20,7 @@ export default function Footer() {
           <div>
             <h5>{tr.footProducts}</h5>
             {categorias.map((c) => (
-              <Link key={c} to={`/catalogo?cat=${encodeURIComponent(c)}`}>{c}</Link>
+              <Link key={c} to={`/catalogo?cat=${encodeURIComponent(c)}`}>{trCat(c)}</Link>
             ))}
           </div>
           <div>

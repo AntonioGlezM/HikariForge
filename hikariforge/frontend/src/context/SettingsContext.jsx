@@ -23,6 +23,8 @@ export function SettingsProvider({ children }) {
     lang, setLang,
     theme, toggleTheme: () => setTheme((t) => (t === "dark" ? "light" : "dark")),
     tr: I18N[lang], // diccionario de textos del idioma activo
+    // Traduce un nombre de categoría de la BD si hay traducción; si no, lo deja igual.
+    trCat: (nombre) => I18N[lang].catMap?.[nombre] ?? nombre,
   };
   return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;
 }

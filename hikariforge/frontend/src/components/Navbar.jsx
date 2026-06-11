@@ -1,4 +1,6 @@
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { I18N } from "../i18n/translations";
 import { useSettings } from "../context/SettingsContext";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
@@ -6,7 +8,16 @@ import { useProductos } from "../context/ProductosContext";
 
 // Cabecera: logo con efecto, mega-menús, idioma, tema, buscador, cuenta y carrito.
 export default function Navbar({ onOpenSearch }) {
-  const { tr, lang, setLang, theme, toggleTheme } = useSettings();
+  const { tr, trCat, lang, setLang, theme, toggleTheme } = useSettings();
+  const [langOpen, setLangOpen] = useState(false);
+  const langRef = useRef(null);
+
+  // Cierra el desplegable de idioma al hacer clic fuera.
+  useEffect(() => {
+    const fuera = (e) => { if (!langRef.current?.contains(e.target)) setLangOpen(false); };
+    document.addEventListener("mousedown", fuera);
+    return () => document.removeEventListener("mousedown", fuera);
+  }, []);
   const { isAuthenticated, isAdmin, user, logout } = useAuth();
   const { items, openCart } = useCart();
   const { productos, categorias } = useProductos();
@@ -29,7 +40,7 @@ export default function Navbar({ onOpenSearch }) {
               <div className="hf-mega-left">
                 <span className="lbl">{tr.mmLabel}</span>
                 {categorias.map((c) => (
-                  <Link key={c} to={`/catalogo?cat=${encodeURIComponent(c)}`} className="col">{c}</Link>
+                  <Link key={c} to={`/catalogo?cat=${encodeURIComponent(c)}`} className="col">{trCat(c)}</Link>
                 ))}
                 <Link to="/catalogo" className="viewall">{tr.mmViewAll} <i className="ti ti-arrow-right" /></Link>
               </div>
@@ -55,7 +66,7 @@ export default function Navbar({ onOpenSearch }) {
         {/* Enlaces directos por categoría */}
         {categorias.slice(0, 3).map((c) => (
           <div key={c} className="hf-navitem">
-            <Link to={`/catalogo?cat=${encodeURIComponent(c)}`}>{c}</Link>
+            <Link to={`/catalogo?cat=${encodeURIComponent(c)}`}>{trCat(c)}</Link>
           </div>
         ))}
 
@@ -78,9 +89,17 @@ export default function Navbar({ onOpenSearch }) {
       </div>
 
       <div className="hf-navicons">
-        <div className="hf-lang">
-          <button className={lang === "es" ? "on" : ""} onClick={() => setLang("es")}>ES</button>
-          <button className={lang === "en" ? "on" : ""} onClick={() => setLang("en")}>EN</button>
+        <div className="hf-langsel" ref={langRef}>
+          <button className="hf-lang-btn" onClick={() => setLangOpen((o) => !o)}>
+            <span className="flag">{tr.flag}</span> {lang.toUpperCase()} <i className="ti ti-chevron-down" />
+          </button>
+          <div className={`hf-lang-menu ${langOpen ? "open" : ""}`}>
+            {Object.keys(I18N).filter((k) => k !== lang).map((k) => (
+              <button key={k} onClick={() => { setLang(k); setLangOpen(false); }}>
+                <span className="flag">{I18N[k].flag}</span> {k.toUpperCase()} · {I18N[k].langName}
+              </button>
+            ))}
+          </div>
         </div>
         <button className="hf-icon-btn" onClick={toggleTheme} aria-label="Tema">
           <i className={`ti ${theme === "dark" ? "ti-sun" : "ti-moon"}`} />

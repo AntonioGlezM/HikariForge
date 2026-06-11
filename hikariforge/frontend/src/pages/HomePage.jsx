@@ -5,7 +5,7 @@ import { useProductos } from "../context/ProductosContext";
 // Home: hero oscuro que se tapa al hacer scroll + bloques promocionales
 // (uno por producto destacado, con enlace compacto a su ficha) + comunidad.
 export default function HomePage() {
-  const { tr } = useSettings();
+  const { tr, trCat } = useSettings();
   const { productos } = useProductos();
   const navigate = useNavigate();
 
@@ -51,7 +51,7 @@ export default function HomePage() {
                 </div>
                 <div className="hf-promo-visual">
                   <span className="big">{p.nombre.split(" ")[0].toUpperCase()}</span>
-                  <span className="chip"><b>{p.categoriaNombre}</b> · {p.marca ?? "HikariForge"}</span>
+                  <span className="chip"><b>{trCat(p.categoriaNombre)}</b> · {p.marca ?? "HikariForge"}</span>
                 </div>
               </div>
             </div>

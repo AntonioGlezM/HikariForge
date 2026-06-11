@@ -8,7 +8,7 @@ import { useCart } from "../context/CartContext";
 // y permite añadir al carrito.
 export default function ProductoPage() {
   const { id } = useParams();
-  const { tr } = useSettings();
+  const { tr, trCat } = useSettings();
   const { add, addRecent } = useCart();
   const [p, setP] = useState(null);
   const [error, setError] = useState(false);
@@ -29,10 +29,10 @@ export default function ProductoPage() {
       <div className="hf-product">
         <div className="hf-promo-visual">
           <span className="big">{p.nombre.split(" ")[0].toUpperCase()}</span>
-          <span className="chip"><b>{p.categoriaNombre}</b> · {p.marca ?? "HikariForge"}</span>
+          <span className="chip"><b>{trCat(p.categoriaNombre)}</b> · {p.marca ?? "HikariForge"}</span>
         </div>
         <div>
-          <span className="hf-promo-kicker"><i className="ti ti-category-2" />{p.categoriaNombre}</span>
+          <span className="hf-promo-kicker"><i className="ti ti-category-2" />{trCat(p.categoriaNombre)}</span>
           <h1>{p.nombre}</h1>
           {p.descripcion && <p className="hf-sub">{p.descripcion}</p>}
           <div className="hf-specs" style={{ maxWidth: 380, margin: "18px 0" }}>
