@@ -6,25 +6,21 @@ const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-// Antes de cada petición, adjunta el token JWT (si existe) en la cabecera Authorization.
+// Adjunta el token JWT (si existe) en cada petición.
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-// Si la API responde 401 (token caducado o inválido), limpia la sesión y manda al login.
+// Si la API responde 401 (token caducado), limpia la sesión y manda al login.
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login";
-      }
+      if (window.location.pathname !== "/login") window.location.href = "/login";
     }
     return Promise.reject(error);
   }

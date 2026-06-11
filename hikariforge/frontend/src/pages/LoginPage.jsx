@@ -1,11 +1,13 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useCallback } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useSettings } from "../context/SettingsContext";
+import GoogleButton from "../components/GoogleButton";
 
-// Formulario mínimo de login (sin diseño todavía). Al entrar, guarda el token
-// y redirige al catálogo. El diseño llegará en el paso de "Login y registro".
+// Login con email/contraseña y con Google.
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
+  const { tr } = useSettings();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,21 +18,38 @@ export default function LoginPage() {
     setError(null);
     try {
       await login({ email, password });
-      navigate("/"); // al catálogo tras iniciar sesión
+      navigate("/");
     } catch (err) {
-      setError(err.response?.data?.mensaje ?? "No se pudo iniciar sesión");
+      setError(err.response?.data?.mensaje ?? tr.loginError);
     }
   };
 
+  // Recibe el idToken del botón de Google y lo cambia por nuestro JWT.
+  const onGoogle = useCallback(async (idToken) => {
+    try {
+      await loginWithGoogle(idToken);
+      navigate("/");
+    } catch {
+      setError(tr.googleError);
+    }
+  }, [loginWithGoogle, navigate, tr]);
+
   return (
-    <form onSubmit={onSubmit} style={{ display: "grid", gap: 8, maxWidth: 320 }}>
-      <h2>Entrar</h2>
-      <input type="email" placeholder="Email" value={email}
-             onChange={(e) => setEmail(e.target.value)} required />
-      <input type="password" placeholder="Contraseña" value={password}
-             onChange={(e) => setPassword(e.target.value)} required />
-      <button type="submit">Entrar</button>
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
-    </form>
+    <main>
+      <form className="hf-form" onSubmit={onSubmit}>
+        <h2>{tr.loginTitle}</h2>
+        <input className="hf-input" type="email" placeholder={tr.email}
+               value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <input className="hf-input" type="password" placeholder={tr.password}
+               value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <button className="hf-btn hf-btn-main" type="submit">{tr.loginBtn}</button>
+        {error && <p className="hf-error">{error}</p>}
+
+        <div className="hf-divider">{tr.or}</div>
+        <GoogleButton onCredential={onGoogle} />
+
+        <p className="alt">{tr.noAccount} <Link to="/register">{tr.registerTitle}</Link></p>
+      </form>
+    </main>
   );
 }
