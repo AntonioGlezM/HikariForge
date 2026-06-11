@@ -4,7 +4,7 @@
 @import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css');
 
 /* ============================================================
-   PALETA DE PRUEBA 
+   PALETA DE PRUEBA (cambiar aquí cuando se decidan los colores)
    --error SOLO para avisos: agotado, sin stock, errores
    ============================================================ */
 :root{
@@ -296,3 +296,7 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
 .hf-faq details[open] summary{color:var(--accent);}
 .hf-faq details[open] summary i{transform:rotate(180deg);color:var(--accent);}
 .hf-faq details p{color:var(--muted);line-height:1.75;margin:0;padding:0 4px 18px;}
+
+/* Iconos gamer como separadores de la marquesina */
+.hf-marquee-track .dot{margin:0 22px;}
+.hf-marquee-track .dot i{font-size:1rem;vertical-align:-2px;}

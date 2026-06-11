@@ -4,6 +4,8 @@ import { useSettings } from "../context/SettingsContext";
 export default function AnnounceBar() {
   const { tr } = useSettings();
   const piezas = Array.from({ length: 12 }); // repeticiones para el bucle continuo
+  // Separadores con iconos gamer, rotando entre ellos.
+  const iconos = ["ti-mouse", "ti-keyboard", "ti-headphones", "ti-microphone", "ti-device-gamepad-2"];
 
   return (
     <div className="hf-announce">
@@ -19,7 +21,7 @@ export default function AnnounceBar() {
           {piezas.map((_, i) => (
             <span key={i}>
               <span>{i % 2 ? tr.marq2 : tr.marq1}</span>
-              <span className="dot"> ◆ </span>
+              <span className="dot"><i className={`ti ${iconos[i % iconos.length]}`} /></span>
             </span>
           ))}
         </div>
