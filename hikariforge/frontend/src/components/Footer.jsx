@@ -25,8 +25,10 @@ export default function Footer() {
           </div>
           <div>
             <h5>{tr.footSupport}</h5>
-            <a href="#">{tr.footContact}</a><a href="#">{tr.footFaq}</a>
-            <a href="#">{tr.footWarranty}</a><a href="#">{tr.footShipping}</a>
+            <Link to="/soporte#contacto">{tr.footContact}</Link>
+            <Link to="/soporte#faq">{tr.footFaq}</Link>
+            <Link to="/soporte#garantia">{tr.footWarranty}</Link>
+            <Link to="/soporte#faq">{tr.footShipping}</Link>
           </div>
           <div>
             <h5>{tr.footFollow}</h5>

@@ -275,3 +275,24 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
 
 @media (prefers-reduced-motion:reduce){.hf-marquee-track{animation:none;}.hf-hero .scroll-hint{animation:none;}.hf-logo .name{animation:none;-webkit-background-clip:initial;background:none;color:var(--ink);}}
 @media (max-width:860px){.hf-navlinks{display:none;}.hf-footcols{grid-template-columns:1fr 1fr;}.hf-promo-banner,.hf-promo.alt .hf-promo-banner{grid-template-columns:1fr;}.hf-promo.alt .hf-promo-copy{order:1;}.hf-promo.alt .hf-promo-visual{order:2;}}
+
+/* Chatbot oculto mientras hay un panel lateral abierto */
+.hf-chat-btn.hide,.hf-chat-panel.hide{opacity:0;pointer-events:none;transform:translateY(12px) scale(.6);}
+.hf-chat-panel{transition:opacity .25s,transform .25s;}
+
+/* ===== Página de soporte ===== */
+.hf-support{display:grid;gap:26px;max-width:840px;}
+.hf-sup-card{border:1.5px solid var(--line);border-radius:22px;padding:28px;background:var(--card);scroll-margin-top:120px;}
+.hf-sup-card>h3{display:flex;align-items:center;gap:12px;font-family:var(--brand);font-weight:700;font-size:1.4rem;margin:0 0 8px;letter-spacing:-.01em;}
+.hf-sup-card>h3 i{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-size:1.2rem;}
+.hf-sup-card>p{color:var(--muted);line-height:1.75;margin:6px 0 0;}
+.hf-sup-card .hf-btn{margin-top:18px;}
+.hf-faq{margin-top:10px;}
+.hf-faq details{border-bottom:1px solid var(--line);}
+.hf-faq details:last-child{border-bottom:none;}
+.hf-faq summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:14px;padding:16px 4px;font-weight:900;cursor:pointer;transition:color .2s;}
+.hf-faq summary::-webkit-details-marker{display:none;}
+.hf-faq summary i{transition:transform .3s;color:var(--muted);}
+.hf-faq details[open] summary{color:var(--accent);}
+.hf-faq details[open] summary i{transform:rotate(180deg);color:var(--accent);}
+.hf-faq details p{color:var(--muted);line-height:1.75;margin:0;padding:0 4px 18px;}

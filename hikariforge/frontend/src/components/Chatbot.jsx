@@ -1,13 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { useSettings } from "../context/SettingsContext";
+import { useCart } from "../context/CartContext";
 
 // Chatbot fijo abajo a la derecha con respuestas guionizadas (demo).
-export default function Chatbot() {
+// Se oculta cuando el carrito o el buscador están abiertos para no solaparse.
+export default function Chatbot({ hidden = false }) {
   const { tr } = useSettings();
+  const { open: cartOpen } = useCart();
   const [open, setOpen] = useState(false);
   const [msgs, setMsgs] = useState([]);
   const [texto, setTexto] = useState("");
   const bodyRef = useRef(null);
+
+  const oculto = hidden || cartOpen; // buscador (prop) o carrito (contexto)
 
   useEffect(() => {
     if (open && msgs.length === 0) setMsgs([{ who: "bot", txt: tr.chatHi }]);
@@ -38,10 +43,11 @@ export default function Chatbot() {
 
   return (
     <>
-      <button className="hf-chat-btn" onClick={() => setOpen((o) => !o)} aria-label="Chat">
+      <button className={`hf-chat-btn ${oculto ? "hide" : ""}`}
+              onClick={() => setOpen((o) => !o)} aria-label="Chat">
         <i className="ti ti-message-circle" />
       </button>
-      <div className={`hf-chat-panel ${open ? "open" : ""}`}>
+      <div className={`hf-chat-panel ${open ? "open" : ""} ${oculto ? "hide" : ""}`}>
         <div className="hf-chat-head">
           <div className="av">光</div>
           <div><b>Hikari</b><small>{tr.online}</small></div>

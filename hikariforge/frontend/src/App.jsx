@@ -13,6 +13,7 @@ import ProductoPage from "./pages/ProductoPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import AdminPage from "./pages/AdminPage";
+import SoportePage from "./pages/SoportePage";
 
 // Layout general: barra de anuncios, nav, rutas, footer y los paneles flotantes.
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="/producto/:id" element={<ProductoPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/soporte" element={<SoportePage />} />
         <Route element={<ProtectedRoute adminOnly />}>
           <Route path="/admin" element={<AdminPage />} />
         </Route>
@@ -37,7 +39,7 @@ export default function App() {
       <Footer />
       <SearchDrawer open={searchOpen} onClose={() => setSearchOpen(false)} />
       <CartDrawer />
-      <Chatbot />
+      <Chatbot hidden={searchOpen} />
     </>
   );
 }

@@ -67,8 +67,8 @@ export default function Navbar({ onOpenSearch }) {
               <div>
                 <div className="hf-mega-head"><span className="lbl">{tr.navSupport}</span></div>
                 <div className="hf-mm-info">
-                  {[["ti-mail", tr.ddContact], ["ti-help-circle", tr.ddFaq], ["ti-shield-check", tr.ddWarranty]].map(([ic, [titulo, desc]]) => (
-                    <a key={titulo} href="#"><i className={`ti ${ic}`} /><b>{titulo}</b><small>{desc}</small></a>
+                  {[["contacto", "ti-mail", tr.ddContact], ["faq", "ti-help-circle", tr.ddFaq], ["garantia", "ti-shield-check", tr.ddWarranty]].map(([id, ic, [titulo, desc]]) => (
+                    <Link key={id} to={`/soporte#${id}`}><i className={`ti ${ic}`} /><b>{titulo}</b><small>{desc}</small></Link>
                   ))}
                 </div>
               </div>

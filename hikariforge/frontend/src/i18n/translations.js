@@ -9,6 +9,16 @@ export const I18N = {
     navProducts: "Productos", navSupport: "Soporte", navCatalog: "Catálogo",
     mmLabel: "Colecciones", mmPopular: "Más popular", mmViewAll: "Ver todos los productos", mmAll: "Ver todo", mmFrom: "Desde",
     ddContact: ["Contacto", "Te respondemos en 24h"], ddFaq: ["FAQ", "Dudas frecuentes"], ddWarranty: ["Garantía", "2 años incluidos"],
+    supContactBody: "Escríbenos y te respondemos en menos de 24 horas laborables. También puedes consultarnos por el chat de la esquina inferior.",
+    supContactCta: "Enviar un email",
+    supFaqs: [
+      ["¿Cuánto tarda el envío?", "Enviamos a toda España en 24-48 horas laborables, con número de seguimiento incluido en el email de confirmación."],
+      ["¿Puedo devolver un producto?", "Sí, tienes 30 días naturales desde la entrega para devolverlo en su embalaje original. El reembolso se hace por el mismo método de pago."],
+      ["¿Qué cubre la garantía?", "Todos los productos tienen 2 años de garantía legal que cubre defectos de fabricación. No cubre golpes, líquidos o desgaste por uso."],
+      ["¿Qué métodos de pago aceptáis?", "Tarjeta (Visa/Mastercard), PayPal y Apple Pay. El pago se procesa de forma segura y no guardamos los datos de tu tarjeta."],
+      ["¿Cómo sigo mi pedido?", "En el email de confirmación tienes el enlace de seguimiento. También puedes preguntarle al chat con tu número de pedido."]
+    ],
+    supWarrantyBody: "Cada producto de HikariForge incluye 2 años de garantía. Si algo falla, escríbenos con tu número de pedido y una descripción del problema: te mandamos las instrucciones de envío y, una vez revisado, reparamos, sustituimos o reembolsamos en un máximo de 15 días.",
     promoKickers: ["Nuevo lanzamiento", "El más vendido", "Novedad"],
     promoTexts: [
       "Acaba de llegar a la tienda. Materiales premium y el rendimiento de siempre.",
@@ -47,6 +57,16 @@ export const I18N = {
     navProducts: "Products", navSupport: "Support", navCatalog: "Catalog",
     mmLabel: "Collections", mmPopular: "Most popular", mmViewAll: "View all products", mmAll: "View all", mmFrom: "From",
     ddContact: ["Contact", "We reply within 24h"], ddFaq: ["FAQ", "Common questions"], ddWarranty: ["Warranty", "2 years included"],
+    supContactBody: "Write to us and we will reply within 24 business hours. You can also ask through the chat in the bottom corner.",
+    supContactCta: "Send an email",
+    supFaqs: [
+      ["How long does shipping take?", "We ship across Spain in 24-48 business hours, with a tracking number included in the confirmation email."],
+      ["Can I return a product?", "Yes, you have 30 calendar days from delivery to return it in its original packaging. Refunds go to the same payment method."],
+      ["What does the warranty cover?", "All products come with a 2-year legal warranty covering manufacturing defects. It does not cover drops, liquids or wear from use."],
+      ["Which payment methods do you accept?", "Card (Visa/Mastercard), PayPal and Apple Pay. Payments are processed securely and we never store your card details."],
+      ["How do I track my order?", "Your confirmation email includes the tracking link. You can also ask the chat with your order number."]
+    ],
+    supWarrantyBody: "Every HikariForge product includes a 2-year warranty. If something fails, write to us with your order number and a description of the issue: we will send shipping instructions and, once reviewed, repair, replace or refund within 15 days.",
     promoKickers: ["New release", "Best seller", "New arrival"],
     promoTexts: [
       "Just landed in the store. Premium materials with the performance you expect.",
