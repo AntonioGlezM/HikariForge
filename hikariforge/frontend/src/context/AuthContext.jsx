@@ -38,6 +38,9 @@ export function AuthProvider({ children }) {
     return data;
   }, [guardarSesion]);
 
+  // Tras editar el perfil, el backend devuelve un token nuevo: se guarda aquí.
+  const refrescarSesion = guardarSesion;
+
   const logout = useCallback(() => {
     setToken(null);
     setUser(null);
@@ -49,7 +52,7 @@ export function AuthProvider({ children }) {
     token, user,
     isAuthenticated: !!token,
     isAdmin: user?.rol === "ADMIN",
-    login, register, loginWithGoogle, logout,
+    login, register, loginWithGoogle, refrescarSesion, logout,
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

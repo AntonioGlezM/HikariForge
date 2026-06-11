@@ -1,13 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSettings } from "../context/SettingsContext";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
+import { crearPedido } from "../api/pedidos";
 
 // Panel lateral del carrito con pestañas Carrito / Vistos recientemente
 // y estado vacío con "Seguir comprando".
 export default function CartDrawer() {
   const { tr } = useSettings();
-  const { items, removeAt, total, recent, open, closeCart, tab, setTab } = useCart();
+  const { items, removeAt, clear, total, recent, open, closeCart, tab, setTab } = useCart();
+  const { isAuthenticated } = useAuth();
+  const [msg, setMsg] = useState(null); // aviso del checkout
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,6 +21,23 @@ export default function CartDrawer() {
   }, [closeCart]);
 
   const irCatalogo = () => { closeCart(); navigate("/catalogo"); };
+
+  // Checkout: agrupa el carrito por producto y crea el pedido en la API.
+  const finalizar = async () => {
+    setMsg(null);
+    if (!isAuthenticated) { closeCart(); navigate("/login"); return; }
+    const porProducto = {};
+    items.forEach((p) => { porProducto[p.id] = (porProducto[p.id] ?? 0) + 1; });
+    const lineas = Object.entries(porProducto).map(([productoId, cantidad]) => ({ productoId, cantidad }));
+    try {
+      await crearPedido(lineas);
+      clear();
+      closeCart();
+      navigate("/pedidos");
+    } catch (err) {
+      setMsg(err.response?.data?.mensaje ?? tr.orderError);
+    }
+  };
 
   return (
     <>
@@ -58,7 +79,10 @@ export default function CartDrawer() {
         {tab === "cart" && items.length > 0 && (
           <div className="hf-cart-foot">
             <div className="hf-cart-total"><span>Total</span><span>{total.toFixed(2)} €</span></div>
-            <button className="hf-btn hf-btn-main" style={{ width: "100%" }}>{tr.checkout}</button>
+            {msg && <p className="hf-error" style={{ margin: "0 0 10px" }}>{msg}</p>}
+            <button className="hf-btn hf-btn-main" style={{ width: "100%" }} onClick={finalizar}>
+              {isAuthenticated ? tr.checkout : tr.checkoutLogin}
+            </button>
           </div>
         )}
       </aside>

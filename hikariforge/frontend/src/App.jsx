@@ -14,13 +14,16 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import AdminPage from "./pages/AdminPage";
 import SoportePage from "./pages/SoportePage";
+import PerfilPage from "./pages/PerfilPage";
+import PedidosPage from "./pages/PedidosPage";
+import FavoritosPage from "./pages/FavoritosPage";
 
 // Layout general: barra de anuncios, nav, rutas, footer y los paneles flotantes.
 export default function App() {
   const [searchOpen, setSearchOpen] = useState(false);
 
   return (
-    <>
+    <div className="hf-app">
       <AnnounceBar />
       <Navbar onOpenSearch={() => setSearchOpen(true)} />
 
@@ -31,6 +34,11 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/soporte" element={<SoportePage />} />
+        <Route path="/favoritos" element={<FavoritosPage />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/perfil" element={<PerfilPage />} />
+          <Route path="/pedidos" element={<PedidosPage />} />
+        </Route>
         <Route element={<ProtectedRoute adminOnly />}>
           <Route path="/admin" element={<AdminPage />} />
         </Route>
@@ -40,6 +48,6 @@ export default function App() {
       <SearchDrawer open={searchOpen} onClose={() => setSearchOpen(false)} />
       <CartDrawer />
       <Chatbot hidden={searchOpen} />
-    </>
+    </div>
   );
 }

@@ -10,11 +10,16 @@ import { useProductos } from "../context/ProductosContext";
 export default function Navbar({ onOpenSearch }) {
   const { tr, trCat, lang, setLang, theme, toggleTheme } = useSettings();
   const [langOpen, setLangOpen] = useState(false);
+  const [accOpen, setAccOpen] = useState(false);
   const langRef = useRef(null);
+  const accRef = useRef(null);
 
-  // Cierra el desplegable de idioma al hacer clic fuera.
+  // Cierra los desplegables (idioma y cuenta) al hacer clic fuera.
   useEffect(() => {
-    const fuera = (e) => { if (!langRef.current?.contains(e.target)) setLangOpen(false); };
+    const fuera = (e) => {
+      if (!langRef.current?.contains(e.target)) setLangOpen(false);
+      if (!accRef.current?.contains(e.target)) setAccOpen(false);
+    };
     document.addEventListener("mousedown", fuera);
     return () => document.removeEventListener("mousedown", fuera);
   }, []);
@@ -105,12 +110,27 @@ export default function Navbar({ onOpenSearch }) {
           <i className={`ti ${theme === "dark" ? "ti-sun" : "ti-moon"}`} />
         </button>
         <button className="hf-icon-btn" onClick={onOpenSearch} aria-label="Buscar"><i className="ti ti-search" /></button>
-        <button className="hf-icon-btn" onClick={() => (isAuthenticated ? logout() : navigate("/login"))}
-                aria-label="Cuenta" title={isAuthenticated ? `${user?.email} · ${tr.logout}` : tr.loginTitle}>
-          <i className={`ti ${isAuthenticated ? "ti-logout" : "ti-user"}`} />
-        </button>
-        {isAdmin && (
-          <button className="hf-icon-btn" onClick={() => navigate("/admin")} aria-label="Admin"><i className="ti ti-settings" /></button>
+        {isAuthenticated ? (
+          <div className="hf-accsel" ref={accRef}>
+            <button className="hf-acc-btn" onClick={() => setAccOpen((o) => !o)} aria-label="Cuenta">
+              {(user?.email ?? "?").charAt(0).toUpperCase()}
+            </button>
+            <div className={`hf-acc-menu ${accOpen ? "open" : ""}`}>
+              <div className="who">{user?.email}</div>
+              <button onClick={() => { setAccOpen(false); navigate("/perfil"); }}><i className="ti ti-user" />{tr.accProfile}</button>
+              <button onClick={() => { setAccOpen(false); navigate("/pedidos"); }}><i className="ti ti-package" />{tr.accOrders}</button>
+              <button onClick={() => { setAccOpen(false); navigate("/favoritos"); }}><i className="ti ti-heart" />{tr.accFavs}</button>
+              {isAdmin && (
+                <button onClick={() => { setAccOpen(false); navigate("/admin"); }}><i className="ti ti-settings" />Admin</button>
+              )}
+              <div className="sep" />
+              <button className="out" onClick={() => { setAccOpen(false); logout(); navigate("/"); }}><i className="ti ti-logout" />{tr.logout}</button>
+            </div>
+          </div>
+        ) : (
+          <button className="hf-icon-btn" onClick={() => navigate("/login")} aria-label="Cuenta" title={tr.loginTitle}>
+            <i className="ti ti-user" />
+          </button>
         )}
         <button className="hf-icon-btn" onClick={openCart} aria-label="Carrito">
           <i className="ti ti-shopping-cart" />

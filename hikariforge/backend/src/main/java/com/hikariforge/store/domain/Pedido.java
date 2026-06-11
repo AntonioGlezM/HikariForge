@@ -25,6 +25,12 @@ public class Pedido {
     @Column(nullable = false)
     private LocalDateTime fecha;
 
+    // Estado del seguimiento; los pedidos nuevos empiezan en PENDIENTE.
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private EstadoPedido estado = EstadoPedido.PENDIENTE;
+
     // cascade + orphanRemoval: las líneas viven y mueren con su pedido.
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

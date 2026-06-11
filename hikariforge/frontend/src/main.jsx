@@ -5,6 +5,7 @@ import { SettingsProvider } from "./context/SettingsContext";
 import { AuthProvider } from "./context/AuthContext";
 import { ProductosProvider } from "./context/ProductosContext";
 import { CartProvider } from "./context/CartContext";
+import { FavsProvider } from "./context/FavsContext";
 import App from "./App";
 import "./styles/theme.css";
 
@@ -16,7 +17,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <AuthProvider>
           <ProductosProvider>
             <CartProvider>
-              <App />
+              <FavsProvider>
+                <App />
+              </FavsProvider>
             </CartProvider>
           </ProductosProvider>
         </AuthProvider>
