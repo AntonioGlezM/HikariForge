@@ -7,7 +7,7 @@ spring:
     # (cómodos para desarrollo local con la base de datos en Docker).
     url: ${DB_URL:jdbc:postgresql://localhost:5432/hikariforge}
     username: ${DB_USER:hikariforge}
-    password: ${DB_PASSWORD:hikari1234}
+    password: ${DB_PASSWORD:hikariforge}
 
   jpa:
     hibernate:
@@ -34,3 +34,7 @@ app:
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
+
+# Login con Google: client ID de la app creada en Google Cloud Console.
+google:
+  client-id: ${GOOGLE_CLIENT_ID:pon-aqui-tu-client-id.apps.googleusercontent.com}
