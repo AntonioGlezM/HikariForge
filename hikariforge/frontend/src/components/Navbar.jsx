@@ -91,12 +91,12 @@ export default function Navbar({ onOpenSearch }) {
       <div className="hf-navicons">
         <div className="hf-langsel" ref={langRef}>
           <button className="hf-lang-btn" onClick={() => setLangOpen((o) => !o)}>
-            <span className="flag">{tr.flag}</span> {lang.toUpperCase()} <i className="ti ti-chevron-down" />
+            <img className="flag-img" src={`https://flagcdn.com/w40/${tr.flag}.png`} alt="" /> {lang.toUpperCase()} <i className="ti ti-chevron-down" />
           </button>
           <div className={`hf-lang-menu ${langOpen ? "open" : ""}`}>
             {Object.keys(I18N).filter((k) => k !== lang).map((k) => (
               <button key={k} onClick={() => { setLang(k); setLangOpen(false); }}>
-                <span className="flag">{I18N[k].flag}</span> {k.toUpperCase()} · {I18N[k].langName}
+                <img className="flag-img" src={`https://flagcdn.com/w40/${I18N[k].flag}.png`} alt="" /> {k.toUpperCase()} · {I18N[k].langName}
               </button>
             ))}
           </div>

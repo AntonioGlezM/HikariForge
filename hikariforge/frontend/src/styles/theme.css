@@ -312,3 +312,6 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
 .hf-lang-menu button{display:flex;align-items:center;gap:9px;width:100%;padding:10px 12px;background:none;border:none;border-radius:10px;color:var(--ink);font-weight:800;font-size:.9rem;transition:.2s;}
 .hf-lang-menu button:hover{background:var(--accent-soft);color:var(--accent);}
 .hf-lang-menu .flag{font-size:1.05rem;line-height:1;}
+
+/* Banderas del selector de idioma (imagen, ya que Windows no muestra los emojis) */
+.flag-img{width:20px;height:auto;border-radius:3px;display:block;}
