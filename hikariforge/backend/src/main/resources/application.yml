@@ -37,4 +37,4 @@ springdoc:
 
 # Login con Google: client ID de la app creada en Google Cloud Console.
 google:
-  client-id: ${GOOGLE_CLIENT_ID:pon-aqui-tu-client-id.apps.googleusercontent.com}
+  client-id: ${GOOGLE_CLIENT_ID:1017756267621-1ujk6kpe0tn6ibe0qh90qkqv81f61opr.apps.googleusercontent.com}
