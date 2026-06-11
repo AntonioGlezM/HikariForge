@@ -27,7 +27,7 @@ spring:
 app:
   jwt:
     # IMPORTANTE: en producción esta clave debe venir de una variable de entorno, nunca en el código.
-    secret: ${JWT_SECRET:cambia-esta-clave-secreta-por-una-larga-y-aleatoria-de-al-menos-32-bytes}
+    secret: ${JWT_SECRET:--------------------clave-secreta-larga-y-aleatoria-de-al-menos-32-bytes}
     expiration-ms: 86400000 # 24 horas
 
 # Ruta de Swagger UI: http://localhost:8080/swagger-ui.html
