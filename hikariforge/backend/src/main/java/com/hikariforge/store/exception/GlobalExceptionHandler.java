@@ -28,6 +28,15 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.UNAUTHORIZED, "Email o contraseña incorrectos");
     }
 
+    // Violación de integridad referencial, p. ej. borrar un producto que aparece
+    // en pedidos existentes -> 409 con un mensaje entendible.
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, Object>> integridad(Exception ex) {
+        return build(HttpStatus.CONFLICT,
+                "No se puede eliminar: el producto forma parte de pedidos existentes. " +
+                "Puedes dejarlo con stock 0 para retirarlo de la venta.");
+    }
+
     // Errores de validación de DTOs (@NotBlank, @Positive...) -> 400 con detalle por campo.
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> validacion(MethodArgumentNotValidException ex) {
