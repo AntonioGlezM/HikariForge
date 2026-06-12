@@ -5,13 +5,13 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { crearPedido } from "../api/pedidos";
 
-// Panel lateral del carrito con pestañas Carrito / Vistos recientemente
-// y estado vacío con "Seguir comprando".
+// Panel lateral del carrito: líneas con selector de cantidad, pestaña de vistos
+// recientemente, estado vacío y checkout real contra la API.
 export default function CartDrawer() {
   const { tr } = useSettings();
-  const { items, removeAt, clear, total, recent, open, closeCart, tab, setTab } = useCart();
+  const { items, cambiarCantidad, quitar, clear, total, recent, open, closeCart, tab, setTab } = useCart();
   const { isAuthenticated } = useAuth();
-  const [msg, setMsg] = useState(null); // aviso del checkout
+  const [msg, setMsg] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,13 +22,11 @@ export default function CartDrawer() {
 
   const irCatalogo = () => { closeCart(); navigate("/catalogo"); };
 
-  // Checkout: agrupa el carrito por producto y crea el pedido en la API.
+  // Checkout: las líneas ya tienen su cantidad; se mandan tal cual a la API.
   const finalizar = async () => {
     setMsg(null);
     if (!isAuthenticated) { closeCart(); navigate("/login"); return; }
-    const porProducto = {};
-    items.forEach((p) => { porProducto[p.id] = (porProducto[p.id] ?? 0) + 1; });
-    const lineas = Object.entries(porProducto).map(([productoId, cantidad]) => ({ productoId, cantidad }));
+    const lineas = items.map((l) => ({ productoId: l.producto.id, cantidad: l.cantidad }));
     try {
       await crearPedido(lineas);
       clear();
@@ -67,10 +65,18 @@ export default function CartDrawer() {
               </button>
             </div>
           ) : (
-            items.map((p, i) => (
-              <div key={i} className="hf-cart-row">
-                <div><div>{p.nombre}</div><div className="p">{p.precio} €</div></div>
-                <button onClick={() => removeAt(i)} aria-label="Quitar"><i className="ti ti-x" /></button>
+            items.map((l) => (
+              <div key={l.producto.id} className="hf-cart-row">
+                <div>
+                  <div>{l.producto.nombre}</div>
+                  <div className="p">{l.producto.precio} € · {(Number(l.producto.precio) * l.cantidad).toFixed(2)} €</div>
+                </div>
+                <div className="hf-qty">
+                  <button onClick={() => cambiarCantidad(l.producto.id, -1)} aria-label="Menos"><i className="ti ti-minus" /></button>
+                  <b>{l.cantidad}</b>
+                  <button onClick={() => cambiarCantidad(l.producto.id, +1)} aria-label="Más"><i className="ti ti-plus" /></button>
+                </div>
+                <button className="hf-quitar" onClick={() => quitar(l.producto.id)} aria-label="Quitar"><i className="ti ti-x" /></button>
               </div>
             ))
           )}

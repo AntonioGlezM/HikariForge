@@ -10,6 +10,7 @@ public record PedidoResponse(
         UUID id,
         LocalDateTime fecha,
         String estado,
+        String clienteEmail,
         BigDecimal total,
         List<Linea> lineas) {
 

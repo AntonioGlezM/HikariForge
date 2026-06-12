@@ -24,7 +24,7 @@ export default function Navbar({ onOpenSearch }) {
     return () => document.removeEventListener("mousedown", fuera);
   }, []);
   const { isAuthenticated, isAdmin, user, logout } = useAuth();
-  const { items, openCart } = useCart();
+  const { unidades, openCart } = useCart();
   const { productos, categorias } = useProductos();
   const navigate = useNavigate();
 
@@ -134,7 +134,7 @@ export default function Navbar({ onOpenSearch }) {
         )}
         <button className="hf-icon-btn" onClick={openCart} aria-label="Carrito">
           <i className="ti ti-shopping-cart" />
-          <span className={`hf-cart-badge ${items.length ? "show" : ""}`}>{items.length}</span>
+          <span className={`hf-cart-badge ${unidades ? "show" : ""}`}>{unidades}</span>
         </button>
       </div>
     </nav>

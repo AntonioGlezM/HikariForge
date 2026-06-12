@@ -42,6 +42,13 @@ public class ProductoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(productoService.crear(req));
     }
 
+    // Solo ADMIN puede actualizar productos.
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ProductoResponse actualizar(@PathVariable UUID id, @Valid @RequestBody ProductoRequest req) {
+        return productoService.actualizar(id, req);
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> eliminar(@PathVariable UUID id) {

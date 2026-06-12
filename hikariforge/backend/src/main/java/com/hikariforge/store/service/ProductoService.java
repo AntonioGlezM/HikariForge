@@ -50,6 +50,23 @@ public class ProductoService {
         return aResponse(productoRepository.save(producto));
     }
 
+    // Actualiza todos los campos del producto (incluida la categoría).
+    @Transactional
+    public ProductoResponse actualizar(UUID id, ProductoRequest req) {
+        Producto producto = buscar(id);
+        Categoria categoria = categoriaRepository.findById(req.categoriaId())
+                .orElseThrow(() -> new RecursoNoEncontradoException("Categoría no encontrada: " + req.categoriaId()));
+
+        producto.setNombre(req.nombre());
+        producto.setDescripcion(req.descripcion());
+        producto.setMarca(req.marca());
+        producto.setPrecio(req.precio());
+        producto.setStock(req.stock());
+        producto.setImagenUrl(req.imagenUrl());
+        producto.setCategoria(categoria);
+        return aResponse(producto);
+    }
+
     @Transactional
     public void eliminar(UUID id) {
         productoRepository.delete(buscar(id));

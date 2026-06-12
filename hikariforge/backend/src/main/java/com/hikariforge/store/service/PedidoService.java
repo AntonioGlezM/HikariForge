@@ -67,6 +67,22 @@ public class PedidoService {
                 .stream().map(this::aResponse).toList();
     }
 
+    // Todos los pedidos de la tienda (zona admin), el más reciente primero.
+    @Transactional(readOnly = true)
+    public List<PedidoResponse> listarTodos() {
+        return pedidoRepository.findAll(org.springframework.data.domain.Sort.by("fecha").descending())
+                .stream().map(this::aResponse).toList();
+    }
+
+    // Cambia el estado del pedido (zona admin).
+    @Transactional
+    public PedidoResponse cambiarEstado(java.util.UUID id, EstadoPedido estado) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Pedido no encontrado"));
+        pedido.setEstado(estado);
+        return aResponse(pedido);
+    }
+
     private PedidoResponse aResponse(Pedido p) {
         List<PedidoResponse.Linea> lineas = p.getLineas().stream()
                 .map(l -> new PedidoResponse.Linea(
@@ -75,6 +91,7 @@ public class PedidoService {
         BigDecimal total = p.getLineas().stream()
                 .map(l -> l.getPrecioUnitario().multiply(BigDecimal.valueOf(l.getCantidad())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return new PedidoResponse(p.getId(), p.getFecha(), p.getEstado().name(), total, lineas);
+        return new PedidoResponse(p.getId(), p.getFecha(), p.getEstado().name(),
+                p.getUsuario().getEmail(), total, lineas);
     }
 }
