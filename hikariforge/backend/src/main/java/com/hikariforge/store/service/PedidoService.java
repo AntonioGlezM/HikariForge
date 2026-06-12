@@ -44,6 +44,9 @@ public class PedidoService {
             Producto producto = productoRepository.findById(linea.productoId())
                     .orElseThrow(() -> new RecursoNoEncontradoException("Producto no encontrado"));
 
+            if (!producto.getActivo()) {
+                throw new IllegalArgumentException("El producto ya no está disponible: " + producto.getNombre());
+            }
             if (producto.getStock() < linea.cantidad()) {
                 throw new IllegalArgumentException("Stock insuficiente para " + producto.getNombre());
             }

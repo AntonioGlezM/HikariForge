@@ -35,6 +35,20 @@ public class ProductoController {
         return productoService.obtener(id);
     }
 
+    // Zona admin: todo el catálogo, incluidos los productos retirados.
+    @GetMapping("/todos")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Page<ProductoResponse> listarTodos(@ParameterObject @PageableDefault(size = 100) Pageable pageable) {
+        return productoService.listarTodos(pageable);
+    }
+
+    // Zona admin: vuelve a poner a la venta un producto retirado.
+    @PutMapping("/{id}/activar")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ProductoResponse reactivar(@PathVariable UUID id) {
+        return productoService.reactivar(id);
+    }
+
     // Solo ADMIN puede crear productos (requiere token con ese rol).
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")

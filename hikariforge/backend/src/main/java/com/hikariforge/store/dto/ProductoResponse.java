@@ -13,6 +13,7 @@ public record ProductoResponse(
         String marca,
         BigDecimal precio,
         Integer stock,
+        Boolean activo,
         String imagenUrl,
         UUID categoriaId,
         String categoriaNombre

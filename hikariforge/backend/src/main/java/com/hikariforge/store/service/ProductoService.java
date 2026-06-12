@@ -22,14 +22,25 @@ public class ProductoService {
         this.categoriaRepository = categoriaRepository;
     }
 
+    // Catálogo público: solo productos activos.
     @Transactional(readOnly = true)
     public Page<ProductoResponse> listar(Pageable pageable) {
+        return productoRepository.findByActivoTrue(pageable).map(this::aResponse);
+    }
+
+    // Zona admin: todo el catálogo, incluidos los retirados.
+    @Transactional(readOnly = true)
+    public Page<ProductoResponse> listarTodos(Pageable pageable) {
         return productoRepository.findAll(pageable).map(this::aResponse);
     }
 
     @Transactional(readOnly = true)
     public ProductoResponse obtener(UUID id) {
-        return aResponse(buscar(id));
+        Producto p = buscar(id);
+        if (!p.getActivo()) {
+            throw new RecursoNoEncontradoException("Producto no encontrado: " + id);
+        }
+        return aResponse(p);
     }
 
     @Transactional
@@ -67,9 +78,19 @@ public class ProductoService {
         return aResponse(producto);
     }
 
+    // Borrado lógico: el producto se retira de la venta pero el historial
+    // de pedidos que lo referencia queda intacto.
     @Transactional
     public void eliminar(UUID id) {
-        productoRepository.delete(buscar(id));
+        buscar(id).setActivo(false);
+    }
+
+    // Vuelve a poner a la venta un producto retirado.
+    @Transactional
+    public ProductoResponse reactivar(UUID id) {
+        Producto p = buscar(id);
+        p.setActivo(true);
+        return aResponse(p);
     }
 
     private Producto buscar(UUID id) {
@@ -81,7 +102,7 @@ public class ProductoService {
     private ProductoResponse aResponse(Producto p) {
         return new ProductoResponse(
                 p.getId(), p.getNombre(), p.getDescripcion(), p.getMarca(),
-                p.getPrecio(), p.getStock(), p.getImagenUrl(),
+                p.getPrecio(), p.getStock(), p.getActivo(), p.getImagenUrl(),
                 p.getCategoria().getId(), p.getCategoria().getNombre());
     }
 }

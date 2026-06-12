@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { listarProductos, crearProducto, actualizarProducto, eliminarProducto } from "../api/productos";
+import { listarProductosAdmin, crearProducto, actualizarProducto, eliminarProducto, reactivarProducto } from "../api/productos";
 import { listarCategorias } from "../api/categorias";
 import { todosPedidos, cambiarEstadoPedido } from "../api/pedidos";
 import { useSettings } from "../context/SettingsContext";
@@ -23,7 +23,7 @@ export default function AdminPage() {
   const [msg, setMsg] = useState(null);
 
   const cargarProductos = () =>
-    listarProductos({ page: 0, size: 100 }).then(({ data }) => setProductos(data.content));
+    listarProductosAdmin({ page: 0, size: 100 }).then(({ data }) => setProductos(data.content));
 
   useEffect(() => {
     cargarProductos();
@@ -59,11 +59,22 @@ export default function AdminPage() {
     }
   };
 
-  const borrar = async (p) => {
+  // "Eliminar" = borrado lógico: retira el producto de la venta.
+  const retirar = async (p) => {
     if (!window.confirm(`${tr.admDeleteConfirm} (${p.nombre})`)) return;
     try {
       await eliminarProducto(p.id);
       setMsg({ ok: true, texto: tr.admDeleted });
+      cargarProductos();
+    } catch (err) {
+      setMsg({ ok: false, texto: err.response?.data?.mensaje ?? tr.loadError });
+    }
+  };
+
+  const reactivar = async (p) => {
+    try {
+      await reactivarProducto(p.id);
+      setMsg({ ok: true, texto: tr.admRestored });
       cargarProductos();
     } catch (err) {
       setMsg({ ok: false, texto: err.response?.data?.mensaje ?? tr.loadError });
@@ -147,8 +158,11 @@ export default function AdminPage() {
               <span>{tr.admPrice}</span><span>{tr.admStock}</span><span />
             </div>
             {filtrados.map((p) => (
-              <div key={p.id} className="row">
-                <span className="nom">{p.nombre}</span>
+              <div key={p.id} className={`row ${p.activo === false ? "inactive" : ""}`}>
+                <span className="nom">
+                  {p.nombre}
+                  {p.activo === false && <em className="hf-badge-off">{tr.admInactive}</em>}
+                </span>
                 <span>{trCat(p.categoriaNombre)}</span>
                 <span>{p.marca ?? "—"}</span>
                 <span>{p.precio} €</span>
@@ -157,7 +171,11 @@ export default function AdminPage() {
                 </span>
                 <span className="acts">
                   <button onClick={() => abrirEditar(p)} aria-label="Editar"><i className="ti ti-pencil" /></button>
-                  <button className="del" onClick={() => borrar(p)} aria-label="Eliminar"><i className="ti ti-trash" /></button>
+                  {p.activo === false ? (
+                    <button className="res" onClick={() => reactivar(p)} title={tr.admRestore} aria-label="Reactivar"><i className="ti ti-restore" /></button>
+                  ) : (
+                    <button className="del" onClick={() => retirar(p)} aria-label="Retirar"><i className="ti ti-trash" /></button>
+                  )}
                 </span>
               </div>
             ))}

@@ -30,6 +30,11 @@ public class Producto {
     @Column(nullable = false)
     private Integer stock;
 
+    // Borrado lógico: false = retirado de la venta (no aparece en el catálogo público).
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean activo = true;
+
     private String imagenUrl;
 
     // Muchos productos pertenecen a una categoría. LAZY evita cargar la
