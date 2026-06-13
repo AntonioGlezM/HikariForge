@@ -25,9 +25,18 @@ public class ProductoController {
     // GET /api/productos?page=0&size=10 -> catálogo paginado.
     // @ParameterObject hace que Swagger muestre page/size/sort como campos sueltos (query),
     // en vez de un único objeto JSON.
+    // Catálogo público con filtros opcionales combinables:
+    // ?texto=&categoriaId=&marca=&precioMax=&enStock=true&page=0&size=10
     @GetMapping
-    public Page<ProductoResponse> listar(@ParameterObject @PageableDefault(size = 10) Pageable pageable) {
-        return productoService.listar(pageable);
+    public Page<ProductoResponse> listar(@ParameterObject ProductoFiltro filtro,
+                                         @ParameterObject @PageableDefault(size = 10) Pageable pageable) {
+        return productoService.listar(filtro, pageable);
+    }
+
+    // Marcas disponibles (para el selector de filtro del frontend).
+    @GetMapping("/marcas")
+    public java.util.List<String> marcas() {
+        return productoService.marcas();
     }
 
     @GetMapping("/{id}")

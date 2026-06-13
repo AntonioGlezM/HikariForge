@@ -4,6 +4,8 @@ import com.hikariforge.store.domain.*;
 import com.hikariforge.store.dto.*;
 import com.hikariforge.store.exception.RecursoNoEncontradoException;
 import com.hikariforge.store.repository.*;
+import org.springframework.data.jpa.domain.Specification;
+import java.util.List;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,10 +24,26 @@ public class ProductoService {
         this.categoriaRepository = categoriaRepository;
     }
 
-    // Catálogo público: solo productos activos.
+    // Catálogo público con filtros combinables (todos opcionales). Siempre
+    // restringe a productos activos; el resto de condiciones se añaden si llegan.
     @Transactional(readOnly = true)
-    public Page<ProductoResponse> listar(Pageable pageable) {
-        return productoRepository.findByActivoTrue(pageable).map(this::aResponse);
+    public Page<ProductoResponse> listar(ProductoFiltro filtro, Pageable pageable) {
+        Specification<Producto> spec = Specification.allOf(
+                ProductoSpecs.soloActivos(),
+                ProductoSpecs.texto(filtro.texto()),
+                ProductoSpecs.categoria(filtro.categoriaId()),
+                ProductoSpecs.marca(filtro.marca()),
+                ProductoSpecs.precioMaximo(filtro.precioMax()),
+                ProductoSpecs.soloConStock(filtro.enStock()));
+        return productoRepository.findAll(spec, pageable).map(this::aResponse);
+    }
+
+    // Marcas distintas de los productos activos, para poblar el filtro de marca.
+    @Transactional(readOnly = true)
+    public List<String> marcas() {
+        return productoRepository.findAll(ProductoSpecs.soloActivos()).stream()
+                .map(Producto::getMarca).filter(m -> m != null && !m.isBlank())
+                .distinct().sorted().toList();
     }
 
     // Zona admin: todo el catálogo, incluidos los retirados.

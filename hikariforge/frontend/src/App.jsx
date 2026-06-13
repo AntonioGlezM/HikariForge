@@ -17,6 +17,7 @@ import SoportePage from "./pages/SoportePage";
 import PerfilPage from "./pages/PerfilPage";
 import PedidosPage from "./pages/PedidosPage";
 import FavoritosPage from "./pages/FavoritosPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 // Layout general: barra de anuncios, nav, rutas, footer y los paneles flotantes.
 export default function App() {
@@ -42,6 +43,8 @@ export default function App() {
         <Route element={<ProtectedRoute adminOnly />}>
           <Route path="/admin" element={<AdminPage />} />
         </Route>
+        {/* Cualquier otra ruta: página 404 */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
 
       <Footer />

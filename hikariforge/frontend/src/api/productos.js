@@ -1,8 +1,12 @@
 import api from "./client";
 
-// Catálogo paginado (Page de Spring).
+// Catálogo paginado con filtros opcionales (Page de Spring).
+// params admite: page, size, texto, categoriaId, marca, precioMax, enStock.
 export const listarProductos = (params = { page: 0, size: 10 }) =>
   api.get("/productos", { params });
+
+// Marcas disponibles para el filtro del catálogo.
+export const listarMarcas = () => api.get("/productos/marcas");
 
 export const obtenerProducto = (id) => api.get(`/productos/${id}`);
 export const crearProducto = (producto) => api.post("/productos", producto);
