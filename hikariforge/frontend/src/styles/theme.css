@@ -488,3 +488,10 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
 .hf-adm-datelbl{display:flex;flex-direction:column;gap:5px;font-size:.78rem;color:var(--muted);font-weight:800;}
 /* Aviso de oferta programada (aún no empezada) */
 .hf-offer-note.soon{color:var(--muted);background:var(--soft);}
+
+/* Disponibilidad cualitativa en la tarjeta (en stock / pocas / agotado) */
+.hf-avail{font-weight:900;}
+.hf-avail.ok{color:var(--ink);}
+.hf-avail.few{color:var(--error);}        /* pocas unidades: rojo de aviso */
+.hf-avail.out{color:var(--muted);}
+.hf-spec .hf-avail i{margin-right:4px;}
