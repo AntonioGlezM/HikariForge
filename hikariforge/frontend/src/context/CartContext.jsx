@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { precioEfectivo } from "../utils/precio";
 
 const CartContext = createContext(null);
 
@@ -55,7 +56,8 @@ export function CartProvider({ children }) {
     setRecent((xs) => [p, ...xs.filter((x) => x.id !== p.id)].slice(0, 10));
 
   const unidades = items.reduce((s, l) => s + l.cantidad, 0);
-  const total = items.reduce((s, l) => s + Number(l.producto.precio) * l.cantidad, 0);
+  // El total usa el precio efectivo (con oferta si la hay) de cada producto.
+  const total = items.reduce((s, l) => s + precioEfectivo(l.producto) * l.cantidad, 0);
 
   const value = {
     items, add, cambiarCantidad, quitar, clear, total, unidades,

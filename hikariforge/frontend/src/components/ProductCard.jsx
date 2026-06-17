@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useSettings } from "../context/SettingsContext";
 import { useCart } from "../context/CartContext";
 import { useFavs } from "../context/FavsContext";
+import { tieneOferta, precioEfectivo, porcentajeDescuento } from "../utils/precio";
 
 // Tarjeta de producto del catálogo, con specs y añadir al carrito.
 export default function ProductCard({ producto }) {
@@ -15,6 +16,7 @@ export default function ProductCard({ producto }) {
       <Link to={`/producto/${producto.id}`}>
         <div className="hf-thumb">
           <span className="hf-tag">{trCat(producto.categoriaNombre)}</span>
+          {tieneOferta(producto) && <span className="hf-off-badge">-{porcentajeDescuento(producto)}%</span>}
           <span className="hf-letter">{producto.nombre.split(" ")[0]}</span>
         </div>
       </Link>
@@ -30,7 +32,10 @@ export default function ProductCard({ producto }) {
         <div className="hf-spec"><span className="k"><i className="ti ti-box" />{tr.specStock}</span><span>{agotado ? "—" : producto.stock}</span></div>
       </div>
       <div className="hf-card-foot">
-        <div className="hf-price">{producto.precio}<span>€</span></div>
+        <div className="hf-price">
+          {precioEfectivo(producto)}<span>€</span>
+          {tieneOferta(producto) && <span className="hf-price-old">{producto.precio} €</span>}
+        </div>
         <div className={`hf-stock ${agotado ? "out" : ""}`}>{agotado ? tr.out : tr.avail}</div>
       </div>
       <button className="hf-add" disabled={agotado} onClick={() => add(producto)}>

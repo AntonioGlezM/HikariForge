@@ -56,7 +56,7 @@ public class PedidoService {
                     .pedido(pedido)
                     .producto(producto)
                     .cantidad(linea.cantidad())
-                    .precioUnitario(producto.getPrecio()) // precio del momento de la compra
+                    .precioUnitario(producto.getPrecioEfectivo()) // precio vigente (oferta si la hay) en el momento de la compra
                     .build());
         }
 

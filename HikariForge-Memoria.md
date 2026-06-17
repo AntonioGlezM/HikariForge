@@ -207,17 +207,27 @@ Esta sección recorre el proyecto en el orden en que se construyó, desde las pr
 - Cálculo de la nota media y listado de reseñas en la ficha; componente de estrellas reutilizable.
 - Moderación: el administrador puede ver y borrar cualquier reseña abusiva desde su panel.
 
+### Módulo 14 — Ofertas y descuentos `Backend · Frontend`
+
+- Migración V6: columna `precioOferta` opcional en el producto (NULL = sin oferta).
+- Migración V7: vigencia de la oferta — `ofertaHasta` (fecha límite) y `ofertaHastaAgotar` (mientras quede stock).
+- Migración V8: `ofertaDesde` (fecha de inicio), que permite programar ofertas a futuro.
+- Método de "precio efectivo" en la entidad: aplica el precio de oferta solo si es válido (positivo y menor que el normal) **y está vigente** (ha llegado su fecha de inicio, no ha pasado la de fin y, si es "hasta fin de existencias", queda stock). Es la única fuente de verdad del importe.
+- El administrador, desde el formulario de su panel, fija el precio de oferta y elige su duración: sin límite, entre dos fechas (inicio opcional y fin), o hasta fin de existencias.
+- En la tienda, los productos de oferta muestran el precio rebajado, el precio anterior tachado y un badge con el porcentaje de descuento (en tarjetas y ficha), además de un aviso de vigencia ("Oferta hasta [fecha]", "¡Hasta fin de existencias!" o "Próximamente" si aún no ha empezado).
+- El carrito y los pedidos usan automáticamente el precio efectivo; una oferta programada no se aplica antes de tiempo y una caducada deja de aplicarse sola.
+
 ---
 
 ## 5. Modelo de datos
 
-La base de datos se compone de seis tablas principales. Todas las claves primarias son de tipo UUID. El esquema se gestiona con migraciones de Flyway (V1 a V5).
+La base de datos se compone de seis tablas principales. Todas las claves primarias son de tipo UUID. El esquema se gestiona con migraciones de Flyway (V1 a V8).
 
 | Tabla | Contenido | Relaciones |
 |---|---|---|
 | **usuario** | Email, contraseña (BCrypt), nombre y rol (CLIENTE/ADMIN) | Tiene pedidos y valoraciones |
 | **categoria** | Nombre de la categoría | Agrupa productos |
-| **producto** | Nombre, descripción, marca, precio, stock, imagen y si está activo | Pertenece a una categoría |
+| **producto** | Nombre, descripción, marca, precio, precio de oferta y su vigencia (inicio/fin/hasta agotar, opcionales), stock, imagen y si está activo | Pertenece a una categoría |
 | **pedido** | Fecha y estado del seguimiento | De un usuario; tiene líneas |
 | **linea_pedido** | Producto, cantidad y precio en el momento de la compra | Une pedido y producto |
 | **valoracion** | Estrellas (1-5), comentario y fecha | De un usuario sobre un producto (única) |

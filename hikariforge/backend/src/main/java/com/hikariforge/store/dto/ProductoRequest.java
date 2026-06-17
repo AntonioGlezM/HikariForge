@@ -11,6 +11,12 @@ public record ProductoRequest(
         String descripcion,
         String marca,
         @NotNull @Positive BigDecimal precio,
+        // Precio de oferta opcional; si llega, debe ser positivo (la entidad valida que sea < precio).
+        @Positive BigDecimal precioOferta,
+        // Vigencia opcional de la oferta: inicio, fin y/o "hasta fin de existencias".
+        java.time.LocalDateTime ofertaDesde,
+        java.time.LocalDateTime ofertaHasta,
+        Boolean ofertaHastaAgotar,
         @NotNull @PositiveOrZero Integer stock,
         String imagenUrl,
         @NotNull UUID categoriaId

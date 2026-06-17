@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { obtenerProducto } from "../api/productos";
 import { useSettings } from "../context/SettingsContext";
 import { useCart } from "../context/CartContext";
+import { tieneOferta, precioEfectivo, porcentajeDescuento } from "../utils/precio";
 import { useProductos } from "../context/ProductosContext";
 import ProductCard from "../components/ProductCard";
 import Reviews from "../components/Reviews";
@@ -43,7 +44,26 @@ export default function ProductoPage() {
             <div className="hf-spec"><span className="k"><i className="ti ti-tag" />{tr.specBrand}</span><span>{p.marca ?? "—"}</span></div>
             <div className="hf-spec"><span className="k"><i className="ti ti-box" />{tr.specStock}</span><span>{agotado ? "—" : p.stock}</span></div>
           </div>
-          <div className="price">{p.precio}<span> €</span></div>
+          <div className="price">
+            {precioEfectivo(p)}<span> €</span>
+            {tieneOferta(p) && (
+              <>
+                <span className="hf-price-old">{p.precio} €</span>
+                <span className="hf-off-badge inline">-{porcentajeDescuento(p)}%</span>
+              </>
+            )}
+          </div>
+          {/* Aviso de vigencia de la oferta */}
+          {tieneOferta(p) && p.ofertaHastaAgotar && (
+            <p className="hf-offer-note"><i className="ti ti-flame" />{tr.offWhileStock}</p>
+          )}
+          {tieneOferta(p) && !p.ofertaHastaAgotar && p.ofertaHasta && (
+            <p className="hf-offer-note"><i className="ti ti-clock" />{tr.offUntil} {new Date(p.ofertaHasta).toLocaleDateString()}</p>
+          )}
+          {/* Oferta definida pero aún no empezada */}
+          {p.ofertaProgramada && (
+            <p className="hf-offer-note soon"><i className="ti ti-calendar-clock" />{tr.offSoon}: {tr.offFrom} {new Date(p.ofertaDesde).toLocaleDateString()}</p>
+          )}
           <div className={`hf-stock ${agotado ? "out" : ""}`} style={{ marginBottom: 16 }}>
             {agotado ? tr.out : tr.avail}
           </div>

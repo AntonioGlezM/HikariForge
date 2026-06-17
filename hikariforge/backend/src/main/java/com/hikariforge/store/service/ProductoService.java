@@ -71,6 +71,10 @@ public class ProductoService {
                 .descripcion(req.descripcion())
                 .marca(req.marca())
                 .precio(req.precio())
+                .precioOferta(req.precioOferta())
+                .ofertaDesde(req.ofertaDesde())
+                .ofertaHasta(req.ofertaHasta())
+                .ofertaHastaAgotar(Boolean.TRUE.equals(req.ofertaHastaAgotar()))
                 .stock(req.stock())
                 .imagenUrl(req.imagenUrl())
                 .categoria(categoria)
@@ -90,6 +94,10 @@ public class ProductoService {
         producto.setDescripcion(req.descripcion());
         producto.setMarca(req.marca());
         producto.setPrecio(req.precio());
+        producto.setPrecioOferta(req.precioOferta());
+        producto.setOfertaDesde(req.ofertaDesde());
+        producto.setOfertaHasta(req.ofertaHasta());
+        producto.setOfertaHastaAgotar(Boolean.TRUE.equals(req.ofertaHastaAgotar()));
         producto.setStock(req.stock());
         producto.setImagenUrl(req.imagenUrl());
         producto.setCategoria(categoria);
@@ -120,7 +128,8 @@ public class ProductoService {
     private ProductoResponse aResponse(Producto p) {
         return new ProductoResponse(
                 p.getId(), p.getNombre(), p.getDescripcion(), p.getMarca(),
-                p.getPrecio(), p.getStock(), p.getActivo(), p.getImagenUrl(),
+                p.getPrecio(), p.getPrecioOferta(), p.getOfertaDesde(), p.getOfertaHasta(), p.getOfertaHastaAgotar(),
+                p.isOfertaVigente(), p.isOfertaProgramada(), p.getStock(), p.getActivo(), p.getImagenUrl(),
                 p.getCategoria().getId(), p.getCategoria().getNombre());
     }
 }

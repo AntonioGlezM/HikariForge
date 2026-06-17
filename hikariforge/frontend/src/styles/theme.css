@@ -473,3 +473,18 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
 
 /* Moderación de reseñas en el admin */
 .hf-adm-resena{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;}
+
+/* ===== Ofertas: badge de descuento y precio anterior tachado ===== */
+.hf-off-badge{position:absolute;top:10px;right:10px;background:var(--error);color:#fff;font-size:.72rem;font-weight:900;letter-spacing:.02em;padding:4px 9px;border-radius:999px;z-index:2;box-shadow:0 4px 10px -3px rgba(0,0,0,.3);}
+.hf-off-badge.inline{position:static;display:inline-block;margin-left:10px;vertical-align:middle;font-size:.8rem;}
+.hf-price-old{margin-left:8px;color:var(--muted);font-weight:700;font-size:.72em;text-decoration:line-through;}
+.hf-price{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px;}
+
+/* Aviso de vigencia de la oferta en la ficha */
+.hf-offer-note{display:inline-flex;align-items:center;gap:7px;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:7px 14px;font-size:.84rem;font-weight:800;margin:0 0 16px;}
+.hf-offer-note i{font-size:1rem;}
+
+/* Fechas de oferta en el formulario admin */
+.hf-adm-datelbl{display:flex;flex-direction:column;gap:5px;font-size:.78rem;color:var(--muted);font-weight:800;}
+/* Aviso de oferta programada (aún no empezada) */
+.hf-offer-note.soon{color:var(--muted);background:var(--soft);}

@@ -4,6 +4,7 @@ import { useSettings } from "../context/SettingsContext";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { crearPedido } from "../api/pedidos";
+import { precioEfectivo } from "../utils/precio";
 
 // Panel lateral del carrito: líneas con selector de cantidad, pestaña de vistos
 // recientemente, estado vacío y checkout real contra la API.
@@ -69,7 +70,7 @@ export default function CartDrawer() {
               <div key={l.producto.id} className="hf-cart-row">
                 <div>
                   <div>{l.producto.nombre}</div>
-                  <div className="p">{l.producto.precio} € · {(Number(l.producto.precio) * l.cantidad).toFixed(2)} €</div>
+                  <div className="p">{precioEfectivo(l.producto)} € · {(precioEfectivo(l.producto) * l.cantidad).toFixed(2)} €</div>
                 </div>
                 <div className="hf-qty">
                   <button onClick={() => cambiarCantidad(l.producto.id, -1)} aria-label="Menos"><i className="ti ti-minus" /></button>

@@ -8,7 +8,7 @@ import { useSettings } from "../context/SettingsContext";
 
 const ESTADOS = ["PENDIENTE", "PAGADO", "ENVIADO", "ENTREGADO"];
 const STOCK_BAJO = 5;
-const FORM_VACIO = { nombre: "", descripcion: "", marca: "", precio: "", stock: "", imagenUrl: "", categoriaId: "" };
+const FORM_VACIO = { nombre: "", descripcion: "", marca: "", precio: "", precioOferta: "", ofertaLimite: "none", ofertaDesde: "", ofertaHasta: "", stock: "", imagenUrl: "", categoriaId: "" };
 
 // Zona de administración: gestión del catálogo (crear/editar/borrar, stock)
 // y gestión de pedidos (avanzar el estado del seguimiento).
@@ -40,7 +40,11 @@ export default function AdminPage() {
   const abrirNuevo = () => { setForm(FORM_VACIO); setEditandoId(null); setMsg(null); };
   const abrirEditar = (p) => {
     setForm({ nombre: p.nombre, descripcion: p.descripcion ?? "", marca: p.marca ?? "",
-              precio: p.precio, stock: p.stock, imagenUrl: p.imagenUrl ?? "", categoriaId: p.categoriaId });
+              precio: p.precio, precioOferta: p.precioOferta ?? "",
+              ofertaLimite: p.ofertaHastaAgotar ? "stock" : (p.ofertaHasta ? "date" : "none"),
+              ofertaDesde: p.ofertaDesde ? p.ofertaDesde.slice(0, 16) : "",
+              ofertaHasta: p.ofertaHasta ? p.ofertaHasta.slice(0, 16) : "",
+              stock: p.stock, imagenUrl: p.imagenUrl ?? "", categoriaId: p.categoriaId });
     setEditandoId(p.id);
     setMsg(null);
   };
@@ -48,8 +52,20 @@ export default function AdminPage() {
   const guardar = async (e) => {
     e.preventDefault();
     setMsg(null);
-    const cuerpo = { ...form, precio: Number(form.precio), stock: Number(form.stock),
-                     imagenUrl: form.imagenUrl || null, descripcion: form.descripcion || null, marca: form.marca || null };
+const tieneOferta = !!form.precioOferta;
+    const cuerpo = {
+      ...form,
+      precio: Number(form.precio),
+      precioOferta: tieneOferta ? Number(form.precioOferta) : null,
+      // La vigencia solo se manda si hay precio de oferta y se eligió un tipo de límite.
+      ofertaDesde: tieneOferta && form.ofertaLimite === "date" && form.ofertaDesde ? form.ofertaDesde : null,
+      ofertaHasta: tieneOferta && form.ofertaLimite === "date" && form.ofertaHasta ? form.ofertaHasta : null,
+      ofertaHastaAgotar: tieneOferta && form.ofertaLimite === "stock",
+      stock: Number(form.stock),
+      imagenUrl: form.imagenUrl || null, descripcion: form.descripcion || null, marca: form.marca || null,
+    };
+    // Quitamos el campo auxiliar de UI que el backend no conoce.
+    delete cuerpo.ofertaLimite;
     try {
       if (editandoId) await actualizarProducto(editandoId, cuerpo);
       else await crearProducto(cuerpo);
@@ -151,6 +167,27 @@ export default function AdminPage() {
                 <input className="hf-input" placeholder={tr.admBrand} value={form.marca} onChange={campo("marca")} />
                 <input className="hf-input" type="number" step="0.01" min="0.01" placeholder={tr.admPrice}
                        value={form.precio} onChange={campo("precio")} required />
+                <input className="hf-input" type="number" step="0.01" min="0.01" placeholder={tr.admPriceOffer}
+                       value={form.precioOferta} onChange={campo("precioOferta")} />
+                {form.precioOferta && (
+                  <select className="hf-input" value={form.ofertaLimite} onChange={campo("ofertaLimite")}>
+                    <option value="none">{tr.admOfferNone}</option>
+                    <option value="date">{tr.admOfferDate}</option>
+                    <option value="stock">{tr.admOfferStock}</option>
+                  </select>
+                )}
+                {form.precioOferta && form.ofertaLimite === "date" && (
+                  <>
+                    <label className="hf-adm-datelbl">{tr.admOfferFrom}
+                      <input className="hf-input" type="datetime-local" value={form.ofertaDesde}
+                             onChange={campo("ofertaDesde")} />
+                    </label>
+                    <label className="hf-adm-datelbl">{tr.admOfferDateLabel}
+                      <input className="hf-input" type="datetime-local" value={form.ofertaHasta}
+                             onChange={campo("ofertaHasta")} />
+                    </label>
+                  </>
+                )}
                 <input className="hf-input" type="number" min="0" placeholder={tr.admStock}
                        value={form.stock} onChange={campo("stock")} required />
                 <select className="hf-input" value={form.categoriaId} onChange={campo("categoriaId")} required>
