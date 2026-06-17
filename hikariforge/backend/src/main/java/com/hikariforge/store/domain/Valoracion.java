@@ -29,10 +29,11 @@ public class Valoracion {
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
-    // La columna en la base de datos es SMALLINT (basta para un valor de 1 a 5);
-    // se indica aquí para que la validación de esquema de Hibernate coincida.
-    @Column(nullable = false, columnDefinition = "smallint")
-    private Integer estrellas;
+    // SMALLINT en la base de datos; en Java es Short, el tipo que le corresponde
+    // exactamente (un valor de 1 a 5 no necesita más). Así la validación de
+    // esquema de Hibernate no encuentra desajuste de tipos.
+    @Column(nullable = false)
+    private Short estrellas;
 
     @Column(length = 1000)
     private String comentario;

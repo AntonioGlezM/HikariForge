@@ -35,7 +35,7 @@ public class ValoracionService {
     public ResumenValoraciones resumen(java.util.UUID productoId, String emailActual) {
         List<Valoracion> lista = valoracionRepository.findByProductoIdOrderByFechaDesc(productoId);
 
-        double media = lista.stream().mapToInt(Valoracion::getEstrellas).average().orElse(0);
+        double media = lista.stream().mapToInt(v -> v.getEstrellas().intValue()).average().orElse(0);
         List<ValoracionResponse> dtos = lista.stream()
                 .map(v -> aResponse(v, emailActual))
                 .toList();
@@ -64,7 +64,7 @@ public class ValoracionService {
                 .findByProductoIdAndUsuarioId(productoId, usuario.getId())
                 .orElseGet(() -> Valoracion.builder().producto(producto).usuario(usuario).build());
 
-        valoracion.setEstrellas(req.estrellas());
+        valoracion.setEstrellas(req.estrellas().shortValue()); // el DTO usa Integer; la entidad, Short (SMALLINT)
         valoracion.setComentario(req.comentario());
         valoracion.setFecha(LocalDateTime.now());
 
@@ -91,7 +91,7 @@ public class ValoracionService {
         return valoracionRepository.findAllByOrderByFechaDesc().stream()
                 .map(v -> new ValoracionAdminResponse(
                         v.getId(), v.getProducto().getNombre(), v.getProducto().getId(),
-                        v.getUsuario().getEmail(), v.getEstrellas(), v.getComentario(), v.getFecha()))
+                        v.getUsuario().getEmail(), v.getEstrellas().intValue(), v.getComentario(), v.getFecha()))
                 .toList();
     }
 
@@ -102,6 +102,6 @@ public class ValoracionService {
             nombre = v.getUsuario().getEmail().split("@")[0];
         }
         boolean mia = v.getUsuario().getEmail().equals(emailActual);
-        return new ValoracionResponse(v.getId(), nombre, v.getEstrellas(), v.getComentario(), v.getFecha(), mia);
+        return new ValoracionResponse(v.getId(), nombre, v.getEstrellas().intValue(), v.getComentario(), v.getFecha(), mia);
     }
 }
