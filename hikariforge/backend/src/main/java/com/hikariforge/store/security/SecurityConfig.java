@@ -37,7 +37,9 @@ public class SecurityConfig {
                 // Rutas públicas: login/registro, documentación y lectura del catálogo.
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/productos", "/api/productos/**", "/api/categorias", "/api/categorias/**").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/productos/**", "/api/categorias/**").permitAll()
+                // El resumen de valoraciones es público (la ficha lo muestra a cualquiera).
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/productos/*/valoraciones").permitAll()
                 // El resto requiere estar autenticado.
                 .anyRequest().authenticated())
             // Ejecuta nuestro filtro JWT antes del filtro estándar de usuario/contraseña.

@@ -5,6 +5,7 @@ import { useSettings } from "../context/SettingsContext";
 import { useCart } from "../context/CartContext";
 import { useProductos } from "../context/ProductosContext";
 import ProductCard from "../components/ProductCard";
+import Reviews from "../components/Reviews";
 
 // Ficha de producto: carga por id, registra la visita en "vistos recientemente"
 // y permite añadir al carrito.
@@ -55,6 +56,9 @@ export default function ProductoPage() {
           </button>
         </div>
       </div>
+
+      {/* Valoraciones del producto */}
+      <Reviews productoId={p.id} />
 
       {/* Relacionados: misma categoría, excluyendo el producto actual */}
       {(() => {

@@ -441,3 +441,32 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
 .hf-cat-filters .hf-input[type="number"]{max-width:150px;}
 .hf-cat-filters select.hf-input{max-width:200px;cursor:pointer;}
 @media (max-width:680px){.hf-cat-filters .hf-input,.hf-cat-filters select.hf-input{max-width:none;width:100%;}}
+
+/* ===== Estrellas de valoración (componente Stars) ===== */
+.hf-stars{display:inline-flex;gap:2px;line-height:1;color:var(--accent);}
+.hf-stars .star{position:relative;background:none;border:none;padding:0;width:1em;height:1em;color:inherit;display:inline-block;}
+.hf-stars .star .bg{color:var(--line);}
+.hf-stars .star .fg{position:absolute;left:0;top:0;overflow:hidden;color:var(--accent);}
+.hf-stars .star i{position:absolute;left:0;top:0;font-size:1em;}
+.hf-stars.interactive .star{cursor:pointer;}
+.hf-stars.interactive .star:hover~.star .fg{width:0;}        /* apaga las posteriores al pasar */
+.hf-stars.interactive:hover .star .fg{width:100%;}            /* enciende hasta donde apunta */
+.hf-stars.interactive .star:hover~.star .bg,
+.hf-stars.interactive .star .fg{transition:width .05s;}
+
+/* ===== Bloque de valoraciones de la ficha ===== */
+.hf-reviews{padding:48px 0 24px;border-top:1px solid var(--line);margin-top:24px;}
+.hf-reviews-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:22px;}
+.hf-reviews-head .resumen{display:flex;align-items:center;gap:10px;font-size:1.05rem;}
+.hf-review-form{background:var(--soft);border:1.5px solid var(--line);border-radius:18px;padding:22px;margin-bottom:28px;display:grid;gap:12px;max-width:560px;}
+.hf-review-form .lbl{font-weight:900;}
+.hf-review-form textarea{width:100%;resize:vertical;font-family:var(--body);font-weight:700;}
+.hf-review-form .acciones{display:flex;gap:10px;}
+.hf-review-list{display:grid;gap:14px;}
+.hf-review{border:1.5px solid var(--line);border-radius:16px;padding:18px 20px;}
+.hf-review.mine{border-color:var(--accent);background:var(--accent-soft);}
+.hf-review .top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;}
+.hf-review .autor{font-weight:900;}
+.hf-review .autor em{font-style:normal;color:var(--accent);font-weight:800;font-size:.85rem;}
+.hf-review p{margin:6px 0;line-height:1.7;color:var(--ink);}
+.hf-review .fecha{color:var(--muted);font-size:.8rem;}
