@@ -22,6 +22,7 @@
 5. [Modelo de datos](#5-modelo-de-datos)
 6. [Seguridad y autenticación](#6-seguridad-y-autenticación)
 7. [Cómo arrancar la aplicación](#7-cómo-arrancar-la-aplicación)
+8. [Historial de ajustes](#8-historial-de-ajustes)
 
 ---
 
@@ -350,3 +351,22 @@ Después es necesario **cerrar sesión y volver a entrar** en la web, ya que el 
 | Tienda (frontend) | http://localhost:5173 |
 | API (backend) | http://localhost:8080 |
 | Documentación de la API (Swagger) | http://localhost:8080/swagger-ui.html |
+
+---
+
+## 8. Historial de ajustes
+
+Cambios, correcciones y refinamientos que no constituyen un módulo completo pero forman parte de la evolución del proyecto, en orden cronológico.
+
+| Fecha | Ámbito | Ajuste |
+|---|---|---|
+| 6 jun 2026 | Decisión técnica | Se eligió Spring Boot 3.5 en lugar de la 4.0: aunque la 4.0 era más reciente, la línea 3.5 ofrecía un ecosistema más maduro, mejor documentación y más soporte de la comunidad para un proyecto de aprendizaje. |
+| 6 jun 2026 | Proyecto | Renombrado completo del proyecto de "tienda-perifericos" a **HikariForge**: paquete Java (`com.tienda` → `com.hikariforge.store`), base de datos, contenedores Docker, configuración y documentación. |
+| 6 jun 2026 | Base de datos | Migración de las claves primarias de `Long` autoincremental a `UUID` en todas las entidades, para identificadores no predecibles y más robustos. |
+| 12 jun 2026 | Entorno | Resolución de un fallo de arranque por la contraseña de PostgreSQL (autenticación rechazada): se reseteó la contraseña del usuario en pgAdmin y se alineó con la configuración de la aplicación. |
+| 12 jun 2026 | Seguridad | Aviso sobre el manejo del fichero `.env` y `.gitignore` para no subir credenciales al repositorio, y aclaración de que el Client ID de Google es un dato público (no secreto). |
+| 12 jun 2026 | Backend | Cambio del borrado físico de productos a **borrado lógico** (columna `activo`): al intentar borrar un producto con pedidos asociados, la clave foránea lo impedía; el borrado lógico preserva el historial y evita el error de integridad (que ahora se traduce a una respuesta clara). |
+| 12 jun 2026 | Diseño (preview) | Varios retoques del preview HTML: enlace compacto en las promos en lugar de tarjeta, eliminación de la línea gris del mega-menú, limpieza de opciones duplicadas en soporte, iconos gamer en la marquesina, y selector de idioma desplegable con bandera (imágenes de flagcdn, porque Windows no renderiza los emojis de bandera). |
+| 12 jun 2026 | Frontend | Traducción de las categorías de la base de datos en la interfaz mediante un mapa (`catMap`), para que se muestren en el idioma activo sin cambiar los datos. |
+| 17 jun 2026 | Backend | Corrección del tipo de la columna `estrellas` (de `Integer` a `Short`) para que coincida con SMALLINT y la validación de esquema de Hibernate no detuviera el arranque. |
+| 17 jun 2026 | Frontend | Rediseño de la tarjeta de producto: se retira la fila de categoría (ya presente en el badge) y el stock numérico exacto, sustituido por un estado cualitativo ("En stock" / "¡Pocas unidades!" / "Agotado"). Se añade una fila de envío para equilibrar la tarjeta. |
