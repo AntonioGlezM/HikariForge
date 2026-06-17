@@ -29,7 +29,9 @@ public class Valoracion {
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
-    @Column(nullable = false)
+    // La columna en la base de datos es SMALLINT (basta para un valor de 1 a 5);
+    // se indica aquí para que la validación de esquema de Hibernate coincida.
+    @Column(nullable = false, columnDefinition = "smallint")
     private Integer estrellas;
 
     @Column(length = 1000)
