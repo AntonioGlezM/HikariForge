@@ -15,3 +15,6 @@ export const enviarValoracion = (productoId, datos) =>
 
 // Borra una valoración propia.
 export const borrarValoracion = (id) => api.delete(`/valoraciones/${id}`);
+
+// Zona admin: todas las reseñas de la tienda para moderación.
+export const todasValoraciones = () => api.get("/valoraciones");

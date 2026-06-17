@@ -16,6 +16,9 @@ public interface ValoracionRepository extends JpaRepository<Valoracion, UUID> {
     // Reseñas de un producto, la más reciente primero.
     List<Valoracion> findByProductoIdOrderByFechaDesc(UUID productoId);
 
+    // Todas las reseñas de la tienda, la más reciente primero (panel de moderación admin).
+    List<Valoracion> findAllByOrderByFechaDesc();
+
     // La valoración de un usuario sobre un producto (si existe), para editarla.
     Optional<Valoracion> findByProductoIdAndUsuarioId(UUID productoId, UUID usuarioId);
 }

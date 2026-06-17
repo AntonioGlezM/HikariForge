@@ -71,15 +71,28 @@ public class ValoracionService {
         return aResponse(valoracionRepository.save(valoracion), email);
     }
 
-    /** Borra la valoración propia. Falla si no es del usuario que la pide. */
+    /**
+     * Borra una valoración. La puede borrar su autor o un administrador (para
+     * moderar reseñas abusivas); cualquier otro usuario recibe un error.
+     */
     @Transactional
-    public void borrar(java.util.UUID valoracionId, String email) {
+    public void borrar(java.util.UUID valoracionId, String email, boolean esAdmin) {
         Valoracion v = valoracionRepository.findById(valoracionId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Valoración no encontrada"));
-        if (!v.getUsuario().getEmail().equals(email)) {
+        if (!esAdmin && !v.getUsuario().getEmail().equals(email)) {
             throw new IllegalArgumentException("No puedes borrar una valoración que no es tuya");
         }
         valoracionRepository.delete(v);
+    }
+
+    /** Todas las reseñas de la tienda para el panel de moderación (solo admin). */
+    @Transactional(readOnly = true)
+    public java.util.List<ValoracionAdminResponse> listarTodas() {
+        return valoracionRepository.findAllByOrderByFechaDesc().stream()
+                .map(v -> new ValoracionAdminResponse(
+                        v.getId(), v.getProducto().getNombre(), v.getProducto().getId(),
+                        v.getUsuario().getEmail(), v.getEstrellas(), v.getComentario(), v.getFecha()))
+                .toList();
     }
 
     // El autor se muestra por nombre (o la parte local del email si no tiene nombre).

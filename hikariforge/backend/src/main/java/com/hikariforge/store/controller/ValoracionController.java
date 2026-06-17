@@ -5,6 +5,8 @@ import com.hikariforge.store.service.ValoracionService;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
+import java.util.List;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,10 +40,19 @@ public class ValoracionController {
         return valoracionService.valorar(productoId, auth.getName(), req);
     }
 
-    // Borra una valoración propia.
+    // Borra una valoración: su autor, o un administrador (moderación).
     @DeleteMapping("/valoraciones/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void borrar(@PathVariable UUID id, Authentication auth) {
-        valoracionService.borrar(id, auth.getName());
+        boolean esAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        valoracionService.borrar(id, auth.getName(), esAdmin);
+    }
+
+    // Panel de moderación: todas las reseñas de la tienda (solo admin).
+    @GetMapping("/valoraciones")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<com.hikariforge.store.dto.ValoracionAdminResponse> todas() {
+        return valoracionService.listarTodas();
     }
 }

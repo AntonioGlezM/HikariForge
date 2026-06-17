@@ -470,3 +470,6 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
 .hf-review .autor em{font-style:normal;color:var(--accent);font-weight:800;font-size:.85rem;}
 .hf-review p{margin:6px 0;line-height:1.7;color:var(--ink);}
 .hf-review .fecha{color:var(--muted);font-size:.8rem;}
+
+/* Moderación de reseñas en el admin */
+.hf-adm-resena{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;}

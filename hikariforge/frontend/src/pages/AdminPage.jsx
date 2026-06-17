@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { listarProductosAdmin, crearProducto, actualizarProducto, eliminarProducto, reactivarProducto } from "../api/productos";
 import { listarCategorias } from "../api/categorias";
 import { todosPedidos, cambiarEstadoPedido } from "../api/pedidos";
+import { todasValoraciones, borrarValoracion } from "../api/valoraciones";
+import Stars from "../components/Stars";
 import { useSettings } from "../context/SettingsContext";
 
 const ESTADOS = ["PENDIENTE", "PAGADO", "ENVIADO", "ENTREGADO"];
@@ -89,6 +91,18 @@ export default function AdminPage() {
   const cargarPedidos = () => todosPedidos().then(({ data }) => setPedidos(data));
   useEffect(() => { if (pestana === "pedidos") cargarPedidos(); }, [pestana]);
 
+  /* ===== Reseñas (moderación) ===== */
+  const [resenas, setResenas] = useState([]);
+  const cargarResenas = () => todasValoraciones().then(({ data }) => setResenas(data));
+  useEffect(() => { if (pestana === "resenas") cargarResenas(); }, [pestana]);
+
+  // El admin puede borrar cualquier reseña (p. ej. spam o reseñas abusivas).
+  const borrarResena = async (r) => {
+    if (!window.confirm(`${tr.admReviewDelete}`)) return;
+    await borrarValoracion(r.id);
+    cargarResenas();
+  };
+
   // Avanza el pedido a la siguiente fase del seguimiento.
   const avanzar = async (p) => {
     const siguiente = ESTADOS[Math.min(ESTADOS.indexOf(p.estado) + 1, ESTADOS.length - 1)];
@@ -110,6 +124,9 @@ export default function AdminPage() {
         </button>
         <button className={pestana === "pedidos" ? "on" : ""} onClick={() => setPestana("pedidos")}>
           <i className="ti ti-package" /> {tr.admOrders}
+        </button>
+        <button className={pestana === "resenas" ? "on" : ""} onClick={() => setPestana("resenas")}>
+          <i className="ti ti-star" /> {tr.admReviews}
         </button>
       </div>
 
@@ -181,6 +198,28 @@ export default function AdminPage() {
             ))}
           </div>
         </>
+      )}
+
+      {pestana === "resenas" && (
+        <div className="hf-support">
+          {resenas.length === 0 && <p className="hf-sub">{tr.admReviewsEmpty}</p>}
+          {resenas.map((r) => (
+            <section key={r.id} className="hf-sup-card">
+              <div className="hf-order-head">
+                <h3 style={{ fontSize: "1.1rem" }}><i className="ti ti-star-filled" />{r.productoNombre}</h3>
+                <span className="hf-order-date">{new Date(r.fecha).toLocaleString()}</span>
+              </div>
+              <div className="hf-adm-resena">
+                <Stars value={r.estrellas} />
+                <span className="hf-sub">· {tr.admReviewAuthor}: <b>{r.autorEmail}</b></span>
+              </div>
+              {r.comentario && <p style={{ lineHeight: 1.7, margin: "8px 0" }}>{r.comentario}</p>}
+              <button className="hf-btn" onClick={() => borrarResena(r)}>
+                <i className="ti ti-trash" /> {tr.admReviewDeleteBtn}
+              </button>
+            </section>
+          ))}
+        </div>
       )}
 
       {pestana === "pedidos" && (
