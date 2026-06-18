@@ -68,6 +68,10 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
 /* ===== Mega-menú ===== */
 .hf-mega{position:absolute;left:12px;right:12px;top:100%;background:var(--card);border:none;border-radius:0 0 26px 26px;box-shadow:var(--shadow);padding:38px 40px 42px;opacity:0;visibility:hidden;transform:rotateX(-8deg);transform-origin:top center;transition:opacity .45s ease,transform .55s cubic-bezier(.34,1.2,.64,1),visibility .45s;}
 .hf-navitem:hover .hf-mega{opacity:1;visibility:visible;transform:rotateX(0);}
+/* Al pulsar un enlace del mega navegamos, pero el :hover lo mantendría visible
+   hasta mover el ratón. Esta clase lo oculta aunque el puntero siga encima;
+   se retira al salir el ratón (onMouseLeave), devolviendo el comportamiento normal. */
+.hf-navitem.mega-cerrado:hover .hf-mega{opacity:0;visibility:hidden;transform:rotateX(-8deg);}
 .hf-mega-grid{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:280px 1fr;gap:52px;}
 .hf-mega-grid.full{grid-template-columns:1fr;}
 .hf-mega-left .lbl,.hf-mega-head .lbl{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:block;}
@@ -519,3 +523,46 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
 .hf-fld{display:flex;flex-direction:column;gap:5px;}
 .hf-fld > span{font-weight:800;font-size:.82rem;color:var(--ink);}
 .hf-fld > small{color:var(--muted);font-size:.74rem;line-height:1.4;}
+
+/* ===== Ficha técnica en la página de producto (5C) ===== */
+.hf-specsheet{padding:40px 0 8px;border-top:1px solid var(--line);margin-top:24px;}
+.hf-specsheet-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:20px;}
+.hf-specsheet-block{border:1.5px solid var(--line);border-radius:16px;padding:18px 20px;}
+.hf-specsheet-block h3{margin:0 0 12px;font-size:.82rem;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;font-weight:900;}
+.hf-specsheet-block dl{margin:0;display:flex;flex-direction:column;gap:8px;}
+.hf-specrow{display:flex;justify-content:space-between;gap:14px;font-size:.92rem;}
+.hf-specrow dt{color:var(--muted);font-weight:700;margin:0;}
+.hf-specrow dd{margin:0;font-weight:800;color:var(--ink);text-align:right;}
+
+/* Filtros avanzados del catálogo */
+.hf-filter-toggle{background:none;border:none;cursor:pointer;color:var(--accent);font-weight:800;font-size:.86rem;display:inline-flex;align-items:center;gap:6px;padding:10px 2px;}
+.hf-cat-filters-adv{margin-top:4px;}
+
+/* ===== Inputs de filtros redondeados (los desplegables usan FancySelect) ===== */
+.hf-cat-filters input.hf-input{border-radius:999px;}
+.hf-cat-filters .hf-filter-check{border-radius:999px;}
+
+/* ===== Desplegable de color con muestra circular ===== */
+.hf-fancysel{position:relative;min-width:170px;}
+.hf-fancysel-btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:14px 16px;
+  color:var(--ink);font-family:var(--body);font-weight:700;font-size:.98rem;cursor:pointer;transition:border-color .2s;}
+.hf-fancysel-btn:hover{border-color:var(--accent);}
+.hf-fancysel-btn .lbl{display:flex;align-items:center;gap:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hf-fancysel-btn i{color:var(--accent);font-size:1rem;flex-shrink:0;}
+.hf-fancysel .ph{color:var(--muted);font-weight:700;}
+.hf-fancysel .dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;border:1px solid rgba(0,0,0,.15);box-shadow:inset 0 0 0 1px rgba(255,255,255,.15);}
+.hf-fancysel-menu{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:30;margin:0;padding:6px;list-style:none;
+  background:var(--card);border:1.5px solid var(--line);border-radius:18px;box-shadow:var(--shadow);max-height:280px;overflow:auto;}
+.hf-fancysel-menu .opt{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:700;transition:background .15s;}
+.hf-fancysel-menu .opt:hover{background:var(--soft);}
+.hf-fancysel-menu .opt.on{background:var(--accent-soft);color:var(--accent);}
+
+/* ===== Encabezado distinto para vista de categoría ===== */
+.hf-section-head.is-categoria .hf-eyebrow{color:var(--accent);}
+.hf-section-head.is-categoria .hf-h2{position:relative;display:inline-block;}
+.hf-section-head.is-categoria .hf-h2::after{content:"";display:block;width:54px;height:4px;border-radius:999px;background:var(--accent);margin-top:10px;}
+
+/* FancySelect dentro de la barra de filtros ocupa como los demás campos */
+.hf-cat-filters .hf-fancysel{flex:1;min-width:150px;max-width:200px;}
+@media (max-width:680px){.hf-cat-filters .hf-fancysel{max-width:none;width:100%;}}

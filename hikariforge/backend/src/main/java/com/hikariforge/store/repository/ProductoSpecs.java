@@ -58,9 +58,11 @@ public final class ProductoSpecs {
         return (root, q, cb) -> cb.lessThanOrEqualTo(root.get("pesoG"), maxGramos);
     }
 
+    // Comparación insensible a mayúsculas para que el color coincida aunque
+    // varíe la capitalización (p. ej. "negro" frente a "Negro").
     public static Specification<Producto> color(String color) {
         if (color == null || color.isBlank()) return null;
-        return (root, q, cb) -> cb.equal(root.get("color"), color);
+        return (root, q, cb) -> cb.equal(cb.lower(root.get("color")), color.toLowerCase().trim());
     }
 
     public static Specification<Producto> conRgb(Boolean rgb) {

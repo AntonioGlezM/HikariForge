@@ -37,6 +37,7 @@ export const I18N = {
     add: "Añadir al carrito", noStock: "Sin stock", avail: "Disponible", out: "Agotado",
     prev: "← Anterior", next: "Siguiente →", page: "Página", of: "de",
     catalogTitle: "Catálogo", catalogSub: "Todos nuestros productos.",
+    catalogAll: "Todo el catálogo", catalogCatSub: "Explora nuestra selección de {cat}.", catalogCount: "productos",
     loading: "Cargando…", loadError: "No se pudo cargar. ¿Está el backend arrancado?",
     stockLeft: "¡Solo quedan {n} unidades!", relatedTitle: "También te puede interesar",
     reviewsTitle: "Valoraciones", reviewsNone: "Aún no hay valoraciones de este producto.",
@@ -83,6 +84,7 @@ export const I18N = {
     admAttrOptionsHelp: "Valores posibles separados por |", admAttrSectionHelp: "Agrupa el atributo en la ficha (Sensor, Batería…)",
     admAttrUnitHelp: "Se muestra junto al valor: 61 g, 8000 Hz", admAttrOrderHelp: "Posición dentro de su sección (menor = antes)",
     admFilterSpecs: "Especificaciones (filtrables)", admSpecsTitle: "Ficha técnica",
+    specSheetTitle: "Especificaciones", filterAdvanced: "Filtros avanzados", filterMaxWeight: "Peso máx. (g)",
     specConexion: "Conexión", specPeso: "Peso", specColor: "Color", specOther: "Otros",
     connWired: "Cable", connWireless: "Inalámbrico", connBoth: "Ambos", yes: "Sí", no: "No",
 
@@ -127,6 +129,7 @@ export const I18N = {
     add: "Add to cart", noStock: "Out of stock", avail: "Available", out: "Sold out",
     prev: "← Previous", next: "Next →", page: "Page", of: "of",
     catalogTitle: "Catalog", catalogSub: "All our products.",
+    catalogAll: "Full catalog", catalogCatSub: "Browse our selection of {cat}.", catalogCount: "products",
     loading: "Loading…", loadError: "Could not load. Is the backend running?",
     stockLeft: "Only {n} left in stock!", relatedTitle: "You may also like",
     reviewsTitle: "Reviews", reviewsNone: "No reviews for this product yet.",
@@ -173,6 +176,7 @@ export const I18N = {
     admAttrOptionsHelp: "Possible values separated by |", admAttrSectionHelp: "Groups the attribute on the page (Sensor, Battery…)",
     admAttrUnitHelp: "Shown next to the value: 61 g, 8000 Hz", admAttrOrderHelp: "Position within its section (lower = first)",
     admFilterSpecs: "Specifications (filterable)", admSpecsTitle: "Tech specs",
+    specSheetTitle: "Specifications", filterAdvanced: "Advanced filters", filterMaxWeight: "Max weight (g)",
     specConexion: "Connection", specPeso: "Weight", specColor: "Color", specOther: "Other",
     connWired: "Wired", connWireless: "Wireless", connBoth: "Both", yes: "Yes", no: "No",
 

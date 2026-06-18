@@ -39,6 +39,12 @@ public class ProductoController {
         return productoService.marcas();
     }
 
+    // Colores existentes en el catálogo, para el desplegable del filtro de color.
+    @GetMapping("/colores")
+    public java.util.List<String> colores() {
+        return productoService.colores();
+    }
+
     @GetMapping("/{id}")
     public ProductoResponse obtener(@PathVariable UUID id) {
         return productoService.obtener(id);

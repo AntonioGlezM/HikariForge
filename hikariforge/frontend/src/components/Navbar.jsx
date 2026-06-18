@@ -30,6 +30,13 @@ export default function Navbar({ onOpenSearch }) {
 
   const populares = productos.slice(0, 4);
 
+  // Cierra el mega-menú al pulsar un enlace: el menú se abre por :hover (CSS),
+  // así que al navegar quedaría visible hasta mover el ratón. Marcamos el navitem
+  // como "cerrado" temporalmente; al salir el ratón (onMouseLeave) se reactiva el hover.
+  const [megaCerrado, setMegaCerrado] = useState(false);
+  const cerrarMega = () => setMegaCerrado(true);
+  const reactivarMega = () => setMegaCerrado(false);
+
   return (
     <nav className="hf-nav">
       <Link to="/" className="hf-logo">
@@ -38,25 +45,25 @@ export default function Navbar({ onOpenSearch }) {
 
       <div className="hf-navlinks">
         {/* Mega-menú de productos: colecciones + más populares */}
-        <div className="hf-navitem">
+        <div className={`hf-navitem ${megaCerrado ? "mega-cerrado" : ""}`} onMouseLeave={reactivarMega}>
           <span>{tr.navProducts} <i className="ti ti-chevron-down" /></span>
           <div className="hf-mega">
             <div className="hf-mega-grid">
               <div className="hf-mega-left">
                 <span className="lbl">{tr.mmLabel}</span>
                 {categorias.map((c) => (
-                  <Link key={c} to={`/catalogo?cat=${encodeURIComponent(c)}`} className="col">{trCat(c)}</Link>
+                  <Link key={c} to={`/catalogo?cat=${encodeURIComponent(c)}`} className="col" onClick={cerrarMega}>{trCat(c)}</Link>
                 ))}
-                <Link to="/catalogo" className="viewall">{tr.mmViewAll} <i className="ti ti-arrow-right" /></Link>
+                <Link to="/catalogo" className="viewall" onClick={cerrarMega}>{tr.mmViewAll} <i className="ti ti-arrow-right" /></Link>
               </div>
               <div>
                 <div className="hf-mega-head">
                   <span className="lbl">{tr.mmPopular}</span>
-                  <Link to="/catalogo" className="all">{tr.mmAll} · {tr.navProducts} ({productos.length}) <i className="ti ti-arrow-right" /></Link>
+                  <Link to="/catalogo" className="all" onClick={cerrarMega}>{tr.mmAll} · {tr.navProducts} ({productos.length}) <i className="ti ti-arrow-right" /></Link>
                 </div>
                 <div className="hf-mm-cards">
                   {populares.map((p) => (
-                    <Link key={p.id} to={`/producto/${p.id}`} className="hf-mm-card">
+                    <Link key={p.id} to={`/producto/${p.id}`} className="hf-mm-card" onClick={cerrarMega}>
                       <div className="th">{p.nombre.split(" ")[0]}</div>
                       <b>{p.nombre}</b>
                       <small>{tr.mmFrom} {p.precio} €</small>
@@ -76,7 +83,7 @@ export default function Navbar({ onOpenSearch }) {
         ))}
 
         {/* Mega-menú de soporte: tarjetas informativas */}
-        <div className="hf-navitem">
+        <div className={`hf-navitem ${megaCerrado ? "mega-cerrado" : ""}`} onMouseLeave={reactivarMega}>
           <span>{tr.navSupport} <i className="ti ti-chevron-down" /></span>
           <div className="hf-mega">
             <div className="hf-mega-grid full">
@@ -84,7 +91,7 @@ export default function Navbar({ onOpenSearch }) {
                 <div className="hf-mega-head"><span className="lbl">{tr.navSupport}</span></div>
                 <div className="hf-mm-info">
                   {[["contacto", "ti-mail", tr.ddContact], ["faq", "ti-help-circle", tr.ddFaq], ["garantia", "ti-shield-check", tr.ddWarranty]].map(([id, ic, [titulo, desc]]) => (
-                    <Link key={id} to={`/soporte#${id}`}><i className={`ti ${ic}`} /><b>{titulo}</b><small>{desc}</small></Link>
+                    <Link key={id} to={`/soporte#${id}`} onClick={cerrarMega}><i className={`ti ${ic}`} /><b>{titulo}</b><small>{desc}</small></Link>
                   ))}
                 </div>
               </div>

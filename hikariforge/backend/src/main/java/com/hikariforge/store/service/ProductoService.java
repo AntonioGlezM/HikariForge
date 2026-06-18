@@ -55,6 +55,14 @@ public class ProductoService {
                 .distinct().sorted().toList();
     }
 
+    // Colores distintos de los productos activos, para poblar el filtro de color.
+    @Transactional(readOnly = true)
+    public List<String> colores() {
+        return productoRepository.findAll(ProductoSpecs.soloActivos()).stream()
+                .map(Producto::getColor).filter(c -> c != null && !c.isBlank())
+                .distinct().sorted().toList();
+    }
+
     // Zona admin: todo el catálogo, incluidos los retirados.
     @Transactional(readOnly = true)
     public Page<ProductoResponse> listarTodos(Pageable pageable) {

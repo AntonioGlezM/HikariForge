@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { listarProductos, listarMarcas } from "../api/productos";
+import { listarProductos, listarMarcas, listarColores } from "../api/productos";
 import { useSettings } from "../context/SettingsContext";
 import { useProductos } from "../context/ProductosContext";
 import ProductCard from "../components/ProductCard";
+import ColorSelect from "../components/ColorSelect";
+import FancySelect from "../components/FancySelect";
 
 const TAM_PAGINA = 8;
 
@@ -18,30 +20,40 @@ export default function CatalogoPage() {
 
   // Estado de los filtros.
   const [texto, setTexto] = useState(textoParam ?? "");
-  const [categoriaId, setCategoriaId] = useState("");
   const [marca, setMarca] = useState("");
   const [precioMax, setPrecioMax] = useState("");
   const [enStock, setEnStock] = useState(false);
+  // Filtros avanzados (especificaciones)
+  const [conexion, setConexion] = useState("");
+  const [pesoMax, setPesoMax] = useState("");
+  const [color, setColor] = useState("");
+  const [rgb, setRgb] = useState(false);
+  const [avanzados, setAvanzados] = useState(false);
   const [pagina, setPagina] = useState(0);
 
   const [marcas, setMarcas] = useState([]);
+  const [colores, setColores] = useState([]);
   const [datos, setDatos] = useState(null);
   const [error, setError] = useState(false);
   const [cargando, setCargando] = useState(true);
 
   // Marcas para el selector (una vez).
   useEffect(() => { listarMarcas().then(({ data }) => setMarcas(data)).catch(() => {}); }, []);
+  useEffect(() => { listarColores().then(({ data }) => setColores(data)).catch(() => {}); }, []);
 
-  // Si llega ?cat=Nombre desde el menú, lo traducimos a su id de categoría.
-  useEffect(() => {
-    if (catParam && categoriasFull.length) {
-      const c = categoriasFull.find((x) => x.nombre === catParam);
-      if (c) setCategoriaId(c.id);
-    }
-  }, [catParam, categoriasFull]);
+  // La categoría activa se deriva directamente de la URL (?cat=Nombre). Así, al
+  // pulsar otra categoría en el menú, la vista se actualiza sola y de forma fiable.
+  // Un <select> manual de categoría actualiza la URL (catManual) para el mismo flujo.
+  const [catManual, setCatManual] = useState(null);
+  const categoriaActual = catManual !== null
+    ? catManual
+    : (catParam ? categoriasFull.find((x) => x.nombre === catParam) ?? null : null);
+  const categoriaId = categoriaActual?.id ?? "";
+  // Si cambia el cat de la URL, descartamos la selección manual previa.
+  useEffect(() => { setCatManual(null); }, [catParam]);
 
   // Cualquier cambio de filtro vuelve a la primera página.
-  useEffect(() => { setPagina(0); }, [texto, categoriaId, marca, precioMax, enStock]);
+  useEffect(() => { setPagina(0); }, [texto, categoriaId, marca, precioMax, enStock, conexion, pesoMax, color, rgb]);
 
   // Petición al backend con los filtros activos.
   useEffect(() => {
@@ -52,16 +64,22 @@ export default function CatalogoPage() {
     if (marca) query.marca = marca;
     if (precioMax) query.precioMax = precioMax;
     if (enStock) query.enStock = true;
+    if (conexion) query.conexion = conexion;
+    if (pesoMax) query.pesoMax = pesoMax;
+    if (color.trim()) query.color = color.trim();
+    if (rgb) query.rgb = true;
 
     listarProductos(query)
       .then(({ data }) => { setDatos(data); setError(false); })
       .catch(() => setError(true))
       .finally(() => setCargando(false));
-  }, [pagina, texto, categoriaId, marca, precioMax, enStock]);
+  }, [pagina, texto, categoriaId, marca, precioMax, enStock, conexion, pesoMax, color, rgb]);
 
-  const hayFiltros = texto || categoriaId || marca || precioMax || enStock;
+  const hayFiltros = texto || categoriaId || marca || precioMax || enStock || conexion || pesoMax || color || rgb;
   const limpiar = () => {
-    setTexto(""); setCategoriaId(""); setMarca(""); setPrecioMax(""); setEnStock(false);
+    setTexto(""); setMarca(""); setPrecioMax(""); setEnStock(false);
+    setConexion(""); setPesoMax(""); setColor(""); setRgb(false);
+    setCatManual(null);
     if (catParam) setParams({}, { replace: true });
   };
 
@@ -74,24 +92,24 @@ export default function CatalogoPage() {
 
   return (
     <main className="hf-wrap hf-section">
-      <div className="hf-section-head">
-        <span className="hf-eyebrow">{tr.navCatalog}</span>
+      <div className={`hf-section-head ${tituloCat ? "is-categoria" : ""}`}>
+        <span className="hf-eyebrow">{tituloCat ? tr.navCatalog : tr.catalogAll}</span>
         <h2 className="hf-h2">{tituloCat ? trCat(tituloCat) : tr.catalogTitle}</h2>
-        <p className="hf-sub">{tr.catalogSub}</p>
+        <p className="hf-sub">
+          {tituloCat ? tr.catalogCatSub.replace("{cat}", trCat(tituloCat)) : tr.catalogSub}
+          {datos != null && ` · ${datos.totalElements} ${tr.catalogCount}`}
+        </p>
       </div>
 
       {/* Barra de filtros (se resuelven en el backend) */}
       <div className="hf-cat-filters">
         <input className="hf-input" placeholder={tr.searchPh} value={texto}
                onChange={(e) => setTexto(e.target.value)} />
-        <select className="hf-input" value={categoriaId} onChange={(e) => setCategoriaId(e.target.value)}>
-          <option value="">{tr.filterCat}</option>
-          {categoriasFull.map((c) => <option key={c.id} value={c.id}>{trCat(c.nombre)}</option>)}
-        </select>
-        <select className="hf-input" value={marca} onChange={(e) => setMarca(e.target.value)}>
-          <option value="">{tr.filterBrand}</option>
-          {marcas.map((m) => <option key={m} value={m}>{m}</option>)}
-        </select>
+        <FancySelect value={categoriaId} placeholder={tr.filterCat}
+          onChange={(v) => setCatManual(categoriasFull.find((c) => c.id === v) ?? null)}
+          opciones={categoriasFull.map((c) => ({ value: c.id, label: trCat(c.nombre) }))} />
+        <FancySelect value={marca} onChange={setMarca} placeholder={tr.filterBrand}
+          opciones={marcas.map((m) => ({ value: m, label: m }))} />
         <input className="hf-input" type="number" min="0" placeholder={tr.filterMaxPrice}
                value={precioMax} onChange={(e) => setPrecioMax(e.target.value)} />
         <label className="hf-filter-check">
@@ -102,6 +120,28 @@ export default function CatalogoPage() {
           <button className="hf-filter-clear" onClick={limpiar}><i className="ti ti-x" /> {tr.filterClear}</button>
         )}
       </div>
+
+      {/* Filtros avanzados (especificaciones): plegables para no saturar la barra */}
+      <button className="hf-filter-toggle" onClick={() => setAvanzados((v) => !v)}>
+        <i className={`ti ${avanzados ? "ti-chevron-up" : "ti-chevron-down"}`} /> {tr.filterAdvanced}
+      </button>
+      {avanzados && (
+        <div className="hf-cat-filters hf-cat-filters-adv">
+          <FancySelect value={conexion} onChange={setConexion} placeholder={tr.specConexion}
+            opciones={[
+              { value: "cable", label: tr.connWired },
+              { value: "inalambrico", label: tr.connWireless },
+              { value: "ambos", label: tr.connBoth },
+            ]} />
+          <input className="hf-input" type="number" min="0" placeholder={tr.filterMaxWeight}
+                 value={pesoMax} onChange={(e) => setPesoMax(e.target.value)} />
+          <ColorSelect value={color} onChange={setColor} opciones={colores} placeholder={tr.specColor} />
+          <label className="hf-filter-check">
+            <input type="checkbox" checked={rgb} onChange={(e) => setRgb(e.target.checked)} />
+            RGB
+          </label>
+        </div>
+      )}
 
       {error && <p className="hf-error">{tr.loadError}</p>}
       {cargando && !datos && <p className="hf-sub">{tr.loading}</p>}

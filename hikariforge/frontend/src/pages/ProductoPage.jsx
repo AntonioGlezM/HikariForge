@@ -7,6 +7,7 @@ import { tieneOferta, precioEfectivo, porcentajeDescuento } from "../utils/preci
 import { useProductos } from "../context/ProductosContext";
 import ProductCard from "../components/ProductCard";
 import Reviews from "../components/Reviews";
+import SpecSheet from "../components/SpecSheet";
 
 // Ficha de producto: carga por id, registra la visita en "vistos recientemente"
 // y permite añadir al carrito.
@@ -79,6 +80,9 @@ export default function ProductoPage() {
           </button>
         </div>
       </div>
+
+      {/* Ficha técnica agrupada por secciones */}
+      <SpecSheet categoriaId={p.categoriaId} specs={p.specs} tr={tr} />
 
       {/* Valoraciones del producto */}
       <Reviews productoId={p.id} />
