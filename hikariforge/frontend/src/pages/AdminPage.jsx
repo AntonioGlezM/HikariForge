@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { listarProductosAdmin, crearProducto, actualizarProducto, eliminarProducto, reactivarProducto } from "../api/productos";
+import { listarAtributos, crearAtributo, actualizarAtributo, eliminarAtributo } from "../api/atributos";
+import SpecFields from "../components/SpecFields";
 import { listarCategorias } from "../api/categorias";
 import { todosPedidos, cambiarEstadoPedido } from "../api/pedidos";
 import { todasValoraciones, borrarValoracion } from "../api/valoraciones";
@@ -8,7 +10,8 @@ import { useSettings } from "../context/SettingsContext";
 
 const ESTADOS = ["PENDIENTE", "PAGADO", "ENVIADO", "ENTREGADO"];
 const STOCK_BAJO = 5;
-const FORM_VACIO = { nombre: "", descripcion: "", marca: "", precio: "", precioOferta: "", ofertaLimite: "none", ofertaDesde: "", ofertaHasta: "", stock: "", imagenUrl: "", categoriaId: "" };
+const FORM_VACIO = { nombre: "", descripcion: "", marca: "", precio: "", precioOferta: "", ofertaLimite: "none", ofertaDesde: "", ofertaHasta: "", stock: "", imagenUrl: "", categoriaId: "",
+  conexion: "", pesoG: "", rgb: "", color: "", specs: {} };
 
 // Zona de administración: gestión del catálogo (crear/editar/borrar, stock)
 // y gestión de pedidos (avanzar el estado del seguimiento).
@@ -44,7 +47,9 @@ export default function AdminPage() {
               ofertaLimite: p.ofertaHastaAgotar ? "stock" : (p.ofertaHasta ? "date" : "none"),
               ofertaDesde: p.ofertaDesde ? p.ofertaDesde.slice(0, 16) : "",
               ofertaHasta: p.ofertaHasta ? p.ofertaHasta.slice(0, 16) : "",
-              stock: p.stock, imagenUrl: p.imagenUrl ?? "", categoriaId: p.categoriaId });
+              stock: p.stock, imagenUrl: p.imagenUrl ?? "", categoriaId: p.categoriaId,
+              conexion: p.conexion ?? "", pesoG: p.pesoG ?? "", rgb: p.rgb == null ? "" : String(p.rgb),
+              color: p.color ?? "", specs: p.specs ?? {} });
     setEditandoId(p.id);
     setMsg(null);
   };
@@ -63,6 +68,12 @@ const tieneOferta = !!form.precioOferta;
       ofertaHastaAgotar: tieneOferta && form.ofertaLimite === "stock",
       stock: Number(form.stock),
       imagenUrl: form.imagenUrl || null, descripcion: form.descripcion || null, marca: form.marca || null,
+      // Especificaciones: columnas filtrables (vacío -> null) y ficha técnica JSON.
+      conexion: form.conexion || null,
+      pesoG: form.pesoG ? Number(form.pesoG) : null,
+      rgb: form.rgb === "" ? null : form.rgb === "true",
+      color: form.color || null,
+      specs: form.specs || {},
     };
     // Quitamos el campo auxiliar de UI que el backend no conoce.
     delete cuerpo.ofertaLimite;
@@ -119,6 +130,49 @@ const tieneOferta = !!form.precioOferta;
     cargarResenas();
   };
 
+  /* ===== Catálogo de atributos ===== */
+  const ATTR_VACIO = { categoriaId: "", clave: "", etiqueta: "", tipo: "TEXTO", opciones: "", seccion: "", unidad: "", orden: 0 };
+  const [catAttr, setCatAttr] = useState("");      // categoría seleccionada para ver/editar atributos
+  const [atributos, setAtributos] = useState([]);
+  const [attrForm, setAttrForm] = useState(null);  // null = formulario cerrado
+  const [attrEditId, setAttrEditId] = useState(null);
+
+  const cargarAtributos = (categoriaId) => {
+    if (!categoriaId) { setAtributos([]); return; }
+    listarAtributos(categoriaId).then(({ data }) => setAtributos(data));
+  };
+  useEffect(() => { if (pestana === "atributos" && catAttr) cargarAtributos(catAttr); }, [pestana, catAttr]);
+
+  const attrCampo = (k) => (e) => setAttrForm((f) => ({ ...f, [k]: e.target.value }));
+  const abrirNuevoAttr = () => { setAttrForm({ ...ATTR_VACIO, categoriaId: catAttr }); setAttrEditId(null); };
+  const abrirEditarAttr = (a) => {
+    setAttrForm({ categoriaId: catAttr, clave: a.clave, etiqueta: a.etiqueta, tipo: a.tipo,
+                  opciones: (a.opciones || []).join("|"), seccion: a.seccion ?? "", unidad: a.unidad ?? "",
+                  orden: a.orden ?? 0 });
+    setAttrEditId(a.id);
+  };
+
+  const guardarAttr = async (e) => {
+    e.preventDefault();
+    const cuerpo = { ...attrForm, orden: Number(attrForm.orden) || 0,
+                     opciones: attrForm.tipo === "LISTA" ? (attrForm.opciones || null) : null };
+    try {
+      if (attrEditId) await actualizarAtributo(attrEditId, cuerpo);
+      else await crearAtributo(cuerpo);
+      setAttrForm(null);
+      cargarAtributos(catAttr);
+      setMsg({ ok: true, texto: tr.admSaved });
+    } catch (err) {
+      setMsg({ ok: false, texto: err.response?.data?.mensaje ?? tr.loadError });
+    }
+  };
+
+  const borrarAttr = async (a) => {
+    if (!window.confirm(`${tr.admAttrDeleteConfirm} (${a.etiqueta})`)) return;
+    await eliminarAtributo(a.id);
+    cargarAtributos(catAttr);
+  };
+
   // Avanza el pedido a la siguiente fase del seguimiento.
   const avanzar = async (p) => {
     const siguiente = ESTADOS[Math.min(ESTADOS.indexOf(p.estado) + 1, ESTADOS.length - 1)];
@@ -143,6 +197,9 @@ const tieneOferta = !!form.precioOferta;
         </button>
         <button className={pestana === "resenas" ? "on" : ""} onClick={() => setPestana("resenas")}>
           <i className="ti ti-star" /> {tr.admReviews}
+        </button>
+        <button className={pestana === "atributos" ? "on" : ""} onClick={() => setPestana("atributos")}>
+          <i className="ti ti-list-details" /> {tr.admAttributes}
         </button>
       </div>
 
@@ -198,6 +255,43 @@ const tieneOferta = !!form.precioOferta;
               </div>
               <textarea className="hf-input" rows="2" placeholder={tr.admDesc}
                         value={form.descripcion} onChange={campo("descripcion")} />
+
+              {/* Especificaciones filtrables (comunes a varias categorías) */}
+              <div className="hf-specfields">
+                <p className="hf-specfields-title">{tr.admFilterSpecs}</p>
+                <div className="hf-specgroup-grid">
+                  <label className="hf-specfield">
+                    <span>{tr.specConexion}</span>
+                    <select className="hf-input" value={form.conexion} onChange={campo("conexion")}>
+                      <option value="">—</option>
+                      <option value="cable">{tr.connWired}</option>
+                      <option value="inalambrico">{tr.connWireless}</option>
+                      <option value="ambos">{tr.connBoth}</option>
+                    </select>
+                  </label>
+                  <label className="hf-specfield">
+                    <span>{tr.specPeso} (g)</span>
+                    <input className="hf-input" type="number" min="0" value={form.pesoG} onChange={campo("pesoG")} />
+                  </label>
+                  <label className="hf-specfield">
+                    <span>{tr.specColor}</span>
+                    <input className="hf-input" value={form.color} onChange={campo("color")} />
+                  </label>
+                  <label className="hf-specfield">
+                    <span>RGB</span>
+                    <select className="hf-input" value={form.rgb} onChange={campo("rgb")}>
+                      <option value="">—</option>
+                      <option value="true">{tr.yes}</option>
+                      <option value="false">{tr.no}</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+
+              {/* Ficha técnica dinámica según la categoría elegida */}
+              <SpecFields categoriaId={form.categoriaId} specs={form.specs}
+                          onChange={(s) => setForm((f) => ({ ...f, specs: s }))} tr={tr} />
+
               <div className="acciones">
                 <button className="hf-btn hf-btn-main" type="submit">{tr.admSave}</button>
                 <button className="hf-btn" type="button" onClick={() => setForm(null)}>{tr.admCancel}</button>
@@ -281,6 +375,111 @@ const tieneOferta = !!form.precioOferta;
               </div>
             </section>
           ))}
+        </div>
+      )}
+
+      {pestana === "atributos" && (
+        <div className="hf-adm-attrs">
+          <p className="hf-sub">{tr.admAttrIntro}</p>
+          <div className="hf-adm-bar">
+            <select className="hf-input" value={catAttr} onChange={(e) => { setCatAttr(e.target.value); setAttrForm(null); }}>
+              <option value="" disabled>{tr.admCat}</option>
+              {categorias.map((c) => <option key={c.id} value={c.id}>{trCat(c.nombre)}</option>)}
+            </select>
+            {catAttr && (
+              <button className="hf-btn hf-btn-main" onClick={abrirNuevoAttr}>
+                <i className="ti ti-plus" /> {tr.admAttrNew}
+              </button>
+            )}
+          </div>
+
+          {/* Formulario de atributo */}
+          {attrForm && (
+            <form className="hf-adm-form hf-attr-form" onSubmit={guardarAttr}>
+              {/* Lo esencial: qué atributo es y de qué tipo */}
+              <fieldset className="hf-attr-group">
+                <legend>{tr.admAttrGroupBasic}</legend>
+                <div className="grid">
+                  <label className="hf-fld">
+                    <span>{tr.admAttrLabel}</span>
+                    <input className="hf-input" value={attrForm.etiqueta} onChange={attrCampo("etiqueta")} required />
+                    <small>{tr.admAttrLabelHelp}</small>
+                  </label>
+                  <label className="hf-fld">
+                    <span>{tr.admAttrKey}</span>
+                    <input className="hf-input" value={attrForm.clave} onChange={attrCampo("clave")} required />
+                    <small>{tr.admAttrKeyHelp}</small>
+                  </label>
+                  <label className="hf-fld">
+                    <span>{tr.admAttrType}</span>
+                    <select className="hf-input" value={attrForm.tipo} onChange={attrCampo("tipo")}>
+                      <option value="TEXTO">{tr.admAttrTypeText}</option>
+                      <option value="NUMERO">{tr.admAttrTypeNum}</option>
+                      <option value="BOOLEANO">{tr.admAttrTypeBool}</option>
+                      <option value="LISTA">{tr.admAttrTypeList}</option>
+                    </select>
+                  </label>
+                  {attrForm.tipo === "LISTA" && (
+                    <label className="hf-fld">
+                      <span>{tr.admAttrOptions}</span>
+                      <input className="hf-input" value={attrForm.opciones} onChange={attrCampo("opciones")} placeholder="palm|claw|fingertip" />
+                      <small>{tr.admAttrOptionsHelp}</small>
+                    </label>
+                  )}
+                </div>
+              </fieldset>
+
+              {/* Presentación: cómo se muestra en la ficha (todo opcional) */}
+              <fieldset className="hf-attr-group">
+                <legend>{tr.admAttrGroupDisplay} <em>{tr.admAttrOptional}</em></legend>
+                <div className="grid">
+                  <label className="hf-fld">
+                    <span>{tr.admAttrSection}</span>
+                    <input className="hf-input" value={attrForm.seccion} onChange={attrCampo("seccion")} placeholder="Sensor" />
+                    <small>{tr.admAttrSectionHelp}</small>
+                  </label>
+                  <label className="hf-fld">
+                    <span>{tr.admAttrUnit}</span>
+                    <input className="hf-input" value={attrForm.unidad} onChange={attrCampo("unidad")} placeholder="g, Hz, mm…" />
+                    <small>{tr.admAttrUnitHelp}</small>
+                  </label>
+                  <label className="hf-fld">
+                    <span>{tr.admAttrOrder}</span>
+                    <input className="hf-input" type="number" value={attrForm.orden} onChange={attrCampo("orden")} />
+                    <small>{tr.admAttrOrderHelp}</small>
+                  </label>
+                </div>
+              </fieldset>
+
+              <div className="acciones">
+                <button className="hf-btn hf-btn-main" type="submit">{tr.admSave}</button>
+                <button className="hf-btn" type="button" onClick={() => setAttrForm(null)}>{tr.admCancel}</button>
+              </div>
+            </form>
+          )}
+
+          {/* Lista de atributos de la categoría */}
+          {catAttr && atributos.length === 0 && <p className="hf-sub">{tr.admAttrEmpty}</p>}
+          {catAttr && atributos.length > 0 && (
+            <div className="hf-adm-table">
+              <div className="row head">
+                <span>{tr.admAttrLabel}</span><span>{tr.admAttrKey}</span><span>{tr.admAttrType}</span>
+                <span>{tr.admAttrSection}</span><span />
+              </div>
+              {atributos.map((a) => (
+                <div key={a.id} className="row">
+                  <span className="nom">{a.etiqueta}{a.unidad ? ` (${a.unidad})` : ""}</span>
+                  <span>{a.clave}</span>
+                  <span>{a.tipo}{a.tipo === "LISTA" && a.opciones.length ? `: ${a.opciones.join(", ")}` : ""}</span>
+                  <span>{a.seccion || "—"}</span>
+                  <span className="acc">
+                    <button className="hf-icon-btn" onClick={() => abrirEditarAttr(a)} aria-label={tr.admEdit}><i className="ti ti-pencil" /></button>
+                    <button className="hf-icon-btn" onClick={() => borrarAttr(a)} aria-label={tr.admDelete}><i className="ti ti-trash" /></button>
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </main>

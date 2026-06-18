@@ -28,6 +28,7 @@ export default function ProductoPage() {
   if (!p) return <main className="hf-wrap hf-section"><p className="hf-sub">{tr.loading}</p></main>;
 
   const agotado = p.stock <= 0;
+  const pocas = !agotado && p.stock <= 5;   // mismo umbral que la tarjeta del catálogo
 
   return (
     <main className="hf-wrap">
@@ -42,7 +43,12 @@ export default function ProductoPage() {
           {p.descripcion && <p className="hf-sub">{p.descripcion}</p>}
           <div className="hf-specs" style={{ maxWidth: 380, margin: "18px 0" }}>
             <div className="hf-spec"><span className="k"><i className="ti ti-tag" />{tr.specBrand}</span><span>{p.marca ?? "—"}</span></div>
-            <div className="hf-spec"><span className="k"><i className="ti ti-box" />{tr.specStock}</span><span>{agotado ? "—" : p.stock}</span></div>
+            <div className="hf-spec">
+              <span className="k"><i className="ti ti-circle-check" />{tr.specStock}</span>
+              <span className={`hf-avail ${agotado ? "out" : pocas ? "few" : "ok"}`}>
+                {agotado ? tr.out : pocas ? tr.stockFew : tr.stockOk}
+              </span>
+            </div>
           </div>
           <div className="price">
             {precioEfectivo(p)}<span> €</span>
@@ -64,12 +70,9 @@ export default function ProductoPage() {
           {p.ofertaProgramada && (
             <p className="hf-offer-note soon"><i className="ti ti-calendar-clock" />{tr.offSoon}: {tr.offFrom} {new Date(p.ofertaDesde).toLocaleDateString()}</p>
           )}
-          <div className={`hf-stock ${agotado ? "out" : ""}`} style={{ marginBottom: 16 }}>
-            {agotado ? tr.out : tr.avail}
-          </div>
           {/* Aviso de stock bajo: empuja a comprar cuando quedan pocas unidades */}
-          {!agotado && p.stock <= 5 && (
-            <p className="hf-lowstock"><i className="ti ti-flame" />{tr.stockLeft.replace("{n}", p.stock)}</p>
+          {pocas && (
+            <p className="hf-lowstock"><i className="ti ti-flame" />{tr.stockFew}</p>
           )}
           <button className="hf-add" style={{ maxWidth: 320 }} disabled={agotado} onClick={() => add(p)}>
             {agotado ? tr.noStock : tr.add}

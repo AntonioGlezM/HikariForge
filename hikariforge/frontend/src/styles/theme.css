@@ -495,3 +495,27 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
 .hf-avail.few{color:var(--error);}        /* pocas unidades: rojo de aviso */
 .hf-avail.out{color:var(--muted);}
 .hf-spec .hf-avail i{margin-right:4px;}
+
+/* ===== Especificaciones en el formulario de admin ===== */
+.hf-specfields{border-top:1px solid var(--line);margin-top:16px;padding-top:16px;}
+.hf-specfields-title{font-weight:900;font-size:.95rem;margin:0 0 12px;color:var(--ink);}
+.hf-specgroup{border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 14px;}
+.hf-specgroup legend{font-weight:800;font-size:.82rem;color:var(--accent);padding:0 8px;text-transform:uppercase;letter-spacing:.04em;}
+.hf-specgroup-grid,.hf-specgroup{display:grid;gap:12px;}
+.hf-specgroup-grid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));}
+.hf-specfield{display:flex;flex-direction:column;gap:5px;font-size:.82rem;color:var(--muted);font-weight:700;}
+.hf-specgroup .hf-specfield{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:10px;}
+
+/* Gestión del catálogo de atributos */
+.hf-adm-attrs{display:flex;flex-direction:column;gap:6px;}
+.hf-adm-attrs .row.head span:last-child,.hf-adm-attrs .row .acc{text-align:right;}
+.hf-icon-btn{background:none;border:none;cursor:pointer;color:var(--muted);padding:6px;border-radius:8px;}
+.hf-icon-btn:hover{background:var(--soft);color:var(--accent);}
+
+/* ===== Formulario de atributos: campos con etiqueta y ayuda ===== */
+.hf-attr-form .hf-attr-group{border:1px solid var(--line);border-radius:14px;padding:16px;margin:0 0 14px;}
+.hf-attr-form .hf-attr-group legend{font-weight:800;font-size:.82rem;color:var(--accent);padding:0 8px;text-transform:uppercase;letter-spacing:.04em;}
+.hf-attr-form .hf-attr-group legend em{font-style:normal;color:var(--muted);font-weight:600;text-transform:none;letter-spacing:0;}
+.hf-fld{display:flex;flex-direction:column;gap:5px;}
+.hf-fld > span{font-weight:800;font-size:.82rem;color:var(--ink);}
+.hf-fld > small{color:var(--muted);font-size:.74rem;line-height:1.4;}
