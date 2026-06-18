@@ -226,6 +226,7 @@ Esta sección recorre el proyecto en el orden en que se construyó, desde las pr
 - Lo filtrable vive en columnas (rápido de buscar, enganchado a las JPA Specifications); lo informativo vive en el JSON `specs` y solo se muestra. Decisión tomada con el horizonte de convertir el proyecto en producto real.
 - Validación de la ficha técnica contra el catálogo antes de guardar: cada valor debe encajar con el tipo de su atributo (número, booleano, o un valor de la lista de opciones); se descartan claves no definidas. Así no se cuelan datos con tipo equivocado aunque la petición no venga del formulario.
 - Filtros nuevos del catálogo: conexión, peso máximo, color y RGB.
+- Panel de administración: pestaña para gestionar el catálogo de atributos por categoría (crear/editar/borrar con su tipo, opciones, sección y unidad) y formulario de producto dinámico, que muestra los campos correctos según la categoría elegida y valida la ficha técnica.
 
 ---
 
@@ -380,3 +381,5 @@ Cambios, correcciones y refinamientos que no constituyen un módulo completo per
 | 12 jun 2026 | Frontend | Traducción de las categorías de la base de datos en la interfaz mediante un mapa (`catMap`), para que se muestren en el idioma activo sin cambiar los datos. |
 | 17 jun 2026 | Backend | Corrección del tipo de la columna `estrellas` (de `Integer` a `Short`) para que coincida con SMALLINT y la validación de esquema de Hibernate no detuviera el arranque. |
 | 17 jun 2026 | Frontend | Rediseño de la tarjeta de producto: se retira la fila de categoría (ya presente en el badge) y el stock numérico exacto, sustituido por un estado cualitativo ("En stock" / "¡Pocas unidades!" / "Agotado"). Se añade una fila de envío para equilibrar la tarjeta. |
+| 18 jun 2026 | Frontend | Mejora del formulario de atributos del admin: cada campo lleva etiqueta y texto de ayuda, separados en dos bloques (definición y presentación), aclarando qué hacen "sección", "unidad" y "orden" y marcándolos como opcionales. |
+| 18 jun 2026 | Frontend | La ficha de producto deja de mostrar el stock numérico exacto: pasa a un estado cualitativo ("En stock" / "¡Pocas unidades!" / "Agotado"), igual que la tarjeta del catálogo. Se elimina el bloque de disponibilidad que quedaba duplicado. |
