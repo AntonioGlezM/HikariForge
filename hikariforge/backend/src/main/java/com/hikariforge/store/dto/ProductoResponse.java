@@ -1,6 +1,7 @@
 package com.hikariforge.store.dto;
 
 import java.util.UUID;
+import java.util.Map;
 
 import java.math.BigDecimal;
 
@@ -22,5 +23,11 @@ public record ProductoResponse(
         Boolean activo,
         String imagenUrl,
         UUID categoriaId,
-        String categoriaNombre
+        String categoriaNombre,
+        // ----- Especificaciones -----
+        String conexion,
+        Integer pesoG,
+        Boolean rgb,
+        String color,
+        Map<String, Object> specs
 ) {}

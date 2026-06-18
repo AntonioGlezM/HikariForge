@@ -40,6 +40,10 @@ public class SecurityConfig {
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/productos/**", "/api/categorias/**").permitAll()
                 // El resumen de valoraciones es público (la ficha lo muestra a cualquiera).
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/productos/*/valoraciones").permitAll()
+                // Consultar el catálogo de atributos de una categoría es público
+                // (lo usan el formulario de producto y la ficha). Crear/editar/borrar
+                // queda protegido por @PreAuthorize en el controlador.
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/atributos").permitAll()
                 // El resto requiere estar autenticado.
                 .anyRequest().authenticated())
             // Ejecuta nuestro filtro JWT antes del filtro estándar de usuario/contraseña.

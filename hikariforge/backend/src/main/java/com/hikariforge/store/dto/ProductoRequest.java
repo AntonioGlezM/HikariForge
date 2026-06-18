@@ -2,6 +2,7 @@ package com.hikariforge.store.dto;
 
 import jakarta.validation.constraints.*;
 import java.util.UUID;
+import java.util.Map;
 import java.math.BigDecimal;
 
 // DTO de entrada para crear/actualizar un producto. Las anotaciones de validación
@@ -19,5 +20,13 @@ public record ProductoRequest(
         Boolean ofertaHastaAgotar,
         @NotNull @PositiveOrZero Integer stock,
         String imagenUrl,
-        @NotNull UUID categoriaId
+        @NotNull UUID categoriaId,
+        // ----- Especificaciones -----
+        // Columnas filtrables (todas opcionales según la categoría).
+        String conexion,
+        @PositiveOrZero Integer pesoG,
+        Boolean rgb,
+        String color,
+        // Ficha técnica flexible (clave -> valor) validada contra el catálogo.
+        Map<String, Object> specs
 ) {}

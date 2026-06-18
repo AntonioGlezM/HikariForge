@@ -7,7 +7,7 @@
 | **Autor** | Antonio González |
 | **Proyecto** | Aplicación web full-stack (e-commerce) |
 | **Stack** | Spring Boot · React · PostgreSQL |
-| **Última actualización** | 17 de junio de 2026 |
+| **Última actualización** | 18 de junio de 2026 |
 
 > Documento vivo: se actualiza con cada módulo o funcionalidad nueva que se implementa. Cuando la aplicación llegue a su versión final, se exportará a PDF.
 
@@ -218,20 +218,30 @@ Esta sección recorre el proyecto en el orden en que se construyó, desde las pr
 - En la tienda, los productos de oferta muestran el precio rebajado, el precio anterior tachado y un badge con el porcentaje de descuento (en tarjetas y ficha), además de un aviso de vigencia ("Oferta hasta [fecha]", "¡Hasta fin de existencias!" o "Próximamente" si aún no ha empezado).
 - El carrito y los pedidos usan automáticamente el precio efectivo; una oferta programada no se aplica antes de tiempo y una caducada deja de aplicarse sola.
 
+### Módulo 15 — Especificaciones de producto `Backend · Frontend`
+
+- Migración V9: modelo híbrido de especificaciones. Columnas filtrables en `producto` (`conexion`, `peso_g`, `rgb`, `color`), un campo `specs` de tipo JSONB para la ficha técnica flexible, y la tabla `atributo_categoria` (catálogo de atributos por categoría: clave, etiqueta, tipo, opciones, sección, unidad y orden).
+- Migración V10: siembra del catálogo de atributos de las cuatro categorías iniciales (ratones, teclados, auriculares, alfombrillas).
+- El catálogo de atributos es **gestionable**: se guarda en base de datos, de modo que añadir un atributo nuevo —o una categoría futura como "Sillas"— no requiere tocar el código. CRUD de atributos restringido al administrador (`/api/atributos`).
+- Lo filtrable vive en columnas (rápido de buscar, enganchado a las JPA Specifications); lo informativo vive en el JSON `specs` y solo se muestra. Decisión tomada con el horizonte de convertir el proyecto en producto real.
+- Validación de la ficha técnica contra el catálogo antes de guardar: cada valor debe encajar con el tipo de su atributo (número, booleano, o un valor de la lista de opciones); se descartan claves no definidas. Así no se cuelan datos con tipo equivocado aunque la petición no venga del formulario.
+- Filtros nuevos del catálogo: conexión, peso máximo, color y RGB.
+
 ---
 
 ## 5. Modelo de datos
 
-La base de datos se compone de seis tablas principales. Todas las claves primarias son de tipo UUID. El esquema se gestiona con migraciones de Flyway (V1 a V8).
+La base de datos se compone de siete tablas principales. Todas las claves primarias son de tipo UUID. El esquema se gestiona con migraciones de Flyway (V1 a V10).
 
 | Tabla | Contenido | Relaciones |
 |---|---|---|
 | **usuario** | Email, contraseña (BCrypt), nombre y rol (CLIENTE/ADMIN) | Tiene pedidos y valoraciones |
 | **categoria** | Nombre de la categoría | Agrupa productos |
-| **producto** | Nombre, descripción, marca, precio, precio de oferta y su vigencia (inicio/fin/hasta agotar, opcionales), stock, imagen y si está activo | Pertenece a una categoría |
+| **producto** | Nombre, descripción, marca, precio, oferta y vigencia, stock, imagen, si está activo, y especificaciones (columnas filtrables `conexion`/`peso_g`/`rgb`/`color` + ficha técnica `specs` en JSON) | Pertenece a una categoría |
 | **pedido** | Fecha y estado del seguimiento | De un usuario; tiene líneas |
 | **linea_pedido** | Producto, cantidad y precio en el momento de la compra | Une pedido y producto |
 | **valoracion** | Estrellas (1-5), comentario y fecha | De un usuario sobre un producto (única) |
+| **atributo_categoria** | Catálogo de atributos por categoría: clave, etiqueta, tipo (texto/número/booleano/lista), opciones, sección, unidad y orden | Pertenece a una categoría |
 
 > **Decisión de diseño:** la línea de pedido guarda el precio del producto en el momento de la compra. Así, aunque el precio del producto cambie después, los pedidos antiguos conservan el importe correcto.
 

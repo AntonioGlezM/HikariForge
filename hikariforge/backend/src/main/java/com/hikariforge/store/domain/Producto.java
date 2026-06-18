@@ -5,6 +5,10 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.*;
 import java.math.BigDecimal;
+import java.util.Map;
+import java.util.HashMap;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 // Producto del catálogo. Usamos BigDecimal para el precio (nunca double con dinero).
 @Entity
@@ -57,8 +61,27 @@ public class Producto {
 
     private String imagenUrl;
 
-    // Muchos productos pertenecen a una categoría. LAZY evita cargar la
-    // categoría hasta que se accede a ella (mejor rendimiento).
+    // ----- Especificaciones (modelo híbrido) -----
+    // Columnas filtrables: lo que se usa para buscar en el catálogo.
+    @Column(length = 20)
+    private String conexion;            // cable / inalambrico / ambos
+
+    @Column(name = "peso_g")
+    private Integer pesoG;              // peso en gramos
+
+    private Boolean rgb;                // tiene iluminación RGB
+
+    @Column(length = 40)
+    private String color;
+
+    // Ficha técnica flexible (clave -> valor) guardada como JSON en Postgres.
+    // Solo se muestra; los atributos disponibles por categoría los define
+    // el catálogo (AtributoCategoria).
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb", nullable = false)
+    @Builder.Default
+    private Map<String, Object> specs = new HashMap<>();
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;

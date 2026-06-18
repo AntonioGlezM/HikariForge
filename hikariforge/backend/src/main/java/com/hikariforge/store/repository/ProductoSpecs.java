@@ -44,4 +44,27 @@ public final class ProductoSpecs {
         if (enStock == null || !enStock) return null;
         return (root, q, cb) -> cb.greaterThan(root.get("stock"), 0);
     }
+
+    // ----- Filtros de especificaciones -----
+
+    public static Specification<Producto> conexion(String conexion) {
+        if (conexion == null || conexion.isBlank()) return null;
+        return (root, q, cb) -> cb.equal(root.get("conexion"), conexion);
+    }
+
+    // Peso máximo en gramos: útil para buscar periféricos ligeros.
+    public static Specification<Producto> pesoMaximo(Integer maxGramos) {
+        if (maxGramos == null) return null;
+        return (root, q, cb) -> cb.lessThanOrEqualTo(root.get("pesoG"), maxGramos);
+    }
+
+    public static Specification<Producto> color(String color) {
+        if (color == null || color.isBlank()) return null;
+        return (root, q, cb) -> cb.equal(root.get("color"), color);
+    }
+
+    public static Specification<Producto> conRgb(Boolean rgb) {
+        if (rgb == null || !rgb) return null;
+        return (root, q, cb) -> cb.isTrue(root.get("rgb"));
+    }
 }
