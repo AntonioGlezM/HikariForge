@@ -11,6 +11,8 @@ import java.util.HashMap;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 // Lógica de negocio del catálogo. Convierte entre entidades y DTOs y orquesta
@@ -21,12 +23,15 @@ public class ProductoService {
     private final ProductoRepository productoRepository;
     private final CategoriaRepository categoriaRepository;
     private final AtributoCategoriaRepository atributoRepository;
+    private final HistorialPrecioRepository historialRepository;
 
     public ProductoService(ProductoRepository productoRepository, CategoriaRepository categoriaRepository,
-                           AtributoCategoriaRepository atributoRepository) {
+                           AtributoCategoriaRepository atributoRepository,
+                           HistorialPrecioRepository historialRepository) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
         this.atributoRepository = atributoRepository;
+        this.historialRepository = historialRepository;
     }
 
     // Catálogo público con filtros combinables (todos opcionales). Siempre
@@ -75,7 +80,8 @@ public class ProductoService {
         if (!p.getActivo()) {
             throw new RecursoNoEncontradoException("Producto no encontrado: " + id);
         }
-        return aResponse(p);
+        // En la ficha sí calculamos el mínimo de 30 días (dato Omnibus).
+        return aResponse(p, precioMinimo30dias(id));
     }
 
     @Transactional
@@ -102,7 +108,9 @@ public class ProductoService {
                 .specs(specsValidadas(req, categoria))
                 .build();
 
-        return aResponse(productoRepository.save(producto));
+        Producto guardado = productoRepository.save(producto);
+        registrarPrecio(guardado);   // primer punto del historial de precios
+        return aResponse(guardado);
     }
 
     // Actualiza todos los campos del producto (incluida la categoría).
@@ -122,12 +130,18 @@ public class ProductoService {
         producto.setOfertaHastaAgotar(Boolean.TRUE.equals(req.ofertaHastaAgotar()));
         producto.setStock(req.stock());
         producto.setImagenUrl(req.imagenUrl());
+        BigDecimal precioAntes = producto.getPrecioEfectivo();
         producto.setCategoria(categoria);
         producto.setConexion(req.conexion());
         producto.setPesoG(req.pesoG());
         producto.setRgb(req.rgb());
         producto.setColor(req.color());
         producto.setSpecs(specsValidadas(req, categoria));
+        // Registramos en el historial solo si el precio efectivo ha cambiado,
+        // para no acumular entradas iguales al editar otros campos (stock, etc.).
+        if (precioAntes == null || precioAntes.compareTo(producto.getPrecioEfectivo()) != 0) {
+            registrarPrecio(producto);
+        }
         return aResponse(producto);
     }
 
@@ -161,6 +175,24 @@ public class ProductoService {
      * Esto es lo que impide que se cuele un dato con el tipo equivocado aunque
      * la petición no venga del formulario (p. ej. una llamada directa a la API).
      */
+    // Guarda el precio efectivo actual del producto como nueva entrada del historial.
+    private void registrarPrecio(Producto p) {
+        historialRepository.save(HistorialPrecio.builder()
+                .producto(p)
+                .precio(p.getPrecioEfectivo())
+                .fecha(LocalDateTime.now())
+                .build());
+    }
+
+    /**
+     * Precio más bajo registrado en los últimos 30 días (dato exigido por
+     * Omnibus al mostrar un descuento). Null si no hay historial en ese rango.
+     */
+    @Transactional(readOnly = true)
+    public BigDecimal precioMinimo30dias(UUID productoId) {
+        return historialRepository.precioMinimoDesde(productoId, LocalDateTime.now().minusDays(30));
+    }
+
     private Map<String, Object> specsValidadas(ProductoRequest req, Categoria categoria) {
         Map<String, Object> entrada = req.specs();
         if (entrada == null || entrada.isEmpty()) return new HashMap<>();
@@ -216,12 +248,19 @@ public class ProductoService {
         }
     }
 
+    // Versión usada en el listado: sin el mínimo de 30 días (evita una consulta por producto).
     private ProductoResponse aResponse(Producto p) {
+        return aResponse(p, null);
+    }
+
+    // Versión con el precio mínimo de 30 días, para la ficha individual.
+    private ProductoResponse aResponse(Producto p, BigDecimal precioMinimo30d) {
         return new ProductoResponse(
                 p.getId(), p.getNombre(), p.getDescripcion(), p.getMarca(),
                 p.getPrecio(), p.getPrecioOferta(), p.getOfertaDesde(), p.getOfertaHasta(), p.getOfertaHastaAgotar(),
                 p.isOfertaVigente(), p.isOfertaProgramada(), p.getStock(), p.getActivo(), p.getImagenUrl(),
                 p.getCategoria().getId(), p.getCategoria().getNombre(),
-                p.getConexion(), p.getPesoG(), p.getRgb(), p.getColor(), p.getSpecs());
+                p.getConexion(), p.getPesoG(), p.getRgb(), p.getColor(), p.getSpecs(),
+                precioMinimo30d);
     }
 }

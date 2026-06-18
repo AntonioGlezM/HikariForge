@@ -85,6 +85,7 @@ export const I18N = {
     admAttrUnitHelp: "Se muestra junto al valor: 61 g, 8000 Hz", admAttrOrderHelp: "Posición dentro de su sección (menor = antes)",
     admFilterSpecs: "Especificaciones (filtrables)", admSpecsTitle: "Ficha técnica",
     specSheetTitle: "Especificaciones", filterAdvanced: "Filtros avanzados", filterMaxWeight: "Peso máx. (g)",
+    priceMin30: "Precio más bajo en los últimos 30 días: {precio} €",
     specConexion: "Conexión", specPeso: "Peso", specColor: "Color", specOther: "Otros",
     connWired: "Cable", connWireless: "Inalámbrico", connBoth: "Ambos", yes: "Sí", no: "No",
 
@@ -177,6 +178,7 @@ export const I18N = {
     admAttrUnitHelp: "Shown next to the value: 61 g, 8000 Hz", admAttrOrderHelp: "Position within its section (lower = first)",
     admFilterSpecs: "Specifications (filterable)", admSpecsTitle: "Tech specs",
     specSheetTitle: "Specifications", filterAdvanced: "Advanced filters", filterMaxWeight: "Max weight (g)",
+    priceMin30: "Lowest price in the last 30 days: €{precio}",
     specConexion: "Connection", specPeso: "Weight", specColor: "Color", specOther: "Other",
     connWired: "Wired", connWireless: "Wireless", connBoth: "Both", yes: "Yes", no: "No",
 

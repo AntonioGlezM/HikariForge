@@ -71,6 +71,10 @@ export default function ProductoPage() {
           {p.ofertaProgramada && (
             <p className="hf-offer-note soon"><i className="ti ti-calendar-clock" />{tr.offSoon}: {tr.offFrom} {new Date(p.ofertaDesde).toLocaleDateString()}</p>
           )}
+          {/* Precio más bajo de los últimos 30 días (cumplimiento Omnibus de la UE) */}
+          {tieneOferta(p) && p.precioMinimo30d != null && (
+            <p className="hf-min30"><i className="ti ti-info-circle" />{tr.priceMin30.replace("{precio}", p.precioMinimo30d)}</p>
+          )}
           {/* Aviso de stock bajo: empuja a comprar cuando quedan pocas unidades */}
           {pocas && (
             <p className="hf-lowstock"><i className="ti ti-flame" />{tr.stockFew}</p>

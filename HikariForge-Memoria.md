@@ -229,11 +229,18 @@ Esta sección recorre el proyecto en el orden en que se construyó, desde las pr
 - Panel de administración: pestaña para gestionar el catálogo de atributos por categoría (crear/editar/borrar con su tipo, opciones, sección y unidad) y formulario de producto dinámico, que muestra los campos correctos según la categoría elegida y valida la ficha técnica.
 - Página de producto: ficha técnica agrupada por secciones (estilo tienda real), combinando los valores del producto con las etiquetas y unidades del catálogo. Catálogo: filtros avanzados plegables (conexión, peso máximo, color, RGB).
 
+### Módulo 16 — Historial de precios (Omnibus) `Backend · Frontend`
+
+- Migración V11: tabla `historial_precio` (producto, precio efectivo, fecha) con índice por producto y fecha, y siembra inicial con el precio actual de cada producto.
+- Cumple la directiva Omnibus de la UE: al anunciar un descuento debe mostrarse el precio más bajo de los últimos 30 días.
+- Se registra una entrada cada vez que cambia el precio efectivo de un producto (al crearlo y al editarlo si el precio cambió; no si solo cambia el stock u otros campos).
+- En la ficha de producto, cuando hay una oferta vigente, se muestra el aviso "Precio más bajo en los últimos 30 días: XX €". El mínimo se calcula solo en la ficha individual (no en el listado, para no consultar por cada producto).
+
 ---
 
 ## 5. Modelo de datos
 
-La base de datos se compone de siete tablas principales. Todas las claves primarias son de tipo UUID. El esquema se gestiona con migraciones de Flyway (V1 a V10).
+La base de datos se compone de ocho tablas principales. Todas las claves primarias son de tipo UUID. El esquema se gestiona con migraciones de Flyway (V1 a V11).
 
 | Tabla | Contenido | Relaciones |
 |---|---|---|
@@ -244,6 +251,7 @@ La base de datos se compone de siete tablas principales. Todas las claves primar
 | **linea_pedido** | Producto, cantidad y precio en el momento de la compra | Une pedido y producto |
 | **valoracion** | Estrellas (1-5), comentario y fecha | De un usuario sobre un producto (única) |
 | **atributo_categoria** | Catálogo de atributos por categoría: clave, etiqueta, tipo (texto/número/booleano/lista), opciones, sección, unidad y orden | Pertenece a una categoría |
+| **historial_precio** | Precio efectivo de un producto en una fecha (para el mínimo de 30 días, Omnibus) | Pertenece a un producto |
 
 > **Decisión de diseño:** la línea de pedido guarda el precio del producto en el momento de la compra. Así, aunque el precio del producto cambie después, los pedidos antiguos conservan el importe correcto.
 

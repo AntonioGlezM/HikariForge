@@ -29,5 +29,8 @@ public record ProductoResponse(
         Integer pesoG,
         Boolean rgb,
         String color,
-        Map<String, Object> specs
+        Map<String, Object> specs,
+        // Precio más bajo de los últimos 30 días (Omnibus). Solo se rellena en la
+        // ficha individual; en el listado va null para no consultar por cada producto.
+        java.math.BigDecimal precioMinimo30d
 ) {}

@@ -566,3 +566,7 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
 /* FancySelect dentro de la barra de filtros ocupa como los demás campos */
 .hf-cat-filters .hf-fancysel{flex:1;min-width:150px;max-width:200px;}
 @media (max-width:680px){.hf-cat-filters .hf-fancysel{max-width:none;width:100%;}}
+
+/* Aviso del precio mínimo de 30 días (Omnibus): informativo y discreto */
+.hf-min30{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-size:.8rem;font-weight:700;margin:0 0 14px;}
+.hf-min30 i{font-size:.95rem;}
