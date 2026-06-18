@@ -8,6 +8,7 @@ import { useProductos } from "../context/ProductosContext";
 import ProductCard from "../components/ProductCard";
 import Reviews from "../components/Reviews";
 import SpecSheet from "../components/SpecSheet";
+import Accordion from "../components/Accordion";
 
 // Ficha de producto: carga por id, registra la visita en "vistos recientemente"
 // y permite añadir al carrito.
@@ -85,8 +86,23 @@ export default function ProductoPage() {
         </div>
       </div>
 
-      {/* Ficha técnica agrupada por secciones */}
-      <SpecSheet categoriaId={p.categoriaId} specs={p.specs} tr={tr} />
+      {/* Información del producto en acordeón: ficha técnica, envío y garantía */}
+      <section className="hf-product-acc">
+        <Accordion abiertoInicial={0} secciones={[
+          {
+            titulo: tr.specSheetTitle,
+            contenido: <SpecSheet categoriaId={p.categoriaId} specs={p.specs} tr={tr} embedded />,
+          },
+          {
+            titulo: tr.accShipping,
+            contenido: <p className="hf-acc-text">{tr.accShippingText}</p>,
+          },
+          {
+            titulo: tr.accWarranty,
+            contenido: <p className="hf-acc-text">{tr.accWarrantyText}</p>,
+          },
+        ]} />
+      </section>
 
       {/* Valoraciones del producto */}
       <Reviews productoId={p.id} />

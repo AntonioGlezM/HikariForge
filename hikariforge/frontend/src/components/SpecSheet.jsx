@@ -12,7 +12,7 @@ import { listarAtributos } from "../api/atributos";
  *  - specs: objeto { clave: valor } del producto
  *  - tr: traducciones
  */
-export default function SpecSheet({ categoriaId, specs, tr }) {
+export default function SpecSheet({ categoriaId, specs, tr, embedded = false }) {
   const [atributos, setAtributos] = useState([]);
 
   useEffect(() => {
@@ -48,8 +48,8 @@ export default function SpecSheet({ categoriaId, specs, tr }) {
   };
 
   return (
-    <section className="hf-specsheet">
-      <h2 className="hf-h2">{tr.specSheetTitle}</h2>
+    <section className={embedded ? "hf-specsheet embedded" : "hf-specsheet"}>
+      {!embedded && <h2 className="hf-h2">{tr.specSheetTitle}</h2>}
       <div className="hf-specsheet-grid">
         {Object.entries(secciones).map(([seccion, attrs]) => (
           <div key={seccion} className="hf-specsheet-block">

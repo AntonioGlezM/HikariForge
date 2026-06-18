@@ -570,3 +570,18 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
 /* Aviso del precio mínimo de 30 días (Omnibus): informativo y discreto */
 .hf-min30{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-size:.8rem;font-weight:700;margin:0 0 14px;}
 .hf-min30 i{font-size:.95rem;}
+
+/* ===== Acordeón (ficha de producto y reutilizable) ===== */
+.hf-product-acc{padding:40px 0 8px;border-top:1px solid var(--line);margin-top:24px;}
+.hf-accordion{display:flex;flex-direction:column;border-top:1px solid var(--line);}
+.hf-acc-item{border-bottom:1px solid var(--line);}
+.hf-acc-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  background:none;border:none;cursor:pointer;padding:20px 4px;font-family:var(--body);
+  font-weight:900;font-size:1.02rem;color:var(--ink);text-align:left;transition:color .15s;}
+.hf-acc-head:hover{color:var(--accent);}
+.hf-acc-head i{color:var(--accent);font-size:1.2rem;flex-shrink:0;}
+.hf-acc-body{padding:0 4px 24px;animation:hf-acc-in .2s ease;}
+.hf-acc-text{margin:0;line-height:1.8;color:var(--muted);font-weight:600;max-width:620px;}
+@keyframes hf-acc-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+/* SpecSheet embebido en el acordeón: sin borde superior ni margen propios */
+.hf-specsheet.embedded{padding:0;border-top:none;margin-top:0;}
