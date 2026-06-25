@@ -7,7 +7,7 @@
 | **Autor** | Antonio González |
 | **Proyecto** | Aplicación web full-stack (e-commerce) |
 | **Stack** | Spring Boot · React · PostgreSQL |
-| **Última actualización** | 18 de junio de 2026 |
+| **Última actualización** | 25 de junio de 2026 |
 
 > Documento vivo: se actualiza con cada módulo o funcionalidad nueva que se implementa. Cuando la aplicación llegue a su versión final, se exportará a PDF.
 
@@ -228,6 +228,7 @@ Esta sección recorre el proyecto en el orden en que se construyó, desde las pr
 - Filtros nuevos del catálogo: conexión, peso máximo, color y RGB.
 - Panel de administración: pestaña para gestionar el catálogo de atributos por categoría (crear/editar/borrar con su tipo, opciones, sección y unidad) y formulario de producto dinámico, que muestra los campos correctos según la categoría elegida y valida la ficha técnica.
 - Página de producto: ficha técnica agrupada por secciones (estilo tienda real), combinando los valores del producto con las etiquetas y unidades del catálogo. Catálogo: filtros avanzados plegables (conexión, peso máximo, color, RGB).
+- Presentación de specs ampliada (V12): cada atributo del catálogo puede tener un icono (Tabler) y marcarse como destacado. La ficha muestra una cabecera de especificaciones destacadas bajo el precio (atributos importantes con su icono) y la ficha técnica completa como tabla de dos columnas (Característica/Especificación) agrupada por secciones.
 
 ### Módulo 16 — Historial de precios (Omnibus) `Backend · Frontend`
 
@@ -240,7 +241,7 @@ Esta sección recorre el proyecto en el orden en que se construyó, desde las pr
 
 ## 5. Modelo de datos
 
-La base de datos se compone de ocho tablas principales. Todas las claves primarias son de tipo UUID. El esquema se gestiona con migraciones de Flyway (V1 a V11).
+La base de datos se compone de ocho tablas principales. Todas las claves primarias son de tipo UUID. El esquema se gestiona con migraciones de Flyway (V1 a V12).
 
 | Tabla | Contenido | Relaciones |
 |---|---|---|
@@ -250,7 +251,7 @@ La base de datos se compone de ocho tablas principales. Todas las claves primari
 | **pedido** | Fecha y estado del seguimiento | De un usuario; tiene líneas |
 | **linea_pedido** | Producto, cantidad y precio en el momento de la compra | Une pedido y producto |
 | **valoracion** | Estrellas (1-5), comentario y fecha | De un usuario sobre un producto (única) |
-| **atributo_categoria** | Catálogo de atributos por categoría: clave, etiqueta, tipo (texto/número/booleano/lista), opciones, sección, unidad y orden | Pertenece a una categoría |
+| **atributo_categoria** | Catálogo de atributos por categoría: clave, etiqueta, tipo (texto/número/booleano/lista), opciones, sección, unidad, orden, icono y destacado | Pertenece a una categoría |
 | **historial_precio** | Precio efectivo de un producto en una fecha (para el mínimo de 30 días, Omnibus) | Pertenece a un producto |
 
 > **Decisión de diseño:** la línea de pedido guarda el precio del producto en el momento de la compra. Así, aunque el precio del producto cambie después, los pedidos antiguos conservan el importe correcto.
@@ -398,3 +399,9 @@ Cambios, correcciones y refinamientos que no constituyen un módulo completo per
 | 18 jun 2026 | Frontend | El mega-menú de la cabecera ahora se cierra al pulsar un enlace. Como se abre por hover (CSS), antes quedaba visible tras navegar hasta mover el ratón, dando sensación de que no respondía; ahora se oculta al hacer clic y el hover se reactiva al salir el puntero. |
 | 18 jun 2026 | Frontend | Todos los desplegables de filtros del catálogo (categoría, marca, conexión y color) usan ahora un componente propio `FancySelect` con la estética redondeada de la página. Antes, los `<select>` nativos seguían viéndose cuadrados (el navegador/SO dibuja su desplegable e ignora el CSS). `ColorSelect` pasa a apoyarse en `FancySelect`. |
 | 18 jun 2026 | Frontend | La ficha de producto agrupa la ficha técnica, el envío/devoluciones y la garantía en secciones plegables (acordeón), con "Especificaciones" abierta por defecto, al estilo de las tiendas de periféricos. Nuevo componente reutilizable `Accordion`. |
+| 18 jun 2026 | Backend · Frontend | Las especificaciones de la ficha se presentan al estilo de tiendas de periféricos: cabecera de atributos destacados con icono bajo el precio, y ficha técnica completa como tabla de dos columnas. Se añade al catálogo de atributos un icono y un indicador de destacado (migración V12), gestionables desde el admin. |
+| 25 jun 2026 | Frontend | Los botones de los formularios de acceso y perfil (entrar, crear cuenta, guardar datos, cambiar contraseña) muestran un spinner y el texto de progreso mientras procesan, y quedan desactivados para evitar envíos dobles. Nuevo componente reutilizable `Spinner`. |
+| 25 jun 2026 | Frontend | Las páginas sin contenido (favoritos y pedidos vacíos) muestran un estado vacío con icono, mensaje y un botón "Explorar catálogo" que invita a seguir, en lugar de una frase suelta. Nuevo componente reutilizable `EmptyState`. |
+| 25 jun 2026 | Frontend | El perfil muestra campos tipo skeleton mientras se cargan los datos del usuario, evitando el parpadeo del formulario en blanco. |
+| 25 jun 2026 | Frontend | El catálogo muestra una rejilla de tarjetas skeleton animadas mientras llegan los productos, en lugar del texto "Cargando". |
+| 25 jun 2026 | Frontend | Detalles de experiencia: la página sube al inicio al cambiar de ruta, cada página fija un título de pestaña propio (mejor navegación y SEO), y se añade un contorno de foco visible para navegación con teclado (accesibilidad). Nuevo componente `ScrollAndTitle`. |
