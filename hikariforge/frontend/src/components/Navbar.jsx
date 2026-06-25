@@ -5,6 +5,7 @@ import { useSettings } from "../context/SettingsContext";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useProductos } from "../context/ProductosContext";
+import logoHorizontal from "../assets/logo-horizontal.svg";
 
 // Cabecera: logo con efecto, mega-menús, idioma, tema, buscador, cuenta y carrito.
 export default function Navbar({ onOpenSearch }) {
@@ -40,7 +41,7 @@ export default function Navbar({ onOpenSearch }) {
   return (
     <nav className="hf-nav">
       <Link to="/" className="hf-logo">
-        <span className="kanji">光</span><span className="name">HikariForge</span>
+        <img src={logoHorizontal} alt="HikariForge" className="hf-logo-img" />
       </Link>
 
       <div className="hf-navlinks">

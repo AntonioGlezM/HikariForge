@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useSettings } from "../context/SettingsContext";
 import { useProductos } from "../context/ProductosContext";
+import logoHorizontal from "../assets/logo-horizontal.svg";
 
 export default function Footer() {
   const { tr, trCat } = useSettings();
@@ -11,9 +12,8 @@ export default function Footer() {
       <div className="hf-wrap">
         <div className="hf-footcols">
           <div>
-            <div className="hf-logo" style={{ fontSize: "1.35rem" }}>
-              <span className="kanji" style={{ fontSize: "1.5rem" }}>光</span>
-              <span className="name">HikariForge</span>
+            <div className="hf-logo">
+              <img src={logoHorizontal} alt="HikariForge" className="hf-logo-img foot" />
             </div>
             <p style={{ marginTop: 12 }}>{tr.footTag}</p>
           </div>

@@ -627,3 +627,10 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
 .hf-btn:focus-visible,.hf-input:focus-visible,a:focus-visible,
 .hf-fancysel-btn:focus-visible,button:focus-visible{
   outline:2px solid var(--accent);outline-offset:2px;}
+
+/* ===== Logo en imagen (SVG horizontal: isotipo + Hikari) ===== */
+.hf-logo-img{height:38px;width:auto;display:block;}
+.hf-logo-img.foot{height:44px;}
+/* En tema oscuro el logo en grises se ve bien; el rayo blanco destaca.
+   Si en claro quedara muy oscuro sobre fondo claro, ya contrasta por el gris. */
+@media (max-width:560px){ .hf-logo-img{height:32px;} }
