@@ -144,12 +144,27 @@ export default function CatalogoPage() {
       )}
 
       {error && <p className="hf-error">{tr.loadError}</p>}
-      {cargando && !datos && <p className="hf-sub">{tr.loading}</p>}
       {!cargando && datos && lista.length === 0 && <p className="hf-sub">{tr.noResults}</p>}
 
-      <div className="hf-grid">
-        {lista.map((p) => <ProductCard key={p.id} producto={p} />)}
-      </div>
+      {/* Mientras llegan los productos, recuadros con la forma de las tarjetas */}
+      {cargando && !datos ? (
+        <div className="hf-grid">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="hf-card-skel">
+              <div className="hf-skel-thumb" />
+              <div className="hf-skel-body">
+                <span className="hf-skel-line short" />
+                <span className="hf-skel-line" />
+                <span className="hf-skel-line tiny" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="hf-grid">
+          {lista.map((p) => <ProductCard key={p.id} producto={p} />)}
+        </div>
+      )}
 
       {totalPaginas > 1 && (
         <div className="hf-pagination">

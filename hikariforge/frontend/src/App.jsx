@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
+import { useSettings } from "./context/SettingsContext";
+import ScrollAndTitle from "./components/ScrollAndTitle";
 import AnnounceBar from "./components/AnnounceBar";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -22,9 +24,11 @@ import NotFoundPage from "./pages/NotFoundPage";
 // Layout general: barra de anuncios, nav, rutas, footer y los paneles flotantes.
 export default function App() {
   const [searchOpen, setSearchOpen] = useState(false);
+  const { tr } = useSettings();
 
   return (
     <div className="hf-app">
+      <ScrollAndTitle tr={tr} />
       <AnnounceBar />
       <Navbar onOpenSearch={() => setSearchOpen(true)} />
 

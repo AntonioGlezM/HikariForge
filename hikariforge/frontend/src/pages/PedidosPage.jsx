@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { misPedidos } from "../api/pedidos";
 import { useSettings } from "../context/SettingsContext";
+import EmptyState from "../components/EmptyState";
 
 const ESTADOS = ["PENDIENTE", "PAGADO", "ENVIADO", "ENTREGADO"];
 
@@ -26,7 +27,10 @@ export default function PedidosPage() {
         <h2 className="hf-h2">{tr.ordersTitle}</h2>
       </div>
 
-      {pedidos.length === 0 && <p className="hf-sub">{tr.ordersEmpty}</p>}
+      {pedidos.length === 0 && (
+        <EmptyState icon="ti-package" title={tr.ordersEmptyTitle} text={tr.ordersEmpty}
+                    ctaLabel={tr.ctaCatalog} ctaTo="/catalogo" />
+      )}
 
       <div className="hf-support">
         {pedidos.map((p) => {
