@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { listarProductos, listarMarcas, listarColores } from "../api/productos";
 import { useSettings } from "../context/SettingsContext";
@@ -55,8 +55,8 @@ export default function CatalogoPage() {
   // Cualquier cambio de filtro vuelve a la primera página.
   useEffect(() => { setPagina(0); }, [texto, categoriaId, marca, precioMax, enStock, conexion, pesoMax, color, rgb]);
 
-  // Petición al backend con los filtros activos.
-  useEffect(() => {
+  // Petición al backend con los filtros activos (reutilizable para "Reintentar").
+  const cargar = useCallback(() => {
     setCargando(true);
     const query = { page: pagina, size: TAM_PAGINA };
     if (texto.trim()) query.texto = texto.trim();
@@ -74,6 +74,8 @@ export default function CatalogoPage() {
       .catch(() => setError(true))
       .finally(() => setCargando(false));
   }, [pagina, texto, categoriaId, marca, precioMax, enStock, conexion, pesoMax, color, rgb]);
+
+  useEffect(() => { cargar(); }, [cargar]);
 
   const hayFiltros = texto || categoriaId || marca || precioMax || enStock || conexion || pesoMax || color || rgb;
   const limpiar = () => {
@@ -143,37 +145,47 @@ export default function CatalogoPage() {
         </div>
       )}
 
-      {error && <p className="hf-error">{tr.loadError}</p>}
-      {!cargando && datos && lista.length === 0 && <p className="hf-sub">{tr.noResults}</p>}
-
-      {/* Mientras llegan los productos, recuadros con la forma de las tarjetas */}
-      {cargando && !datos ? (
-        <div className="hf-grid">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="hf-card-skel">
-              <div className="hf-skel-thumb" />
-              <div className="hf-skel-body">
-                <span className="hf-skel-line short" />
-                <span className="hf-skel-line" />
-                <span className="hf-skel-line tiny" />
-              </div>
-            </div>
-          ))}
+      {error ? (
+        <div className="hf-neterror">
+          <div className="hf-neterror-ic"><i className="ti ti-wifi-off" /></div>
+          <h3>{tr.netErrorTitle}</h3>
+          <p>{tr.netErrorText}</p>
+          <button className="hf-btn hf-btn-main" onClick={cargar}>{tr.retry}</button>
         </div>
       ) : (
-        <div className="hf-grid">
-          {lista.map((p) => <ProductCard key={p.id} producto={p} />)}
-        </div>
-      )}
+        <>
+          {!cargando && datos && lista.length === 0 && <p className="hf-sub">{tr.noResults}</p>}
 
-      {totalPaginas > 1 && (
-        <div className="hf-pagination">
-          <button className="hf-btn" disabled={pagina === 0 || cargando}
-                  onClick={() => setPagina((n) => Math.max(0, n - 1))}>{tr.prev}</button>
-          <span className="hf-page-info">{tr.page} {pagina + 1} {tr.of} {totalPaginas}</span>
-          <button className="hf-btn" disabled={pagina >= totalPaginas - 1 || cargando}
-                  onClick={() => setPagina((n) => n + 1)}>{tr.next}</button>
-        </div>
+          {/* Mientras llegan los productos, recuadros con la forma de las tarjetas */}
+          {cargando && !datos ? (
+            <div className="hf-grid">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="hf-card-skel">
+                  <div className="hf-skel-thumb" />
+                  <div className="hf-skel-body">
+                    <span className="hf-skel-line short" />
+                    <span className="hf-skel-line" />
+                    <span className="hf-skel-line tiny" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="hf-grid">
+              {lista.map((p) => <ProductCard key={p.id} producto={p} />)}
+            </div>
+          )}
+
+          {totalPaginas > 1 && (
+            <div className="hf-pagination">
+              <button className="hf-btn" disabled={pagina === 0 || cargando}
+                      onClick={() => setPagina((n) => Math.max(0, n - 1))}>{tr.prev}</button>
+              <span className="hf-page-info">{tr.page} {pagina + 1} {tr.of} {totalPaginas}</span>
+              <button className="hf-btn" disabled={pagina >= totalPaginas - 1 || cargando}
+                      onClick={() => setPagina((n) => n + 1)}>{tr.next}</button>
+            </div>
+          )}
+        </>
       )}
     </main>
   );

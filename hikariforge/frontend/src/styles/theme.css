@@ -652,3 +652,35 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
 /* En tema oscuro el logo en grises se ve bien; el rayo blanco destaca.
    Si en claro quedara muy oscuro sobre fondo claro, ya contrasta por el gris. */
 @media (max-width:560px){ .hf-logo-img{height:48px;} }
+
+/* ===== Detalles de experiencia: toasts, confirmación, error de red ===== */
+
+/* Toasts (avisos breves abajo centro) */
+.hf-toasts{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:300;
+  display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;}
+.hf-toast{display:flex;align-items:center;gap:8px;background:var(--ink);color:var(--bg);
+  padding:10px 18px;border-radius:999px;font-size:.9rem;font-weight:800;box-shadow:0 10px 30px -8px rgba(0,0,0,.45);
+  animation:hf-toast-in .25s cubic-bezier(.2,.7,.2,1);}
+.hf-toast i{font-size:1.05rem;}
+@keyframes hf-toast-in{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* Confirmación de vaciar carrito */
+.hf-cart-clear{width:100%;margin-top:10px;background:transparent;border:none;color:var(--muted);
+  font-size:.86rem;font-weight:700;cursor:pointer;padding:8px;transition:color .2s;}
+.hf-cart-clear:hover{color:var(--error);}
+.hf-confirm{margin-top:10px;background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center;}
+.hf-confirm>span{display:block;font-size:.86rem;color:var(--ink);margin-bottom:10px;}
+.hf-confirm-actions{display:flex;gap:8px;justify-content:center;}
+.hf-confirm-cancel{background:transparent;border:1.5px solid var(--line);color:var(--ink);
+  padding:7px 16px;border-radius:999px;font-size:.82rem;font-weight:800;cursor:pointer;}
+.hf-confirm-ok{background:var(--error);border:none;color:#fff;padding:7px 16px;border-radius:999px;
+  font-size:.82rem;font-weight:800;cursor:pointer;}
+
+/* Estado de error de red (catálogo) */
+.hf-neterror{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  gap:12px;padding:56px 24px;}
+.hf-neterror-ic{width:68px;height:68px;border-radius:50%;background:var(--soft);display:flex;align-items:center;justify-content:center;}
+.hf-neterror-ic i{font-size:30px;color:var(--muted);}
+.hf-neterror h3{margin:0;font-size:1.2rem;font-weight:900;}
+.hf-neterror p{margin:0;color:var(--muted);max-width:360px;}
+.hf-neterror .hf-btn{margin-top:6px;}
