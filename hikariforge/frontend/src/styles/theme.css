@@ -8,20 +8,20 @@
    --error SOLO para avisos: agotado, sin stock, errores
    ============================================================ */
 :root{
-  --bg:#ffffff; --soft:#f6f5fb; --card:#ffffff;
-  --ink:#221f2e; --muted:#6e6a7c; --line:#ebe9f2;
-  --accent:#6c5ce7; --accent-deep:#5246c9; --accent-soft:#efedff;
+  --bg:#ffffff; --soft:#f4f5fb; --card:#ffffff;
+  --ink:#1f1f2e; --muted:#6a6c7c; --line:#e9eaf2;
+  --accent:#4e48e0; --accent-deep:#3f3bb7; --accent-soft:#edecfb;
   --error:#e5484d; --error-soft:#ffefef;
-  --hero-bg:#0d0b14; --hero-ink:#f6f4fa; --hero-muted:#a39dae;
-  --shadow:0 24px 48px -24px rgba(34,31,46,.25);
+  --hero-bg:#0b0b16; --hero-ink:#f4f4fa; --hero-muted:#9d9eae;
+  --shadow:0 24px 48px -24px rgba(31,31,46,.25);
   --brand:"Space Grotesk",sans-serif;
   --jp:"Shippori Mincho",serif;
   --body:"Nunito",system-ui,sans-serif;
 }
 [data-theme="dark"]{
-  --bg:#121019; --soft:#1a1724; --card:#1d1a28;
-  --ink:#f1eef8; --muted:#9d97ab; --line:#2b2738;
-  --accent:#8d7ffa; --accent-deep:#a89dff; --accent-soft:#272138;
+  --bg:#101019; --soft:#171724; --card:#1a1a28;
+  --ink:#eeeef8; --muted:#9799ab; --line:#272838;
+  --accent:#6d68e5; --accent-deep:#8a86ea; --accent-soft:#1c1a3c;
   --error:#ff6b6e; --error-soft:#3a2326;
   --shadow:0 24px 48px -24px rgba(0,0,0,.6);
 }
