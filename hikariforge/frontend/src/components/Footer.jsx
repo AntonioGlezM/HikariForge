@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useSettings } from "../context/SettingsContext";
 import { useProductos } from "../context/ProductosContext";
-import logoHorizontal from "../assets/logo-horizontal.svg";
+import logoHielo from "../assets/logo-horizontal-hielo.svg";
 
 // Footer estilo tienda: franja de garantías arriba + cuerpo oscuro (siempre, en
 // ambos temas) con columnas de enlaces, redes y barra inferior con pagos.
@@ -38,7 +38,7 @@ export default function Footer() {
         <div className="hf-wrap">
           <div className="hf-footcols">
             <div className="hf-foot-brand">
-              <img src={logoHorizontal} alt="HikariForge" className="hf-logo-img foot" />
+              <img src={logoHielo} alt="HikariForge" className="hf-logo-img foot" />
               <p>{tr.footTag}</p>
               <div className="hf-foot-social">
                 <a href="#" aria-label="X (Twitter)"><i className="ti ti-brand-x" /></a>
