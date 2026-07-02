@@ -684,3 +684,25 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
 .hf-neterror h3{margin:0;font-size:1.2rem;font-weight:900;}
 .hf-neterror p{margin:0;color:var(--muted);max-width:360px;}
 .hf-neterror .hf-btn{margin-top:6px;}
+
+/* ===== Menú de navegación móvil ===== */
+/* La hamburguesa solo aparece cuando los enlaces del navbar se ocultan */
+.hf-burger{display:none;}
+@media (max-width:860px){ .hf-burger{display:grid;} }
+.hf-mobile-menu{position:fixed;top:12px;left:12px;height:calc(100% - 24px);width:320px;max-width:88vw;
+  background:var(--card);border:1px solid var(--line);border-radius:26px;z-index:130;
+  transform:translateX(calc(-100% - 24px));transition:transform .35s cubic-bezier(.2,.7,.2,1);
+  padding:22px;display:flex;flex-direction:column;box-shadow:var(--shadow);overflow:auto;}
+.hf-mobile-menu.open{transform:translateX(0);}
+.hf-mm-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.hf-mm-head b{font-size:1.15rem;font-weight:900;}
+.hf-mm-nav{display:flex;flex-direction:column;gap:4px;}
+.hf-mm-nav .lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);
+  font-weight:900;margin:16px 0 6px;}
+.hf-mm-nav button{display:flex;align-items:center;justify-content:space-between;width:100%;
+  background:transparent;border:none;color:var(--ink);font-family:var(--body);font-weight:800;
+  font-size:1rem;padding:11px 10px;border-radius:12px;cursor:pointer;transition:background .15s;}
+.hf-mm-nav button:hover{background:var(--soft);}
+.hf-mm-nav button i{color:var(--muted);font-size:1rem;}
+.hf-mm-nav button.destacado{background:var(--accent);color:var(--on-accent);margin-top:4px;}
+.hf-mm-nav button.destacado i{color:var(--on-accent);}

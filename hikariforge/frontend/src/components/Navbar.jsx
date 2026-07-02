@@ -5,6 +5,7 @@ import { useSettings } from "../context/SettingsContext";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useProductos } from "../context/ProductosContext";
+import MobileMenu from "./MobileMenu";
 import logoNegro from "../assets/logo-horizontal-negro.svg";
 import logoHielo from "../assets/logo-horizontal-hielo.svg";
 
@@ -12,6 +13,7 @@ import logoHielo from "../assets/logo-horizontal-hielo.svg";
 export default function Navbar({ onOpenSearch }) {
   const { tr, trCat, lang, setLang, theme, toggleTheme } = useSettings();
   const [langOpen, setLangOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [accOpen, setAccOpen] = useState(false);
   const langRef = useRef(null);
   const accRef = useRef(null);
@@ -41,6 +43,11 @@ export default function Navbar({ onOpenSearch }) {
 
   return (
     <nav className="hf-nav">
+      {/* Hamburguesa: solo visible en móvil (donde se ocultan los enlaces) */}
+      <button className="hf-icon-btn hf-burger" onClick={() => setMenuOpen(true)} aria-label="Menú">
+        <i className="ti ti-menu-2" />
+      </button>
+
       <Link to="/" className="hf-logo">
         <img src={theme === "dark" ? logoHielo : logoNegro} alt="HikariForge" className="hf-logo-img" />
       </Link>
@@ -146,6 +153,8 @@ export default function Navbar({ onOpenSearch }) {
           <span className={`hf-cart-badge ${unidades ? "show" : ""}`}>{unidades}</span>
         </button>
       </div>
+
+      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
     </nav>
   );
 }
