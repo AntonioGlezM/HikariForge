@@ -17,4 +17,6 @@ public record AtributoResponse(
         List<String> opciones,
         String seccion,
         String unidad,
-        Integer orden) {}
+        Integer orden,
+        String icono,
+        Boolean destacado) {}

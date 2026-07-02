@@ -16,4 +16,6 @@ public record AtributoRequest(
         @Size(max = 500) String opciones,
         @Size(max = 60) String seccion,
         @Size(max = 20) String unidad,
-        Integer orden) {}
+        Integer orden,
+        @Size(max = 40) String icono,
+        Boolean destacado) {}

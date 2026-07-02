@@ -8,6 +8,7 @@ import { useProductos } from "../context/ProductosContext";
 import ProductCard from "../components/ProductCard";
 import Reviews from "../components/Reviews";
 import SpecSheet from "../components/SpecSheet";
+import SpecHighlights from "../components/SpecHighlights";
 import Accordion from "../components/Accordion";
 
 // Ficha de producto: carga por id, registra la visita en "vistos recientemente"
@@ -83,6 +84,9 @@ export default function ProductoPage() {
           <button className="hf-add" style={{ maxWidth: 320 }} disabled={agotado} onClick={() => add(p)}>
             {agotado ? tr.noStock : tr.add}
           </button>
+
+          {/* Cabecera de especificaciones destacadas (los atributos importantes) */}
+          <SpecHighlights categoriaId={p.categoriaId} specs={p.specs} tr={tr} />
         </div>
       </div>
 

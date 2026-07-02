@@ -706,3 +706,38 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
 .hf-mm-nav button i{color:var(--muted);font-size:1rem;}
 .hf-mm-nav button.destacado{background:var(--accent);color:var(--on-accent);margin-top:4px;}
 .hf-mm-nav button.destacado i{color:var(--on-accent);}
+
+/* ===== Cabecera de specs destacadas (estilo ficha de tienda) ===== */
+.hf-highlights{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;margin-top:24px;
+  border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--line);max-width:520px;}
+.hf-hl-item{display:flex;align-items:center;gap:12px;padding:16px 18px;background:var(--card);}
+.hf-hl-item i{font-size:1.4rem;color:var(--muted);flex-shrink:0;}
+.hf-hl-txt{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.hf-hl-txt .k{font-weight:900;font-size:.92rem;color:var(--ink);}
+.hf-hl-txt .v{color:var(--muted);font-size:.86rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+@media (max-width:560px){.hf-highlights{grid-template-columns:1fr;}}
+
+/* ===== Tabla de especificaciones (dos columnas, estilo limpio) ===== */
+.hf-spectable{width:100%;border-collapse:collapse;max-width:760px;}
+.hf-spectable thead th{text-align:left;padding:14px 16px;font-size:.72rem;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--muted);font-weight:900;border-bottom:1.5px solid var(--line);}
+.hf-spectable tr.sec td{padding:18px 16px 8px;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;
+  color:var(--accent);font-weight:900;}
+.hf-spectable td.item{padding:13px 16px;color:var(--muted);font-weight:700;width:38%;border-bottom:1px solid var(--line);}
+.hf-spectable td.val{padding:13px 16px;color:var(--ink);font-weight:700;border-bottom:1px solid var(--line);}
+@media (max-width:560px){.hf-spectable td.item,.hf-spectable td.val{padding:11px 10px;font-size:.88rem;}}
+
+/* Check inline en el formulario de atributos */
+.hf-fld-check .hf-check-inline{display:flex;align-items:center;gap:8px;font-weight:700;font-size:.9rem;color:var(--ink);cursor:pointer;}
+
+/* ===== Ajustes responsive menores (fase 0) ===== */
+/* Marquesina: en móvil los iconos sociales se ocultan para no chocar con el texto */
+@media (max-width:640px){
+  .hf-announce .socials{display:none;}
+  .hf-marquee{width:100%;}
+}
+/* Hero: titular más contenido en pantallas pequeñas */
+@media (max-width:560px){
+  .hf-hero h1{font-size:clamp(1.9rem,9vw,2.6rem);letter-spacing:-.5px;}
+  .hf-hero{padding-left:18px;padding-right:18px;}
+}

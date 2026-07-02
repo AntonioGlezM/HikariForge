@@ -53,4 +53,13 @@ public class AtributoCategoria {
     @Column(nullable = false)
     @Builder.Default
     private Integer orden = 0;
+
+    // Nombre de icono (Tabler) para la cabecera de specs destacadas.
+    @Column(length = 40)
+    private String icono;
+
+    // Si el atributo aparece en la cabecera de specs destacadas de la ficha.
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean destacado = false;
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { listarAtributos } from "../api/atributos";
 
 /**
@@ -50,21 +50,25 @@ export default function SpecSheet({ categoriaId, specs, tr, embedded = false }) 
   return (
     <section className={embedded ? "hf-specsheet embedded" : "hf-specsheet"}>
       {!embedded && <h2 className="hf-h2">{tr.specSheetTitle}</h2>}
-      <div className="hf-specsheet-grid">
-        {Object.entries(secciones).map(([seccion, attrs]) => (
-          <div key={seccion} className="hf-specsheet-block">
-            <h3>{seccion}</h3>
-            <dl>
+      <table className="hf-spectable">
+        <thead>
+          <tr><th>{tr.specColItem}</th><th>{tr.specColValue}</th></tr>
+        </thead>
+        <tbody>
+          {Object.entries(secciones).map(([seccion, attrs]) => (
+            <Fragment key={seccion}>
+              {/* Fila de sección como subtítulo dentro de la tabla */}
+              <tr className="sec"><td colSpan={2}>{seccion}</td></tr>
               {attrs.map((a) => (
-                <div key={a.id} className="hf-specrow">
-                  <dt>{a.etiqueta}</dt>
-                  <dd>{mostrar(a)}</dd>
-                </div>
+                <tr key={a.id}>
+                  <td className="item">{a.etiqueta}</td>
+                  <td className="val">{mostrar(a)}</td>
+                </tr>
               ))}
-            </dl>
-          </div>
-        ))}
-      </div>
+            </Fragment>
+          ))}
+        </tbody>
+      </table>
     </section>
   );
 }

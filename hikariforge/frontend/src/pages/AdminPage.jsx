@@ -131,7 +131,7 @@ const tieneOferta = !!form.precioOferta;
   };
 
   /* ===== Catálogo de atributos ===== */
-  const ATTR_VACIO = { categoriaId: "", clave: "", etiqueta: "", tipo: "TEXTO", opciones: "", seccion: "", unidad: "", orden: 0 };
+  const ATTR_VACIO = { categoriaId: "", clave: "", etiqueta: "", tipo: "TEXTO", opciones: "", seccion: "", unidad: "", orden: 0, icono: "", destacado: false };
   const [catAttr, setCatAttr] = useState("");      // categoría seleccionada para ver/editar atributos
   const [atributos, setAtributos] = useState([]);
   const [attrForm, setAttrForm] = useState(null);  // null = formulario cerrado
@@ -148,13 +148,14 @@ const tieneOferta = !!form.precioOferta;
   const abrirEditarAttr = (a) => {
     setAttrForm({ categoriaId: catAttr, clave: a.clave, etiqueta: a.etiqueta, tipo: a.tipo,
                   opciones: (a.opciones || []).join("|"), seccion: a.seccion ?? "", unidad: a.unidad ?? "",
-                  orden: a.orden ?? 0 });
+                  orden: a.orden ?? 0, icono: a.icono ?? "", destacado: !!a.destacado });
     setAttrEditId(a.id);
   };
 
   const guardarAttr = async (e) => {
     e.preventDefault();
     const cuerpo = { ...attrForm, orden: Number(attrForm.orden) || 0,
+                     destacado: !!attrForm.destacado,
                      opciones: attrForm.tipo === "LISTA" ? (attrForm.opciones || null) : null };
     try {
       if (attrEditId) await actualizarAtributo(attrEditId, cuerpo);
@@ -447,6 +448,20 @@ const tieneOferta = !!form.precioOferta;
                     <span>{tr.admAttrOrder}</span>
                     <input className="hf-input" type="number" value={attrForm.orden} onChange={attrCampo("orden")} />
                     <small>{tr.admAttrOrderHelp}</small>
+                  </label>
+                  <label className="hf-fld">
+                    <span>{tr.admAttrIcon}</span>
+                    <input className="hf-input" value={attrForm.icono} onChange={attrCampo("icono")} placeholder="crosshair, battery…" />
+                    <small>{tr.admAttrIconHelp}</small>
+                  </label>
+                  <label className="hf-fld hf-fld-check">
+                    <span>{tr.admAttrFeatured}</span>
+                    <label className="hf-check-inline">
+                      <input type="checkbox" checked={attrForm.destacado}
+                             onChange={(e) => setAttrForm((f) => ({ ...f, destacado: e.target.checked }))} />
+                      {tr.admAttrFeaturedLabel}
+                    </label>
+                    <small>{tr.admAttrFeaturedHelp}</small>
                   </label>
                 </div>
               </fieldset>

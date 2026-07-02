@@ -46,6 +46,8 @@ public class AtributoService {
                 .seccion(req.seccion())
                 .unidad(req.unidad())
                 .orden(req.orden() != null ? req.orden() : 0)
+                .icono(req.icono())
+                .destacado(Boolean.TRUE.equals(req.destacado()))
                 .build();
         return aResponse(atributoRepository.save(a));
     }
@@ -61,6 +63,8 @@ public class AtributoService {
         a.setSeccion(req.seccion());
         a.setUnidad(req.unidad());
         a.setOrden(req.orden() != null ? req.orden() : 0);
+        a.setIcono(req.icono());
+        a.setDestacado(Boolean.TRUE.equals(req.destacado()));
         return aResponse(atributoRepository.save(a));
     }
 
@@ -84,6 +88,7 @@ public class AtributoService {
                 ? List.of()
                 : List.of(a.getOpciones().split("\\|"));
         return new AtributoResponse(a.getId(), a.getCategoria().getId(), a.getClave(),
-                a.getEtiqueta(), a.getTipo(), opciones, a.getSeccion(), a.getUnidad(), a.getOrden());
+                a.getEtiqueta(), a.getTipo(), opciones, a.getSeccion(), a.getUnidad(), a.getOrden(),
+                a.getIcono(), a.getDestacado());
     }
 }
