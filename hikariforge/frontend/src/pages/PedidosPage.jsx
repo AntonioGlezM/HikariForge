@@ -80,14 +80,17 @@ export default function PedidosPage() {
                 </div>
               )}
 
-              {/* Dirección de envío (los pedidos antiguos pueden no tenerla) */}
+              {/* Dirección de envío en vertical (los pedidos antiguos pueden no tenerla) */}
               {p.destinatario && (
                 <div className="hf-order-ship">
-                  <i className="ti ti-map-pin" />
-                  <span>
-                    {p.destinatario} · {p.direccion}, {p.ciudad} ({p.codigoPostal}), {p.provincia} · {p.telefono}
-                    {p.notas && <em> · “{p.notas}”</em>}
-                  </span>
+                  <div className="hf-ship-head"><i className="ti ti-map-pin" /> {tr.shipTo}</div>
+                  <div className="hf-ship-lines">
+                    <span>{p.destinatario}</span>
+                    <span>{p.direccion}</span>
+                    <span>{p.codigoPostal} {p.ciudad}, {p.provincia}</span>
+                    <span>{p.telefono}</span>
+                    {p.notas && <em>“{p.notas}”</em>}
+                  </div>
                 </div>
               )}
 

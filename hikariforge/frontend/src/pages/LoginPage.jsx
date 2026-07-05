@@ -12,7 +12,14 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(() => {
+    // Si el interceptor nos trajo aquí por sesión caducada, lo explicamos.
+    if (sessionStorage.getItem("sesionCaducada")) {
+      sessionStorage.removeItem("sesionCaducada");
+      return tr.sessionExpired;
+    }
+    return null;
+  });
   const [enviando, setEnviando] = useState(false);
 
   const onSubmit = async (e) => {

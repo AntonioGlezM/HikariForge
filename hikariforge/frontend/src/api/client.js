@@ -13,13 +13,16 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Si la API responde 401 (token caducado), limpia la sesión y manda al login.
+// Si la API responde 401 (token caducado o ausente), limpia la sesión y manda
+// al login dejando un aviso para que la página de login explique el porqué.
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+      // El login lee esta marca una sola vez y muestra el aviso.
+      sessionStorage.setItem("sesionCaducada", "1");
       if (window.location.pathname !== "/login") window.location.href = "/login";
     }
     return Promise.reject(error);

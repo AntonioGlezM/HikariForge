@@ -765,9 +765,12 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
 @media (max-width:560px){.hf-co-grid{grid-template-columns:1fr;}.hf-co-grid .wide{grid-column:auto;}}
 
 /* Pedidos: dirección de envío, cancelación e insignia de cancelado */
-.hf-order-ship{display:flex;align-items:flex-start;gap:8px;margin:12px 0 2px;color:var(--muted);font-size:.86rem;line-height:1.5;}
-.hf-order-ship i{flex-shrink:0;margin-top:2px;}
-.hf-order-ship em{font-style:italic;}
+.hf-order-ship{margin:14px 0 4px;font-size:.86rem;}
+.hf-ship-head{display:flex;align-items:center;gap:6px;font-weight:900;color:var(--ink);
+  font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.hf-ship-lines{display:flex;flex-direction:column;gap:2px;color:var(--muted);line-height:1.55;
+  border-left:2px solid var(--line);padding-left:12px;}
+.hf-ship-lines em{font-style:italic;}
 .hf-order-cancelled{display:flex;align-items:center;gap:8px;background:var(--error-soft);color:var(--error);
   font-weight:900;font-size:.9rem;border-radius:12px;padding:10px 14px;margin:10px 0;}
 .hf-order-cancel-btn{margin-top:14px;background:transparent;border:none;color:var(--error);

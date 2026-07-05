@@ -25,6 +25,12 @@ export default function CheckoutPage() {
   const [procesando, setProcesando] = useState(false);
 
   const campo = (k) => (e) => setEnvio((f) => ({ ...f, [k]: e.target.value }));
+  // CP internacional: dígitos y letras (Reino Unido, Países Bajos…), más
+  // espacio y guion (Portugal). Se normaliza a mayúsculas al teclear.
+  const campoCP = (e) => setEnvio((f) =>
+    ({ ...f, codigoPostal: e.target.value.toUpperCase().replace(/[^A-Z0-9\s-]/g, "") }));
+  // Teléfono: dígitos, espacios y el "+" del prefijo internacional.
+  const campoTel = (e) => setEnvio((f) => ({ ...f, telefono: e.target.value.replace(/[^\d\s+]/g, "") }));
 
   const confirmar = async (e) => {
     e.preventDefault();
@@ -37,7 +43,10 @@ export default function CheckoutPage() {
       toast(tr.orderCreated, "package");
       navigate("/pedidos");
     } catch (err) {
-      setError(err.response?.data?.mensaje ?? tr.orderError);
+      const data = err.response?.data;
+      // Si la API devuelve errores de validación por campo, los mostramos juntos.
+      const detalle = data?.errores ? Object.values(data.errores).join(" · ") : null;
+      setError(detalle ?? data?.mensaje ?? tr.orderError);
       setProcesando(false);
     }
   };
@@ -73,10 +82,10 @@ export default function CheckoutPage() {
             <input className="hf-input" placeholder={tr.shipProvince} value={envio.provincia}
                    onChange={campo("provincia")} required maxLength={80} autoComplete="address-level1" />
             <input className="hf-input" placeholder={tr.shipZip} value={envio.codigoPostal}
-                   onChange={campo("codigoPostal")} required maxLength={10} autoComplete="postal-code"
-                   pattern="[0-9]{4,10}" title={tr.shipZipHelp} />
+                   onChange={campoCP} required maxLength={10} autoComplete="postal-code"
+                   pattern="[A-Za-z0-9][A-Za-z0-9 -]{2,9}" title={tr.shipZipHelp} />
             <input className="hf-input" type="tel" placeholder={tr.shipPhone} value={envio.telefono}
-                   onChange={campo("telefono")} required maxLength={20} autoComplete="tel" />
+                   onChange={campoTel} required maxLength={20} autoComplete="tel" />
             <textarea className="hf-input wide" placeholder={tr.shipNotes} value={envio.notas}
                       onChange={campo("notas")} maxLength={300} rows={2} />
           </div>

@@ -86,7 +86,8 @@ export default function CatalogoPage() {
   };
 
   const lista = datos?.content ?? [];
-  const totalPaginas = datos?.totalPages ?? 0;
+  // Con VIA_DTO los metadatos de paginación viajan dentro de "page".
+  const totalPaginas = datos?.page?.totalPages ?? 0;
   const tituloCat = useMemo(
     () => categoriasFull.find((c) => c.id === categoriaId)?.nombre,
     [categoriaId, categoriasFull]
@@ -99,7 +100,7 @@ export default function CatalogoPage() {
         <h2 className="hf-h2">{tituloCat ? trCat(tituloCat) : tr.catalogTitle}</h2>
         <p className="hf-sub">
           {tituloCat ? tr.catalogCatSub.replace("{cat}", trCat(tituloCat)) : tr.catalogSub}
-          {datos != null && ` · ${datos.totalElements} ${tr.catalogCount}`}
+          {datos != null && ` · ${datos.page?.totalElements ?? 0} ${tr.catalogCount}`}
         </p>
       </div>
 

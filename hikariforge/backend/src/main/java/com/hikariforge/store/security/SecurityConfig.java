@@ -46,6 +46,15 @@ public class SecurityConfig {
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/atributos").permitAll()
                 // El resto requiere estar autenticado.
                 .anyRequest().authenticated())
+            // Sin sesión válida (token ausente o caducado) -> 401 con un mensaje
+            // claro, en vez del 403 mudo por defecto. Así el frontend detecta la
+            // sesión caducada y redirige al login. El 403 queda para su significado
+            // real: autenticado pero sin permisos (p. ej. no-admin en /api/admin).
+            .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authEx) -> {
+                response.setStatus(401);
+                response.setContentType("application/json;charset=UTF-8");
+                response.getWriter().write("{\"mensaje\":\"Sesión caducada o no iniciada. Vuelve a entrar.\"}");
+            }))
             // Ejecuta nuestro filtro JWT antes del filtro estándar de usuario/contraseña.
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
