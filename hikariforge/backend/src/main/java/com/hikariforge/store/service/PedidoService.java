@@ -19,12 +19,14 @@ public class PedidoService {
     private final PedidoRepository pedidoRepository;
     private final ProductoRepository productoRepository;
     private final UsuarioRepository usuarioRepository;
+    private final EmailService emailService;
 
     public PedidoService(PedidoRepository pedidoRepository, ProductoRepository productoRepository,
-                         UsuarioRepository usuarioRepository) {
+                         UsuarioRepository usuarioRepository, EmailService emailService) {
         this.pedidoRepository = pedidoRepository;
         this.productoRepository = productoRepository;
         this.usuarioRepository = usuarioRepository;
+        this.emailService = emailService;
     }
 
     // Crea un pedido del usuario autenticado a partir de las líneas del carrito.
@@ -68,7 +70,42 @@ public class PedidoService {
                     .build());
         }
 
-        return aResponse(pedidoRepository.save(pedido));
+        PedidoResponse respuesta = aResponse(pedidoRepository.save(pedido));
+        enviarConfirmacion(usuario, respuesta); // si el correo falla, el pedido se crea igual
+        return respuesta;
+    }
+
+    // Correo de confirmación con el resumen del pedido y la dirección en vertical.
+    private void enviarConfirmacion(Usuario usuario, PedidoResponse p) {
+        StringBuilder filas = new StringBuilder();
+        for (PedidoResponse.Linea l : p.lineas()) {
+            filas.append("<tr><td style='padding:6px 0;border-bottom:1px solid #eee'>")
+                 .append(l.productoNombre()).append(" ×").append(l.cantidad())
+                 .append("</td><td style='padding:6px 0;border-bottom:1px solid #eee;text-align:right'><b>")
+                 .append(l.precioUnitario().multiply(java.math.BigDecimal.valueOf(l.cantidad())))
+                 .append(" €</b></td></tr>");
+        }
+        String html = """
+                <div style="font-family:Arial,sans-serif;max-width:460px">
+                  <h2 style="letter-spacing:1px">HIKARIFORGE</h2>
+                  <p><b>¡Gracias por tu pedido%s!</b></p>
+                  <p style="color:#777;font-size:13px">Pedido #%s</p>
+                  <table style="width:100%%;border-collapse:collapse;font-size:14px">%s
+                    <tr><td style="padding:10px 0;font-weight:bold">Total</td>
+                        <td style="padding:10px 0;text-align:right;font-weight:bold">%s €</td></tr>
+                  </table>
+                  <p style="font-size:13px;line-height:1.7;margin-top:14px">
+                    <b>Envío a:</b><br>%s<br>%s<br>%s %s, %s<br>%s
+                  </p>
+                  <p style="color:#999;font-size:12px">Te avisaremos cuando tu pedido salga de camino.</p>
+                </div>
+                """.formatted(
+                usuario.getNombre() != null ? ", " + usuario.getNombre() : "",
+                p.id().toString().substring(0, 8),
+                filas, p.total(),
+                p.destinatario(), p.direccion(), p.codigoPostal(), p.ciudad(), p.provincia(), p.telefono());
+        emailService.enviar(usuario.getEmail(),
+                "Confirmación de tu pedido #" + p.id().toString().substring(0, 8) + " — HikariForge", html);
     }
 
     // Pedidos del usuario autenticado, el más reciente primero.

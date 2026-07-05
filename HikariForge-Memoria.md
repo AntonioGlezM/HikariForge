@@ -241,7 +241,7 @@ Esta sección recorre el proyecto en el orden en que se construyó, desde las pr
 
 ## 5. Modelo de datos
 
-La base de datos se compone de ocho tablas principales. Todas las claves primarias son de tipo UUID. El esquema se gestiona con migraciones de Flyway (V1 a V13).
+La base de datos se compone de ocho tablas principales. Todas las claves primarias son de tipo UUID. El esquema se gestiona con migraciones de Flyway (V1 a V14).
 
 | Tabla | Contenido | Relaciones |
 |---|---|---|
@@ -433,3 +433,7 @@ Cambios, correcciones y refinamientos que no constituyen un módulo completo per
 | 5 jul 2026 | Frontend | Al detectar el 401 de sesión caducada, el interceptor limpia la sesión, deja una marca y redirige al login, que muestra el aviso "Tu sesión ha caducado. Vuelve a entrar para continuar" en lugar de aparecer sin explicación. |
 | 5 jul 2026 | Frontend | Mis pedidos: la dirección de envío pasa de una sola línea a formato vertical tipo etiqueta de paquete (cabecera "Envío a" con icono y las líneas destinatario / dirección / CP ciudad, provincia / teléfono / notas, con un filete lateral). |
 | 5 jul 2026 | Frontend | La confirmación de cancelar un pedido ya no menciona la reposición del stock (detalle interno de la tienda): solo pregunta "¿Seguro que quieres cancelar este pedido?". El stock se sigue reponiendo igual en el backend. |
+| 5 jul 2026 | Backend | Fase 2 del roadmap — servicio de email transaccional: dependencia spring-boot-starter-mail, EmailService con interruptor dev/real (por defecto los correos se imprimen en la consola del backend; con MAIL_ENABLED=true y credenciales SMTP en variables de entorno se envían de verdad; el fallo de un correo nunca rompe la operación que lo origina). |
+| 5 jul 2026 | Backend | Recuperación de contraseña: migración V14 (tabla password_reset_token), tokens aleatorios de un solo uso con caducidad de 45 minutos, endpoints públicos POST /api/auth/recuperar (siempre responde 200, no revela si el email existe) y POST /api/auth/restablecer (valida token no usado y no caducado, cifra y guarda la nueva contraseña). Email de recuperación con botón y aviso de caducidad. |
+| 5 jul 2026 | Backend | Confirmación de pedido por email: al crear un pedido se envía un correo con el número, las líneas, el total y la dirección de envío en formato vertical (protegido con try interno: si el correo falla, el pedido se crea igual). |
+| 5 jul 2026 | Frontend | Flujo de recuperación: enlace "¿Has olvidado tu contraseña?" en el login, página /recuperar (pide el email y muestra siempre el mismo mensaje neutro) y página /restablecer (lee el token de la URL, pide la contraseña nueva dos veces, valida que coincidan y al éxito lleva al login con un toast). Rutas públicas y traducciones es/en. |

@@ -35,4 +35,16 @@ public class AuthController {
     public AuthResponse google(@Valid @RequestBody GoogleLoginRequest req) {
         return googleAuthService.loginConGoogle(req.idToken());
     }
+
+    // Recuperación de contraseña: siempre responde 200 (no revela si el email existe).
+    @PostMapping("/recuperar")
+    public void recuperar(@Valid @RequestBody RecuperarPasswordRequest req) {
+        authService.recuperarPassword(req.email());
+    }
+
+    // Restablece la contraseña con el token del correo.
+    @PostMapping("/restablecer")
+    public void restablecer(@Valid @RequestBody RestablecerPasswordRequest req) {
+        authService.restablecerPassword(req.token(), req.nuevaPassword());
+    }
 }
