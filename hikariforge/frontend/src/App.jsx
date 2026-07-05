@@ -18,6 +18,7 @@ import AdminPage from "./pages/AdminPage";
 import SoportePage from "./pages/SoportePage";
 import PerfilPage from "./pages/PerfilPage";
 import PedidosPage from "./pages/PedidosPage";
+import CheckoutPage from "./pages/CheckoutPage";
 import FavoritosPage from "./pages/FavoritosPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
@@ -43,6 +44,7 @@ export default function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/perfil" element={<PerfilPage />} />
           <Route path="/pedidos" element={<PedidosPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
         </Route>
         <Route element={<ProtectedRoute adminOnly />}>
           <Route path="/admin" element={<AdminPage />} />

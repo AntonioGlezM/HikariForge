@@ -3,18 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useSettings } from "../context/SettingsContext";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
-import { crearPedido } from "../api/pedidos";
 import { precioEfectivo } from "../utils/precio";
-import Spinner from "./Spinner";
 
 // Panel lateral del carrito: líneas con selector de cantidad, pestaña de vistos
-// recientemente, estado vacío y checkout real contra la API.
+// recientemente, estado vacío y acceso al checkout (página /checkout).
 export default function CartDrawer() {
   const { tr } = useSettings();
   const { items, cambiarCantidad, quitar, clear, total, recent, open, closeCart, tab, setTab } = useCart();
   const { isAuthenticated } = useAuth();
-  const [msg, setMsg] = useState(null);
-  const [procesando, setProcesando] = useState(false);   // checkout en curso
   const [confirmarVaciar, setConfirmarVaciar] = useState(false);
   const navigate = useNavigate();
 
@@ -29,22 +25,10 @@ export default function CartDrawer() {
 
   const irCatalogo = () => { closeCart(); navigate("/catalogo"); };
 
-  // Checkout: las líneas ya tienen su cantidad; se mandan tal cual a la API.
-  const finalizar = async () => {
-    setMsg(null);
-    if (!isAuthenticated) { closeCart(); navigate("/login"); return; }
-    const lineas = items.map((l) => ({ productoId: l.producto.id, cantidad: l.cantidad }));
-    setProcesando(true);
-    try {
-      await crearPedido(lineas);
-      clear();
-      closeCart();
-      navigate("/pedidos");
-    } catch (err) {
-      setMsg(err.response?.data?.mensaje ?? tr.orderError);
-    } finally {
-      setProcesando(false);
-    }
+  // Fase 1: la compra se completa en la página de checkout (dirección + resumen).
+  const finalizar = () => {
+    closeCart();
+    navigate(isAuthenticated ? "/checkout" : "/login");
   };
 
   return (
@@ -95,9 +79,8 @@ export default function CartDrawer() {
         {tab === "cart" && items.length > 0 && (
           <div className="hf-cart-foot">
             <div className="hf-cart-total"><span>Total</span><span>{total.toFixed(2)} €</span></div>
-            {msg && <p className="hf-error" style={{ margin: "0 0 10px" }}>{msg}</p>}
-            <button className="hf-btn hf-btn-main" style={{ width: "100%" }} onClick={finalizar} disabled={procesando}>
-              {procesando ? <><Spinner /> {tr.checkoutProcessing}</> : (isAuthenticated ? tr.checkout : tr.checkoutLogin)}
+            <button className="hf-btn hf-btn-main" style={{ width: "100%" }} onClick={finalizar}>
+              {isAuthenticated ? tr.checkout : tr.checkoutLogin}
             </button>
 
             {/* Vaciar carrito con confirmación en dos pasos */}
@@ -110,7 +93,7 @@ export default function CartDrawer() {
                 </div>
               </div>
             ) : (
-              <button className="hf-cart-clear" onClick={() => setConfirmarVaciar(true)} disabled={procesando}>
+              <button className="hf-cart-clear" onClick={() => setConfirmarVaciar(true)}>
                 {tr.clearCart}
               </button>
             )}

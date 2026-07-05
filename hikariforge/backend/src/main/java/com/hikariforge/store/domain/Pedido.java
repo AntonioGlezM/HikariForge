@@ -31,6 +31,29 @@ public class Pedido {
     @Builder.Default
     private EstadoPedido estado = EstadoPedido.PENDIENTE;
 
+    // --- Dirección de envío (Fase 1). Nullable para el histórico anterior. ---
+    @Column(length = 120)
+    private String destinatario;
+
+    @Column(length = 200)
+    private String direccion;
+
+    @Column(length = 80)
+    private String ciudad;
+
+    @Column(length = 80)
+    private String provincia;
+
+    @Column(name = "codigo_postal", length = 10)
+    private String codigoPostal;
+
+    @Column(length = 20)
+    private String telefono;
+
+    // Instrucciones de entrega opcionales ("dejar en conserjería", etc.).
+    @Column(length = 300)
+    private String notas;
+
     // cascade + orphanRemoval: las líneas viven y mueren con su pedido.
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

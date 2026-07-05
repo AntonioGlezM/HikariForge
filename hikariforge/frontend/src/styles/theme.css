@@ -741,3 +741,35 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
   .hf-hero h1{font-size:clamp(1.9rem,9vw,2.6rem);letter-spacing:-.5px;}
   .hf-hero{padding-left:18px;padding-right:18px;}
 }
+
+/* ===== Checkout (Fase 1): formulario de envío + resumen ===== */
+.hf-checkout{display:grid;grid-template-columns:1.5fr 1fr;gap:26px;align-items:start;}
+.hf-co-form{border:1.5px solid var(--line);border-radius:20px;padding:26px;background:var(--card);}
+.hf-co-form h3{display:flex;align-items:center;gap:9px;margin:0 0 18px;font-size:1.05rem;font-weight:900;}
+.hf-co-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.hf-co-grid .wide{grid-column:1 / 3;}
+.hf-co-grid textarea{resize:vertical;min-height:56px;font-family:var(--body);}
+.hf-co-summary{border:1.5px solid var(--line);border-radius:20px;padding:26px;background:var(--soft);
+  position:sticky;top:110px;}
+.hf-co-summary h3{margin:0 0 14px;font-size:1.05rem;font-weight:900;}
+.hf-co-lines{list-style:none;margin:0;padding:0;}
+.hf-co-lines li{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:.92rem;}
+.hf-co-lines .n{color:var(--ink);font-weight:700;}
+.hf-co-lines .p{color:var(--muted);font-weight:700;white-space:nowrap;}
+.hf-co-total{display:flex;justify-content:space-between;font-weight:900;font-size:1.1rem;padding:14px 0 16px;}
+.hf-co-summary .hf-btn{width:100%;}
+.hf-co-note{display:flex;align-items:center;justify-content:center;gap:6px;color:var(--muted);font-size:.8rem;margin:12px 0 0;}
+.hf-co-back{display:block;text-align:center;margin-top:10px;color:var(--muted);font-size:.86rem;font-weight:700;}
+.hf-co-back:hover{color:var(--ink);}
+@media (max-width:860px){.hf-checkout{grid-template-columns:1fr;}.hf-co-summary{position:static;}}
+@media (max-width:560px){.hf-co-grid{grid-template-columns:1fr;}.hf-co-grid .wide{grid-column:auto;}}
+
+/* Pedidos: dirección de envío, cancelación e insignia de cancelado */
+.hf-order-ship{display:flex;align-items:flex-start;gap:8px;margin:12px 0 2px;color:var(--muted);font-size:.86rem;line-height:1.5;}
+.hf-order-ship i{flex-shrink:0;margin-top:2px;}
+.hf-order-ship em{font-style:italic;}
+.hf-order-cancelled{display:flex;align-items:center;gap:8px;background:var(--error-soft);color:var(--error);
+  font-weight:900;font-size:.9rem;border-radius:12px;padding:10px 14px;margin:10px 0;}
+.hf-order-cancel-btn{margin-top:14px;background:transparent;border:none;color:var(--error);
+  font-size:.86rem;font-weight:800;cursor:pointer;padding:6px 0;}
+.hf-order-cancel-btn:hover{text-decoration:underline;}

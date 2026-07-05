@@ -12,6 +12,13 @@ public record PedidoResponse(
         String estado,
         String clienteEmail,
         BigDecimal total,
+        String destinatario,
+        String direccion,
+        String ciudad,
+        String provincia,
+        String codigoPostal,
+        String telefono,
+        String notas,
         List<Linea> lineas) {
 
     public record Linea(String productoNombre, Integer cantidad, BigDecimal precioUnitario) {}

@@ -241,7 +241,7 @@ Esta sección recorre el proyecto en el orden en que se construyó, desde las pr
 
 ## 5. Modelo de datos
 
-La base de datos se compone de ocho tablas principales. Todas las claves primarias son de tipo UUID. El esquema se gestiona con migraciones de Flyway (V1 a V12).
+La base de datos se compone de ocho tablas principales. Todas las claves primarias son de tipo UUID. El esquema se gestiona con migraciones de Flyway (V1 a V13).
 
 | Tabla | Contenido | Relaciones |
 |---|---|---|
@@ -421,3 +421,7 @@ Cambios, correcciones y refinamientos que no constituyen un módulo completo per
 | 2 jul 2026 | Frontend | Menú de navegación móvil: en pantallas pequeñas (donde los enlaces del navbar se ocultaban sin alternativa, dejando al usuario sin navegación) aparece un botón hamburguesa que abre un panel lateral con las categorías, el acceso al catálogo completo, los enlaces de soporte y los accesos de cuenta (perfil/pedidos/favoritos o entrar). Nuevo componente MobileMenu, coherente con el estilo de los drawers existentes y la paleta monocroma. |
 | 2 jul 2026 | Backend · Frontend | Fase 0 del roadmap: se aplica al proyecto la tanda de presentación de specs que faltaba (migración V12 con icono y destacado en el catálogo de atributos, cabecera de specs destacadas bajo el precio, ficha técnica como tabla de dos columnas y campos de icono/destacado en el admin), adaptada quirúrgicamente sobre el código actual para no pisar los cambios posteriores (monocromo, menú móvil, toasts). |
 | 2 jul 2026 | Frontend | Ajustes responsive menores: en móvil la marquesina oculta los iconos sociales para no chocar con el texto y ocupa todo el ancho; el titular del hero se contiene con clamp en pantallas pequeñas; la tabla de especificaciones compacta su padding en móvil estrecho. |
+| 2 jul 2026 | Backend | Fase 1 del roadmap — el pedido guarda la dirección de envío: migración V13 (destinatario, dirección, ciudad, provincia, código postal, teléfono y notas de entrega, nullable para el histórico), entidad Pedido y DTOs ampliados con validaciones (@NotBlank/@Size), y el servicio guarda la dirección al crear el pedido. |
+| 2 jul 2026 | Backend | Cancelación de pedidos por el cliente: nuevo estado CANCELADO, endpoint PUT /api/pedidos/{id}/cancelar que valida que el pedido pertenece al usuario y sigue PENDIENTE, repone el stock de cada línea en la misma transacción y marca el pedido como cancelado. |
+| 2 jul 2026 | Frontend | Nueva página de checkout (/checkout, protegida): formulario de datos de envío (con autocompletado del navegador y validaciones) y resumen del pedido con total; al confirmar crea el pedido con la dirección, vacía el carrito, avisa con un toast y lleva a Mis pedidos. El botón del carrito ahora navega al checkout en lugar de crear el pedido directamente (o a login si no hay sesión). |
+| 2 jul 2026 | Frontend | Mis pedidos: muestra la dirección de envío de cada pedido, permite cancelar los pendientes con confirmación en dos pasos (spinner mientras procesa, toast al terminar) y los cancelados muestran una insignia en lugar de la línea de seguimiento. |

@@ -38,6 +38,14 @@ public class PedidoService {
                 .usuario(usuario)
                 .fecha(LocalDateTime.now())
                 .estado(EstadoPedido.PENDIENTE)
+                // Dirección de envío del formulario de checkout (Fase 1)
+                .destinatario(req.destinatario().trim())
+                .direccion(req.direccion().trim())
+                .ciudad(req.ciudad().trim())
+                .provincia(req.provincia().trim())
+                .codigoPostal(req.codigoPostal().trim())
+                .telefono(req.telefono().trim())
+                .notas(req.notas() != null && !req.notas().isBlank() ? req.notas().trim() : null)
                 .build();
 
         for (CrearPedidoRequest.Linea linea : req.lineas()) {
@@ -77,6 +85,26 @@ public class PedidoService {
                 .stream().map(this::aResponse).toList();
     }
 
+    // El cliente cancela SU pedido, solo si sigue PENDIENTE. Se repone el stock
+    // de cada línea en la misma transacción (si no, se perdería inventario).
+    @Transactional
+    public PedidoResponse cancelar(String emailUsuario, java.util.UUID id) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Pedido no encontrado"));
+
+        if (!pedido.getUsuario().getEmail().equals(emailUsuario)) {
+            throw new IllegalArgumentException("El pedido no pertenece a este usuario");
+        }
+        if (pedido.getEstado() != EstadoPedido.PENDIENTE) {
+            throw new IllegalArgumentException("Solo se pueden cancelar pedidos pendientes");
+        }
+
+        pedido.getLineas().forEach(l ->
+                l.getProducto().setStock(l.getProducto().getStock() + l.getCantidad()));
+        pedido.setEstado(EstadoPedido.CANCELADO);
+        return aResponse(pedido);
+    }
+
     // Cambia el estado del pedido (zona admin).
     @Transactional
     public PedidoResponse cambiarEstado(java.util.UUID id, EstadoPedido estado) {
@@ -95,6 +123,8 @@ public class PedidoService {
                 .map(l -> l.getPrecioUnitario().multiply(BigDecimal.valueOf(l.getCantidad())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         return new PedidoResponse(p.getId(), p.getFecha(), p.getEstado().name(),
-                p.getUsuario().getEmail(), total, lineas);
+                p.getUsuario().getEmail(), total,
+                p.getDestinatario(), p.getDireccion(), p.getCiudad(), p.getProvincia(),
+                p.getCodigoPostal(), p.getTelefono(), p.getNotas(), lineas);
     }
 }

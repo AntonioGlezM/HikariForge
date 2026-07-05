@@ -1,21 +1,42 @@
 import { useEffect, useState } from "react";
-import { misPedidos } from "../api/pedidos";
+import { misPedidos, cancelarPedido } from "../api/pedidos";
 import { useSettings } from "../context/SettingsContext";
+import { useToast } from "../context/ToastContext";
 import EmptyState from "../components/EmptyState";
+import Spinner from "../components/Spinner";
 
 const ESTADOS = ["PENDIENTE", "PAGADO", "ENVIADO", "ENTREGADO"];
 
-// Pedidos del usuario con su línea de seguimiento y el detalle de cada uno.
+// Pedidos del usuario: seguimiento, dirección de envío, detalle y cancelación
+// (solo pedidos pendientes, con confirmación y reposición de stock en la API).
 export default function PedidosPage() {
   const { tr } = useSettings();
+  const { toast } = useToast();
   const [pedidos, setPedidos] = useState(null);
   const [error, setError] = useState(false);
+  const [confirmando, setConfirmando] = useState(null); // id del pedido en confirmación
+  const [cancelando, setCancelando] = useState(null);   // id del pedido cancelándose
 
   useEffect(() => {
     misPedidos()
       .then(({ data }) => setPedidos(data))
       .catch(() => setError(true));
   }, []);
+
+  const cancelar = async (id) => {
+    setCancelando(id);
+    try {
+      const { data } = await cancelarPedido(id);
+      // Sustituimos el pedido por su versión cancelada, sin recargar la lista.
+      setPedidos((xs) => xs.map((p) => (p.id === id ? data : p)));
+      toast(tr.orderCancelled, "circle-x");
+    } catch (err) {
+      toast(err.response?.data?.mensaje ?? tr.orderCancelError, "alert-triangle");
+    } finally {
+      setCancelando(null);
+      setConfirmando(null);
+    }
+  };
 
   if (error) return <main className="hf-wrap hf-section"><p className="hf-error">{tr.loadError}</p></main>;
   if (!pedidos) return <main className="hf-wrap hf-section"><p className="hf-sub">{tr.loading}</p></main>;
@@ -34,6 +55,7 @@ export default function PedidosPage() {
 
       <div className="hf-support">
         {pedidos.map((p) => {
+          const cancelado = p.estado === "CANCELADO";
           const paso = ESTADOS.indexOf(p.estado); // fase actual del seguimiento
           return (
             <section key={p.id} className="hf-sup-card">
@@ -42,15 +64,32 @@ export default function PedidosPage() {
                 <span className="hf-order-date">{new Date(p.fecha).toLocaleString()}</span>
               </div>
 
-              {/* Seguimiento del pedido */}
-              <div className="hf-track">
-                {tr.orderSteps.map((etiqueta, i) => (
-                  <div key={etiqueta} className={`hf-track-step ${i <= paso ? "done" : ""}`}>
-                    <span className="dot"><i className={`ti ${i <= paso ? "ti-check" : "ti-point"}`} /></span>
-                    <small>{etiqueta}</small>
-                  </div>
-                ))}
-              </div>
+              {/* Cancelado: insignia en lugar del seguimiento */}
+              {cancelado ? (
+                <div className="hf-order-cancelled">
+                  <i className="ti ti-circle-x" /> {tr.orderCancelledBadge}
+                </div>
+              ) : (
+                <div className="hf-track">
+                  {tr.orderSteps.map((etiqueta, i) => (
+                    <div key={etiqueta} className={`hf-track-step ${i <= paso ? "done" : ""}`}>
+                      <span className="dot"><i className={`ti ${i <= paso ? "ti-check" : "ti-point"}`} /></span>
+                      <small>{etiqueta}</small>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Dirección de envío (los pedidos antiguos pueden no tenerla) */}
+              {p.destinatario && (
+                <div className="hf-order-ship">
+                  <i className="ti ti-map-pin" />
+                  <span>
+                    {p.destinatario} · {p.direccion}, {p.ciudad} ({p.codigoPostal}), {p.provincia} · {p.telefono}
+                    {p.notas && <em> · “{p.notas}”</em>}
+                  </span>
+                </div>
+              )}
 
               {/* Líneas del pedido */}
               <div className="hf-order-lines">
@@ -64,6 +103,25 @@ export default function PedidosPage() {
               <div className="hf-cart-total" style={{ marginTop: 14 }}>
                 <span>{tr.orderTotal}</span><span>{Number(p.total).toFixed(2)} €</span>
               </div>
+
+              {/* Cancelación: solo pedidos pendientes, confirmación en dos pasos */}
+              {p.estado === "PENDIENTE" && (
+                confirmando === p.id ? (
+                  <div className="hf-confirm">
+                    <span>{tr.orderCancelConfirm}</span>
+                    <div className="hf-confirm-actions">
+                      <button className="hf-confirm-cancel" onClick={() => setConfirmando(null)}>{tr.cancel}</button>
+                      <button className="hf-confirm-ok" onClick={() => cancelar(p.id)} disabled={cancelando === p.id}>
+                        {cancelando === p.id ? <Spinner size={13} /> : tr.orderCancelYes}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button className="hf-order-cancel-btn" onClick={() => setConfirmando(p.id)}>
+                    {tr.orderCancelBtn}
+                  </button>
+                )
+              )}
             </section>
           );
         })}

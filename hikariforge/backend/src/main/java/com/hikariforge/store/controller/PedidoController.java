@@ -33,6 +33,12 @@ public class PedidoController {
         return pedidoService.listarMios(auth.getName());
     }
 
+    // El cliente cancela su propio pedido (solo si sigue pendiente).
+    @PutMapping("/{id}/cancelar")
+    public PedidoResponse cancelar(@PathVariable java.util.UUID id, Authentication auth) {
+        return pedidoService.cancelar(auth.getName(), id);
+    }
+
     // Zona admin: todos los pedidos de la tienda.
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
