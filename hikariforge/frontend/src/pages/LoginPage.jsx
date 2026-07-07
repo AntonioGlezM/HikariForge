@@ -58,6 +58,8 @@ export default function LoginPage() {
         </button>
         {error && <p className="hf-error">{error}</p>}
 
+        <p className="alt" style={{ marginTop: 6 }}><Link to="/recuperar">{tr.forgotPassword}</Link></p>
+
         <div className="hf-divider">{tr.or}</div>
         <GoogleButton onCredential={onGoogle} />
 

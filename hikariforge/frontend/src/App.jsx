@@ -19,6 +19,8 @@ import SoportePage from "./pages/SoportePage";
 import PerfilPage from "./pages/PerfilPage";
 import PedidosPage from "./pages/PedidosPage";
 import CheckoutPage from "./pages/CheckoutPage";
+import RecuperarPage from "./pages/RecuperarPage";
+import RestablecerPage from "./pages/RestablecerPage";
 import FavoritosPage from "./pages/FavoritosPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
@@ -39,6 +41,8 @@ export default function App() {
         <Route path="/producto/:id" element={<ProductoPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/recuperar" element={<RecuperarPage />} />
+        <Route path="/restablecer" element={<RestablecerPage />} />
         <Route path="/soporte" element={<SoportePage />} />
         <Route path="/favoritos" element={<FavoritosPage />} />
         <Route element={<ProtectedRoute />}>
