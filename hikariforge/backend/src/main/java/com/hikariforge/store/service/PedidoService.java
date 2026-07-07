@@ -151,7 +151,7 @@ public class PedidoService {
         return aResponse(pedido);
     }
 
-    private PedidoResponse aResponse(Pedido p) {
+    PedidoResponse aResponse(Pedido p) { // visible en el paquete: lo usa también PagoService
         List<PedidoResponse.Linea> lineas = p.getLineas().stream()
                 .map(l -> new PedidoResponse.Linea(
                         l.getProducto().getNombre(), l.getCantidad(), l.getPrecioUnitario()))

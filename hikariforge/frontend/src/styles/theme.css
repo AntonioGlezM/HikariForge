@@ -776,3 +776,6 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
 .hf-order-cancel-btn{margin-top:14px;background:transparent;border:none;color:var(--error);
   font-size:.86rem;font-weight:800;cursor:pointer;padding:6px 0;}
 .hf-order-cancel-btn:hover{text-decoration:underline;}
+
+/* Botón de pago en Mis pedidos (Fase 3) */
+.hf-order-pay{margin-top:14px;display:inline-flex;align-items:center;gap:8px;}

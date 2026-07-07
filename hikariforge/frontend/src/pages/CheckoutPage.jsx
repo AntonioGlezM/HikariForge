@@ -4,6 +4,7 @@ import { useSettings } from "../context/SettingsContext";
 import { useCart } from "../context/CartContext";
 import { useToast } from "../context/ToastContext";
 import { crearPedido } from "../api/pedidos";
+import { crearSesionPago } from "../api/pagos";
 import { precioEfectivo } from "../utils/precio";
 import Spinner from "../components/Spinner";
 import EmptyState from "../components/EmptyState";
@@ -38,10 +39,18 @@ export default function CheckoutPage() {
     setProcesando(true);
     const lineas = items.map((l) => ({ productoId: l.producto.id, cantidad: l.cantidad }));
     try {
-      await crearPedido(lineas, envio);
+      const { data: pedido } = await crearPedido(lineas, envio);
       clear();
-      toast(tr.orderCreated, "package");
-      navigate("/pedidos");
+      // Si Stripe está configurado, vamos directos a la página de pago.
+      // Si no (o falla), el pedido queda PENDIENTE y se puede pagar desde Mis pedidos.
+      try {
+        const { data } = await crearSesionPago(pedido.id);
+        window.location.href = data.url;
+        return;
+      } catch {
+        toast(tr.orderCreated, "package");
+        navigate("/pedidos");
+      }
     } catch (err) {
       const data = err.response?.data;
       // Si la API devuelve errores de validación por campo, los mostramos juntos.

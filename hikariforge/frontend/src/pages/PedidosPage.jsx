@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { misPedidos, cancelarPedido } from "../api/pedidos";
+import { crearSesionPago, confirmarPago } from "../api/pagos";
 import { useSettings } from "../context/SettingsContext";
 import { useToast } from "../context/ToastContext";
 import EmptyState from "../components/EmptyState";
@@ -16,12 +18,43 @@ export default function PedidosPage() {
   const [error, setError] = useState(false);
   const [confirmando, setConfirmando] = useState(null); // id del pedido en confirmación
   const [cancelando, setCancelando] = useState(null);   // id del pedido cancelándose
+  const [pagando, setPagando] = useState(null);         // id del pedido yendo a Stripe
+  const [params, setParams] = useSearchParams();
 
   useEffect(() => {
     misPedidos()
       .then(({ data }) => setPedidos(data))
       .catch(() => setError(true));
   }, []);
+
+  // Al volver de Stripe: verificamos la sesión EN EL SERVIDOR y refrescamos.
+  useEffect(() => {
+    const sessionId = params.get("session_id");
+    if (sessionId) {
+      confirmarPago(sessionId)
+        .then(({ data }) => {
+          setPedidos((xs) => (xs ? xs.map((p) => (p.id === data.id ? data : p)) : xs));
+          toast(tr.payDone, "circle-check");
+        })
+        .catch((err) => toast(err.response?.data?.mensaje ?? tr.payError, "alert-triangle"))
+        .finally(() => setParams({}, { replace: true })); // limpia la URL
+    } else if (params.get("pago") === "cancelado") {
+      toast(tr.payCancelled, "circle-x");
+      setParams({}, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const pagar = async (id) => {
+    setPagando(id);
+    try {
+      const { data } = await crearSesionPago(id);
+      window.location.href = data.url; // a la página de pago de Stripe
+    } catch (err) {
+      toast(err.response?.data?.mensaje ?? tr.payError, "alert-triangle");
+      setPagando(null);
+    }
+  };
 
   const cancelar = async (id) => {
     setCancelando(id);
@@ -106,6 +139,14 @@ export default function PedidosPage() {
               <div className="hf-cart-total" style={{ marginTop: 14 }}>
                 <span>{tr.orderTotal}</span><span>{Number(p.total).toFixed(2)} €</span>
               </div>
+
+              {/* Pago: solo pedidos pendientes */}
+              {p.estado === "PENDIENTE" && (
+                <button className="hf-btn hf-btn-main hf-order-pay" onClick={() => pagar(p.id)}
+                        disabled={pagando === p.id}>
+                  {pagando === p.id ? <><Spinner /> {tr.payRedirect}</> : <><i className="ti ti-credit-card" /> {tr.payNow}</>}
+                </button>
+              )}
 
               {/* Cancelación: solo pedidos pendientes, confirmación en dos pasos */}
               {p.estado === "PENDIENTE" && (

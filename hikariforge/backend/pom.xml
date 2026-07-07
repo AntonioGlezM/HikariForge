@@ -54,6 +54,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
+        <!-- Pasarela de pago Stripe (Checkout en modo test) -->
+        <dependency>
+            <groupId>com.stripe</groupId>
+            <artifactId>stripe-java</artifactId>
+            <version>26.3.0</version>
+        </dependency>
 
         <!-- Driver de PostgreSQL (solo en tiempo de ejecución) -->
         <dependency>

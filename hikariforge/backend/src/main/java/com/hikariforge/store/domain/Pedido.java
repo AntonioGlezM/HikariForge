@@ -54,6 +54,13 @@ public class Pedido {
     @Column(length = 300)
     private String notas;
 
+    // --- Pago con Stripe (Fase 3) ---
+    @Column(name = "stripe_session_id", length = 120)
+    private String stripeSessionId;
+
+    @Column(name = "pagado_en")
+    private java.time.LocalDateTime pagadoEn;
+
     // cascade + orphanRemoval: las líneas viven y mueren con su pedido.
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
