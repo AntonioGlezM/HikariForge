@@ -22,6 +22,7 @@ export default function PedidosPage() {
   const [params, setParams] = useSearchParams();
 
   useEffect(() => {
+    sessionStorage.removeItem("pagoEnCurso"); // ya está viendo sus pedidos
     misPedidos()
       .then(({ data }) => setPedidos(data))
       .catch(() => setError(true));

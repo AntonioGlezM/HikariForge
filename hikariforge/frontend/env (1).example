@@ -1,0 +1,18 @@
+# ============================================================================
+# HikariForge — plantilla de variables de entorno del FRONTEND (Vite)
+# 
+# REGLAS DE VITE:
+# - Solo se leen las variables que empiezan por VITE_.
+# - Se INCRUSTAN en el JavaScript al hacer el build: TODO lo que pongas aquí
+#   es PÚBLICO (visible en el navegador). Jamás un secreto en este archivo.
+# - Cambiar un valor exige reiniciar el dev server (o recompilar el build).
+# ============================================================================
+
+# URL base de la API del backend. En producción: la URL pública real
+# (p. ej. https://api.midominio.com/api)
+VITE_API_URL=http://localhost:8080/api
+
+# Client ID de Google para el botón "Entrar con Google" (dato público).
+# console.cloud.google.com -> APIs y servicios -> Credenciales -> ID de
+# cliente de OAuth. Debe ser el MISMO que usa el backend en GOOGLE_CLIENT_ID.
+VITE_GOOGLE_CLIENT_ID=

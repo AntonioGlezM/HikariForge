@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useSettings } from "../context/SettingsContext";
 import { useCart } from "../context/CartContext";
@@ -45,6 +45,10 @@ export default function CheckoutPage() {
       // Si no (o falla), el pedido queda PENDIENTE y se puede pagar desde Mis pedidos.
       try {
         const { data } = await crearSesionPago(pedido.id);
+        // Miga de pan: si el usuario vuelve con el botón atrás del navegador
+        // (sin pasar por la URL de cancelación de Stripe), sabremos que hay
+        // un pedido creado pendiente de pago y no le enseñaremos el carrito vacío.
+        sessionStorage.setItem("pagoEnCurso", pedido.id);
         window.location.href = data.url;
         return;
       } catch {
@@ -59,6 +63,18 @@ export default function CheckoutPage() {
       setProcesando(false);
     }
   };
+
+  // Vuelta con el botón atrás del navegador desde Stripe: el carrito está
+  // vacío (el pedido ya existe), así que en vez del carrito vacío llevamos
+  // a Mis pedidos con un aviso de que el pedido está pendiente de pago.
+  useEffect(() => {
+    if (items.length === 0 && sessionStorage.getItem("pagoEnCurso")) {
+      sessionStorage.removeItem("pagoEnCurso");
+      toast(tr.payPendingBack, "credit-card");
+      navigate("/pedidos", { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Sin artículos no hay nada que pagar: invitamos a volver al catálogo.
   if (items.length === 0) {
