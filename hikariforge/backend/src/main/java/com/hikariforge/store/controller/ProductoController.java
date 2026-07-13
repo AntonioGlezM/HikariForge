@@ -84,4 +84,20 @@ public class ProductoController {
         productoService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
+
+    // ----- Galería de imágenes (Fase 4) -----
+
+    // Galería pública del producto (URLs en orden).
+    @GetMapping("/{id}/galeria")
+    public java.util.List<String> galeria(@PathVariable UUID id) {
+        return productoService.galeria(id);
+    }
+
+    // Reemplaza la galería completa (solo admin). Body: lista de URLs.
+    @PutMapping("/{id}/galeria")
+    @PreAuthorize("hasRole('ADMIN')")
+    public java.util.List<String> guardarGaleria(@PathVariable UUID id,
+                                                 @RequestBody java.util.List<String> urls) {
+        return productoService.guardarGaleria(id, urls);
+    }
 }

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { listarProductosAdmin, crearProducto, actualizarProducto, eliminarProducto, reactivarProducto } from "../api/productos";
+import { listarProductosAdmin, crearProducto, actualizarProducto, eliminarProducto, reactivarProducto , obtenerGaleria, guardarGaleria } from "../api/productos";
 import { listarAtributos, crearAtributo, actualizarAtributo, eliminarAtributo } from "../api/atributos";
 import SpecFields from "../components/SpecFields";
 import { listarCategorias } from "../api/categorias";
@@ -40,8 +40,12 @@ export default function AdminPage() {
     return q ? productos.filter((p) => p.nombre.toLowerCase().includes(q)) : productos;
   }, [productos, busqueda]);
 
-  const abrirNuevo = () => { setForm(FORM_VACIO); setEditandoId(null); setMsg(null); };
+  const abrirNuevo = () => { setGaleriaTxt(""); setForm(FORM_VACIO); setEditandoId(null); setMsg(null); };
+  const [galeriaTxt, setGaleriaTxt] = useState(""); // URLs de la galería, una por línea
+
   const abrirEditar = (p) => {
+    // Cargamos la galería existente del producto para editarla.
+    obtenerGaleria(p.id).then(({ data }) => setGaleriaTxt(data.join("\n"))).catch(() => setGaleriaTxt(""));
     setForm({ nombre: p.nombre, descripcion: p.descripcion ?? "", marca: p.marca ?? "",
               precio: p.precio, precioOferta: p.precioOferta ?? "",
               ofertaLimite: p.ofertaHastaAgotar ? "stock" : (p.ofertaHasta ? "date" : "none"),
@@ -78,8 +82,12 @@ const tieneOferta = !!form.precioOferta;
     // Quitamos el campo auxiliar de UI que el backend no conoce.
     delete cuerpo.ofertaLimite;
     try {
+      let productoId = editandoId;
       if (editandoId) await actualizarProducto(editandoId, cuerpo);
-      else await crearProducto(cuerpo);
+      else { const { data } = await crearProducto(cuerpo); productoId = data.id; }
+      // Galería: el textarea manda (una URL por línea; vacío = sin galería).
+      const urls = galeriaTxt.split("\n").map((u) => u.trim()).filter(Boolean);
+      await guardarGaleria(productoId, urls);
       setForm(null);
       setMsg({ ok: true, texto: tr.admSaved });
       cargarProductos();
@@ -253,6 +261,13 @@ const tieneOferta = !!form.precioOferta;
                   {categorias.map((c) => <option key={c.id} value={c.id}>{trCat(c.nombre)}</option>)}
                 </select>
                 <input className="hf-input" placeholder={tr.admImage} value={form.imagenUrl} onChange={campo("imagenUrl")} />
+                <label className="hf-fld" style={{ gridColumn: "1 / -1" }}>
+                  <span>{tr.admGallery}</span>
+                  <textarea className="hf-input" rows={3} value={galeriaTxt}
+                            onChange={(e) => setGaleriaTxt(e.target.value)}
+                            placeholder={tr.admGalleryPh} />
+                  <small>{tr.admGalleryHelp}</small>
+                </label>
               </div>
               <textarea className="hf-input" rows="2" placeholder={tr.admDesc}
                         value={form.descripcion} onChange={campo("descripcion")} />

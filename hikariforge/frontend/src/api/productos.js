@@ -17,3 +17,7 @@ export const eliminarProducto = (id) => api.delete(`/productos/${id}`);
 // Zona admin: catálogo completo (incluidos retirados) y reactivación.
 export const listarProductosAdmin = (params = { page: 0, size: 100 }) => api.get("/productos/todos", { params });
 export const reactivarProducto = (id) => api.put(`/productos/${id}/activar`);
+
+// Galería de imágenes (Fase 4): URLs adicionales del producto.
+export const obtenerGaleria = (id) => api.get(`/productos/${id}/galeria`);
+export const guardarGaleria = (id, urls) => api.put(`/productos/${id}/galeria`, urls);

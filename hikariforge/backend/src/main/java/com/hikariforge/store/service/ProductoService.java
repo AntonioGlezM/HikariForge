@@ -24,14 +24,17 @@ public class ProductoService {
     private final CategoriaRepository categoriaRepository;
     private final AtributoCategoriaRepository atributoRepository;
     private final HistorialPrecioRepository historialRepository;
+    private final ProductoImagenRepository imagenRepository;
 
     public ProductoService(ProductoRepository productoRepository, CategoriaRepository categoriaRepository,
                            AtributoCategoriaRepository atributoRepository,
-                           HistorialPrecioRepository historialRepository) {
+                           HistorialPrecioRepository historialRepository,
+                           ProductoImagenRepository imagenRepository) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
         this.atributoRepository = atributoRepository;
         this.historialRepository = historialRepository;
+        this.imagenRepository = imagenRepository;
     }
 
     // Catálogo público con filtros combinables (todos opcionales). Siempre
@@ -262,5 +265,29 @@ public class ProductoService {
                 p.getCategoria().getId(), p.getCategoria().getNombre(),
                 p.getConexion(), p.getPesoG(), p.getRgb(), p.getColor(), p.getSpecs(),
                 precioMinimo30d);
+    }
+
+    // ----- Galería de imágenes (Fase 4) -----
+
+    // URLs de la galería de un producto, en su orden.
+    public java.util.List<String> galeria(java.util.UUID productoId) {
+        return imagenRepository.findByProductoIdOrderByOrden(productoId)
+                .stream().map(ProductoImagen::getUrl).toList();
+    }
+
+    // Reemplaza la galería completa (zona admin): borra la anterior y guarda
+    // las URLs recibidas en orden. Lista vacía = quitar la galería.
+    @Transactional
+    public java.util.List<String> guardarGaleria(java.util.UUID productoId, java.util.List<String> urls) {
+        Producto producto = productoRepository.findById(productoId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Producto no encontrado"));
+        imagenRepository.deleteByProductoId(productoId);
+        int orden = 0;
+        for (String url : urls) {
+            if (url == null || url.isBlank()) continue;
+            imagenRepository.save(ProductoImagen.builder()
+                    .producto(producto).url(url.trim()).orden(orden++).build());
+        }
+        return galeria(productoId);
     }
 }

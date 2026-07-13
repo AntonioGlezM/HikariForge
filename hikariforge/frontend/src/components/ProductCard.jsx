@@ -29,7 +29,9 @@ export default function ProductCard({ producto }) {
         <div className="hf-thumb">
           <span className="hf-tag">{trCat(producto.categoriaNombre)}</span>
           {tieneOferta(producto) && <span className="hf-off-badge">-{porcentajeDescuento(producto)}%</span>}
-          <span className="hf-letter">{producto.nombre.split(" ")[0]}</span>
+          {producto.imagenUrl
+            ? <img className="hf-thumb-img" src={producto.imagenUrl} alt={producto.nombre} loading="lazy" />
+            : <span className="hf-letter">{producto.nombre.split(" ")[0]}</span>}
         </div>
       </Link>
       {/* Corazón de favoritos (no navega: detiene el clic) */}

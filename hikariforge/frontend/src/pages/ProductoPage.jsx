@@ -15,6 +15,8 @@ import Accordion from "../components/Accordion";
 // y permite añadir al carrito.
 export default function ProductoPage() {
   const { id } = useParams();
+  const [galeria, setGaleria] = useState([]);       // URLs adicionales
+  const [imgActiva, setImgActiva] = useState(null); // la imagen grande mostrada
   const { tr, trCat } = useSettings();
   const { add, addRecent } = useCart();
   const { productos } = useProductos();
@@ -22,6 +24,9 @@ export default function ProductoPage() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    obtenerGaleria(id).then(({ data }) => setGaleria(data)).catch(() => setGaleria([]));
+    setImgActiva(null); // al cambiar de producto, vuelve a la imagen principal
+
     obtenerProducto(id)
       .then(({ data }) => { setP(data); addRecent(data); })
       .catch(() => setError(true));
@@ -36,10 +41,37 @@ export default function ProductoPage() {
   return (
     <main className="hf-wrap">
       <div className="hf-product">
-        <div className="hf-promo-visual">
-          <span className="big">{p.nombre.split(" ")[0].toUpperCase()}</span>
-          <span className="chip"><b>{trCat(p.categoriaNombre)}</b> · {p.marca ?? "HikariForge"}</span>
-        </div>
+        {(() => {
+          // Todas las imágenes disponibles: la principal + la galería.
+          const imagenes = [p.imagenUrl, ...galeria].filter(Boolean);
+          if (imagenes.length === 0) {
+            return (
+              <div className="hf-promo-visual">
+                <span className="big">{p.nombre.split(" ")[0].toUpperCase()}</span>
+                <span className="chip"><b>{trCat(p.categoriaNombre)}</b> · {p.marca ?? "HikariForge"}</span>
+              </div>
+            );
+          }
+          const principal = imgActiva ?? imagenes[0];
+          return (
+            <div className="hf-gallery">
+              <div className="hf-gallery-main">
+                <img src={principal} alt={p.nombre} />
+              </div>
+              {imagenes.length > 1 && (
+                <div className="hf-gallery-thumbs">
+                  {imagenes.map((url) => (
+                    <button key={url} type="button"
+                            className={url === principal ? "on" : ""}
+                            onClick={() => setImgActiva(url)}>
+                      <img src={url} alt="" loading="lazy" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })()}
         <div>
           <span className="hf-promo-kicker"><i className="ti ti-category-2" />{trCat(p.categoriaNombre)}</span>
           <h1>{p.nombre}</h1>
