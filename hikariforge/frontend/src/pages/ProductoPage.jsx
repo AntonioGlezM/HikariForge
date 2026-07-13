@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { obtenerProducto } from "../api/productos";
+import { obtenerProducto, obtenerGaleria } from "../api/productos";
 import { useSettings } from "../context/SettingsContext";
 import { useCart } from "../context/CartContext";
 import { tieneOferta, precioEfectivo, porcentajeDescuento } from "../utils/precio";
