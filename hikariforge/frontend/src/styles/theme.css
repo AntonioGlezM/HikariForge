@@ -778,4 +778,79 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
 .hf-order-cancel-btn:hover{text-decoration:underline;}
 
 /* Botón de pago en Mis pedidos (Fase 3) */
-.hf-order-pay{margin-top:14px;display:inline-flex;align-items:center;gap:8px;}
+.hf-order-pay{margin:14px 18px 0 0;display:inline-flex;align-items:center;gap:8px;}
+
+/* ===== Galería de imágenes (Fase 4) ===== */
+.hf-thumb-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit;}
+.hf-gallery{display:flex;flex-direction:column;gap:12px;}
+.hf-gallery-main{border:1.5px solid var(--line);border-radius:24px;overflow:hidden;background:var(--soft);
+  aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;}
+.hf-gallery-main img{width:100%;height:100%;object-fit:cover;}
+.hf-gallery-thumbs{display:flex;gap:10px;flex-wrap:wrap;}
+.hf-gallery-thumbs button{width:72px;height:72px;border-radius:14px;overflow:hidden;border:2px solid var(--line);
+  padding:0;background:var(--soft);cursor:pointer;transition:border-color .2s,transform .2s;}
+.hf-gallery-thumbs button img{width:100%;height:100%;object-fit:cover;display:block;}
+.hf-gallery-thumbs button:hover{transform:translateY(-2px);}
+.hf-gallery-thumbs button.on{border-color:var(--accent);}
+
+/* ===== Fase 5: cupones, aviso de stock y comparador ===== */
+.hf-co-coupon{padding:4px 0 10px;}
+.hf-coupon-row{display:flex;gap:8px;}
+.hf-coupon-row .hf-input{flex:1;min-width:0;}
+.hf-coupon-ok{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:var(--accent-soft);border-radius:12px;padding:9px 14px;font-weight:800;font-size:.9rem;}
+.hf-coupon-ok button{background:transparent;border:none;color:var(--muted);font-weight:800;cursor:pointer;font-size:.82rem;}
+.hf-coupon-ok button:hover{color:var(--error);}
+.hf-co-discount{display:flex;justify-content:space-between;font-weight:800;color:var(--muted);padding:2px 0 6px;}
+
+.hf-stock-alert{margin-top:16px;border:1.5px dashed var(--line);border-radius:16px;padding:14px 16px;max-width:380px;}
+.hf-stock-alert-txt{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-weight:800;font-size:.9rem;}
+
+.hf-compare{position:absolute;top:12px;right:52px;width:34px;height:34px;border-radius:50%;
+  border:none;background:var(--card);color:var(--muted);display:grid;place-items:center;cursor:pointer;
+  box-shadow:0 4px 14px -6px rgba(0,0,0,.25);transition:color .2s,transform .2s;z-index:2;}
+.hf-compare:hover{transform:scale(1.1);}
+.hf-compare.on{color:var(--on-accent);background:var(--accent);}
+
+.hf-compare-bar{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:140;
+  display:flex;align-items:center;gap:14px;background:var(--card);border:1.5px solid var(--line);
+  border-radius:999px;padding:10px 12px 10px 20px;box-shadow:var(--shadow);font-weight:800;font-size:.92rem;}
+.hf-compare-clear{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:1.05rem;padding:4px;}
+.hf-compare-clear:hover{color:var(--error);}
+
+.hf-compare-scroll{overflow-x:auto;}
+.hf-compare-table{width:100%;border-collapse:collapse;min-width:560px;}
+.hf-compare-table th,.hf-compare-table td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;font-size:.92rem;}
+.hf-compare-table td.k{color:var(--muted);font-weight:800;width:180px;}
+.hf-cmp-head{display:flex;flex-direction:column;gap:8px;align-items:flex-start;}
+.hf-cmp-head img{width:110px;height:110px;object-fit:cover;border-radius:14px;border:1px solid var(--line);}
+.hf-cmp-ph{width:110px;height:110px;border-radius:14px;background:var(--soft);display:grid;place-items:center;
+  font-weight:900;color:var(--muted);}
+.hf-cmp-head a{font-weight:900;color:var(--ink);}
+.hf-cmp-quitar{background:transparent;border:none;color:var(--muted);font-size:.8rem;font-weight:800;cursor:pointer;padding:0;}
+.hf-cmp-quitar:hover{color:var(--error);}
+
+/* ===== Dashboard del admin (Fase 6) ===== */
+.hf-stats-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:26px;}
+.hf-stat{border:1.5px solid var(--line);border-radius:18px;padding:18px 20px;background:var(--card);}
+.hf-stat .k{display:block;font-size:.76rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:900;margin-bottom:6px;}
+.hf-stat b{font-size:1.5rem;font-weight:900;}
+.hf-stats-h{font-size:1rem;font-weight:900;margin:26px 0 12px;}
+.hf-bars{display:flex;align-items:flex-end;gap:8px;height:140px;border:1.5px solid var(--line);
+  border-radius:18px;padding:16px 16px 10px;background:var(--card);}
+.hf-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;}
+.hf-bar{width:100%;max-width:34px;background:var(--accent);border-radius:6px 6px 0 0;min-height:2px;transition:height .4s;}
+.hf-bar-col small{color:var(--muted);font-size:.68rem;font-weight:800;}
+.hf-top-list{display:flex;flex-direction:column;gap:10px;}
+.hf-top-row{display:grid;grid-template-columns:1fr 2fr auto;gap:14px;align-items:center;}
+.hf-top-row .n{font-weight:800;font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hf-top-track{height:10px;background:var(--soft);border-radius:999px;overflow:hidden;}
+.hf-top-fill{height:100%;background:var(--accent);border-radius:999px;transition:width .4s;}
+@media (max-width:640px){.hf-top-row{grid-template-columns:1fr;gap:6px;}}
+
+/* ===== Login con código por email (Fase 7) ===== */
+.hf-code-alt{width:100%;display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:10px;}
+.hf-code-input{text-align:center;font-size:1.6rem;font-weight:900;letter-spacing:.55em;
+  padding-left:.55em; /* compensa el letter-spacing para centrar de verdad */}
+.hf-linkbtn{background:transparent;border:none;color:inherit;font:inherit;text-decoration:underline;
+  cursor:pointer;padding:0;}
