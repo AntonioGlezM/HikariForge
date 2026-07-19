@@ -422,29 +422,43 @@ const tieneOferta = !!form.precioOferta;
       {pestana === "cupones" && (
         <section>
           <form className="hf-adm-cupon-form" onSubmit={guardarCupon}>
-            <input className="hf-input" placeholder={tr.admCouponCode} required maxLength={30}
-                   value={cuponForm.codigo}
-                   onChange={(e) => setCuponForm((f) => ({ ...f, codigo: e.target.value.toUpperCase() }))} />
-            <input className="hf-input" type="number" min={1} max={90} placeholder="%" required
-                   value={cuponForm.porcentaje}
-                   onChange={(e) => setCuponForm((f) => ({ ...f, porcentaje: e.target.value }))} />
-            <input className="hf-input" type="number" min={1} placeholder={tr.admCouponUses}
-                   value={cuponForm.usosMax}
-                   onChange={(e) => setCuponForm((f) => ({ ...f, usosMax: e.target.value }))} />
-            <input className="hf-input" type="date" value={cuponForm.caduca}
-                   onChange={(e) => setCuponForm((f) => ({ ...f, caduca: e.target.value }))} />
+            <label className="hf-fld"><span>{tr.admCupCode}</span>
+              <input className="hf-input" placeholder="VERANO10" required maxLength={30}
+                     value={cuponForm.codigo}
+                     onChange={(e) => setCuponForm((f) => ({ ...f, codigo: e.target.value.toUpperCase() }))} />
+            </label>
+            <label className="hf-fld"><span>{tr.admCupPct}</span>
+              <input className="hf-input" type="number" min={1} max={90} placeholder="5" required
+                     value={cuponForm.porcentaje}
+                     onChange={(e) => setCuponForm((f) => ({ ...f, porcentaje: e.target.value }))} />
+            </label>
+            <label className="hf-fld"><span>{tr.admCupUses}</span>
+              <input className="hf-input" type="number" min={1} placeholder="∞"
+                     value={cuponForm.usosMax}
+                     onChange={(e) => setCuponForm((f) => ({ ...f, usosMax: e.target.value }))} />
+            </label>
+            <label className="hf-fld"><span>{tr.admCupExpiry}</span>
+              <input className="hf-input" type="date" value={cuponForm.caduca}
+                     onChange={(e) => setCuponForm((f) => ({ ...f, caduca: e.target.value }))} />
+            </label>
             <button className="hf-btn hf-btn-main" type="submit">{tr.admCouponAdd}</button>
           </form>
 
           <div className="hf-adm-cupones">
             {cupones.map((c) => (
               <div key={c.id} className={`hf-adm-cupon ${c.activo ? "" : "off"}`}>
-                <b>{c.codigo}</b>
-                <span>−{c.porcentaje}%</span>
-                <span>{c.usos}{c.usosMax ? ` / ${c.usosMax}` : ""} {tr.admCouponUsed}</span>
-                <span>{c.caduca ? `${tr.admCouponExpires} ${c.caduca}` : tr.admCouponNoExpiry}</span>
+                <span className={`hf-cup-state ${c.activo ? "on" : ""}`}>
+                  {c.activo ? tr.admCupActive : tr.admCupInactive}
+                </span>
+                <b className="hf-cup-code">{c.codigo}</b>
+                <span className="hf-cup-pct">−{c.porcentaje}%</span>
+                <span className="hf-cup-meta">{c.usos} / {c.usosMax ?? "∞"} {tr.admCouponUsed}</span>
+                <span className="hf-cup-meta">
+                  {c.caduca ? `${tr.admCouponExpires} ${c.caduca}` : tr.admCouponNoExpiry}
+                </span>
                 <div className="acts">
-                  <button className="hf-icon-btn" title={c.activo ? tr.admCouponOff : tr.admCouponOn}
+                  <button className={`hf-icon-btn hf-cup-toggle ${c.activo ? "on" : ""}`}
+                          title={c.activo ? tr.admCouponOff : tr.admCouponOn}
                           onClick={() => alternarCupon(c.id).then(cargarCupones)}>
                     <i className={`ti ${c.activo ? "ti-toggle-right" : "ti-toggle-left"}`} />
                   </button>

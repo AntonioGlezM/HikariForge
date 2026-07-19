@@ -854,3 +854,25 @@ button{font-family:var(--body);font-weight:800;cursor:pointer;}
   padding-left:.55em; /* compensa el letter-spacing para centrar de verdad */}
 .hf-linkbtn{background:transparent;border:none;color:inherit;font:inherit;text-decoration:underline;
   cursor:pointer;padding:0;}
+
+/* ===== Admin · Cupones: formulario etiquetado y lista legible (fix fase 5) ===== */
+.hf-adm-cupon-form{display:grid;grid-template-columns:2fr 1fr 1fr 1.4fr auto;gap:14px;align-items:end;margin-bottom:24px;}
+@media (max-width:820px){.hf-adm-cupon-form{grid-template-columns:1fr 1fr;}}
+.hf-adm-cupones{display:flex;flex-direction:column;gap:10px;}
+.hf-adm-cupon{display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  border:1.5px solid var(--line);border-radius:16px;padding:12px 18px;background:var(--card);}
+.hf-adm-cupon.off{opacity:.55;}
+.hf-cup-state{font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em;
+  padding:4px 12px;border-radius:999px;background:var(--soft);color:var(--muted);}
+.hf-cup-state.on{background:var(--accent);color:var(--on-accent);}
+.hf-cup-code{font-weight:900;letter-spacing:.02em;}
+.hf-cup-pct{font-weight:900;}
+.hf-cup-meta{color:var(--muted);font-size:.88rem;font-weight:700;}
+.hf-adm-cupon .acts{margin-left:auto;display:flex;align-items:center;gap:4px;}
+.hf-cup-toggle{font-size:1.55rem;color:var(--muted);}
+.hf-cup-toggle.on{color:var(--accent);}
+
+/* Fix: la regla de ancho completo del resumen (.hf-co-summary .hf-btn) aplastaba
+   el input del cupón. En la fila del cupón, el input manda y el botón se ajusta. */
+.hf-co-summary .hf-coupon-row .hf-input{flex:1 1 auto;width:auto;min-width:0;text-transform:uppercase;}
+.hf-co-summary .hf-coupon-row .hf-btn{width:auto;flex:0 0 auto;padding-inline:24px;}

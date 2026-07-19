@@ -1,0 +1,1 @@
+Comparador añadir unidades. Ej: en autonomía poner que el numero corresponde a horas, minutos, etc.
