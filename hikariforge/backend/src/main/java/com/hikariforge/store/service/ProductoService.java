@@ -25,16 +25,19 @@ public class ProductoService {
     private final AtributoCategoriaRepository atributoRepository;
     private final HistorialPrecioRepository historialRepository;
     private final ProductoImagenRepository imagenRepository;
+    private final AvisoStockService avisoStockService;
 
     public ProductoService(ProductoRepository productoRepository, CategoriaRepository categoriaRepository,
                            AtributoCategoriaRepository atributoRepository,
                            HistorialPrecioRepository historialRepository,
-                           ProductoImagenRepository imagenRepository) {
+                           ProductoImagenRepository imagenRepository,
+                           AvisoStockService avisoStockService) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
         this.atributoRepository = atributoRepository;
         this.historialRepository = historialRepository;
         this.imagenRepository = imagenRepository;
+        this.avisoStockService = avisoStockService;
     }
 
     // Catálogo público con filtros combinables (todos opcionales). Siempre
@@ -131,7 +134,13 @@ public class ProductoService {
         producto.setOfertaDesde(req.ofertaDesde());
         producto.setOfertaHasta(req.ofertaHasta());
         producto.setOfertaHastaAgotar(Boolean.TRUE.equals(req.ofertaHastaAgotar()));
+        // Aviso "disponible de nuevo" (Fase 5): si el stock pasa de 0 a >0,
+        // se notifica a quienes se apuntaron al aviso.
+        boolean estabaAgotado = producto.getStock() != null && producto.getStock() == 0;
         producto.setStock(req.stock());
+        if (estabaAgotado && req.stock() != null && req.stock() > 0) {
+            avisoStockService.notificarDisponible(producto);
+        }
         producto.setImagenUrl(req.imagenUrl());
         BigDecimal precioAntes = producto.getPrecioEfectivo();
         producto.setCategoria(categoria);

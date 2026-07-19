@@ -106,6 +106,7 @@ export const I18N = {
     sessionExpired: "Tu sesión ha caducado. Vuelve a entrar para continuar.",
     // ----- Fase 3: pago con Stripe -----
     payNow: "Pagar ahora", payRedirect: "Llevándote al pago…",
+    payPendingBack: "Tu pedido está creado y pendiente de pago — puedes pagarlo desde aquí.",
     payDone: "¡Pago completado! Gracias por tu compra.",
     payCancelled: "Pago cancelado. Tu pedido sigue pendiente.",
     payError: "No se pudo procesar el pago",
@@ -274,6 +275,7 @@ export const I18N = {
     sessionExpired: "Your session has expired. Please sign in again.",
     // ----- Fase 3: Stripe payment -----
     payNow: "Pay now", payRedirect: "Taking you to payment…",
+    payPendingBack: "Your order is created and awaiting payment — you can pay it from here.",
     payDone: "Payment completed! Thanks for your purchase.",
     payCancelled: "Payment cancelled. Your order is still pending.",
     payError: "Could not process the payment",

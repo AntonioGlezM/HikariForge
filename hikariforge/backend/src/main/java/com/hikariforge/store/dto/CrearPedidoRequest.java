@@ -14,6 +14,7 @@ public record CrearPedidoRequest(
         @NotBlank @Size(max = 80) String provincia,
         @NotBlank @Size(max = 10) String codigoPostal,
         @NotBlank @Size(max = 20) String telefono,
-        @Size(max = 300) String notas) {
+        @Size(max = 300) String notas,
+        @Size(max = 30) String cupon) {   // opcional: código de descuento
     public record Linea(@NotNull UUID productoId, @NotNull @Min(1) Integer cantidad) {}
 }

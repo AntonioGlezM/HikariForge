@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { listarCupones, crearCupon, alternarCupon, eliminarCupon } from "../api/cupones";
 import { listarProductosAdmin, crearProducto, actualizarProducto, eliminarProducto, reactivarProducto , obtenerGaleria, guardarGaleria } from "../api/productos";
 import { listarAtributos, crearAtributo, actualizarAtributo, eliminarAtributo } from "../api/atributos";
 import SpecFields from "../components/SpecFields";
@@ -131,6 +132,26 @@ const tieneOferta = !!form.precioOferta;
   const cargarResenas = () => todasValoraciones().then(({ data }) => setResenas(data));
   useEffect(() => { if (pestana === "resenas") cargarResenas(); }, [pestana]);
 
+  // ----- Cupones (Fase 5) -----
+  const [cupones, setCupones] = useState([]);
+  const [cuponForm, setCuponForm] = useState({ codigo: "", porcentaje: "", usosMax: "", caduca: "" });
+  const cargarCupones = () => listarCupones().then(({ data }) => setCupones(data)).catch(() => {});
+  useEffect(() => { if (pestana === "cupones") cargarCupones(); }, [pestana]);
+
+  const guardarCupon = async (e) => {
+    e.preventDefault();
+    try {
+      await crearCupon({ codigo: cuponForm.codigo, porcentaje: Number(cuponForm.porcentaje),
+                         usosMax: cuponForm.usosMax ? Number(cuponForm.usosMax) : null,
+                         caduca: cuponForm.caduca || null });
+      setCuponForm({ codigo: "", porcentaje: "", usosMax: "", caduca: "" });
+      cargarCupones();
+      setMsg({ ok: true, texto: tr.admSaved });
+    } catch (err) {
+      setMsg({ ok: false, texto: err.response?.data?.mensaje ?? tr.loadError });
+    }
+  };
+
   // El admin puede borrar cualquier reseña (p. ej. spam o reseñas abusivas).
   const borrarResena = async (r) => {
     if (!window.confirm(`${tr.admReviewDelete}`)) return;
@@ -206,6 +227,9 @@ const tieneOferta = !!form.precioOferta;
         </button>
         <button className={pestana === "resenas" ? "on" : ""} onClick={() => setPestana("resenas")}>
           <i className="ti ti-star" /> {tr.admReviews}
+        </button>
+        <button className={pestana === "cupones" ? "on" : ""} onClick={() => setPestana("cupones")}>
+          <i className="ti ti-ticket" /> {tr.admTabCoupons}
         </button>
         <button className={pestana === "atributos" ? "on" : ""} onClick={() => setPestana("atributos")}>
           <i className="ti ti-list-details" /> {tr.admAttributes}
@@ -392,6 +416,48 @@ const tieneOferta = !!form.precioOferta;
             </section>
           ))}
         </div>
+      )}
+
+      {/* ----- Cupones (Fase 5) ----- */}
+      {pestana === "cupones" && (
+        <section>
+          <form className="hf-adm-cupon-form" onSubmit={guardarCupon}>
+            <input className="hf-input" placeholder={tr.admCouponCode} required maxLength={30}
+                   value={cuponForm.codigo}
+                   onChange={(e) => setCuponForm((f) => ({ ...f, codigo: e.target.value.toUpperCase() }))} />
+            <input className="hf-input" type="number" min={1} max={90} placeholder="%" required
+                   value={cuponForm.porcentaje}
+                   onChange={(e) => setCuponForm((f) => ({ ...f, porcentaje: e.target.value }))} />
+            <input className="hf-input" type="number" min={1} placeholder={tr.admCouponUses}
+                   value={cuponForm.usosMax}
+                   onChange={(e) => setCuponForm((f) => ({ ...f, usosMax: e.target.value }))} />
+            <input className="hf-input" type="date" value={cuponForm.caduca}
+                   onChange={(e) => setCuponForm((f) => ({ ...f, caduca: e.target.value }))} />
+            <button className="hf-btn hf-btn-main" type="submit">{tr.admCouponAdd}</button>
+          </form>
+
+          <div className="hf-adm-cupones">
+            {cupones.map((c) => (
+              <div key={c.id} className={`hf-adm-cupon ${c.activo ? "" : "off"}`}>
+                <b>{c.codigo}</b>
+                <span>−{c.porcentaje}%</span>
+                <span>{c.usos}{c.usosMax ? ` / ${c.usosMax}` : ""} {tr.admCouponUsed}</span>
+                <span>{c.caduca ? `${tr.admCouponExpires} ${c.caduca}` : tr.admCouponNoExpiry}</span>
+                <div className="acts">
+                  <button className="hf-icon-btn" title={c.activo ? tr.admCouponOff : tr.admCouponOn}
+                          onClick={() => alternarCupon(c.id).then(cargarCupones)}>
+                    <i className={`ti ${c.activo ? "ti-toggle-right" : "ti-toggle-left"}`} />
+                  </button>
+                  <button className="hf-icon-btn" title={tr.admDelete}
+                          onClick={() => eliminarCupon(c.id).then(cargarCupones)}>
+                    <i className="ti ti-trash" />
+                  </button>
+                </div>
+              </div>
+            ))}
+            {cupones.length === 0 && <p className="hf-sub">{tr.admCouponEmpty}</p>}
+          </div>
+        </section>
       )}
 
       {pestana === "atributos" && (

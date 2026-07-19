@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { obtenerProducto, obtenerGaleria } from "../api/productos";
+import { obtenerProducto, obtenerGaleria, avisarStock } from "../api/productos";
 import { useSettings } from "../context/SettingsContext";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 import { tieneOferta, precioEfectivo, porcentajeDescuento } from "../utils/precio";
 import { useProductos } from "../context/ProductosContext";
 import ProductCard from "../components/ProductCard";
@@ -16,6 +17,10 @@ import Accordion from "../components/Accordion";
 export default function ProductoPage() {
   const { id } = useParams();
   const [galeria, setGaleria] = useState([]);       // URLs adicionales
+  const { user } = useAuth();
+  const [avisoEmail, setAvisoEmail] = useState(user?.email ?? "");  // aviso disponible de nuevo
+  const [avisoOk, setAvisoOk] = useState(false);
+  const [avisoError, setAvisoError] = useState(null);
   const [imgActiva, setImgActiva] = useState(null); // la imagen grande mostrada
   const { tr, trCat } = useSettings();
   const { add, addRecent } = useCart();
@@ -116,6 +121,29 @@ export default function ProductoPage() {
           <button className="hf-add" style={{ maxWidth: 320 }} disabled={agotado} onClick={() => add(p)}>
             {agotado ? tr.noStock : tr.add}
           </button>
+
+          {/* Aviso "disponible de nuevo" (Fase 5): solo si está agotado */}
+          {agotado && (
+            <div className="hf-stock-alert">
+              {avisoOk ? (
+                <p className="hf-ok"><i className="ti ti-bell-check" /> {tr.stockAlertOk}</p>
+              ) : (
+                <>
+                  <p className="hf-stock-alert-txt"><i className="ti ti-bell" /> {tr.stockAlertText}</p>
+                  <div className="hf-coupon-row">
+                    <input className="hf-input" type="email" placeholder={tr.email}
+                           value={avisoEmail} onChange={(e) => setAvisoEmail(e.target.value)} />
+                    <button type="button" className="hf-btn" onClick={async () => {
+                      setAvisoError(null);
+                      try { await avisarStock(p.id, avisoEmail); setAvisoOk(true); }
+                      catch (err) { setAvisoError(err.response?.data?.mensaje ?? tr.stockAlertError); }
+                    }}>{tr.stockAlertBtn}</button>
+                  </div>
+                  {avisoError && <p className="hf-error" style={{ margin: "6px 0 0" }}>{avisoError}</p>}
+                </>
+              )}
+            </div>
+          )}
 
           {/* Cabecera de especificaciones destacadas (los atributos importantes) */}
           <SpecHighlights categoriaId={p.categoriaId} specs={p.specs} tr={tr} />

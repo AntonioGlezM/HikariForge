@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useSettings } from "../context/SettingsContext";
 import { useCart } from "../context/CartContext";
 import { useFavs } from "../context/FavsContext";
+import { useComparador } from "../context/ComparadorContext";
 import { tieneOferta, precioEfectivo, porcentajeDescuento } from "../utils/precio";
 
 const STOCK_BAJO = 5; // umbral para avisar de "pocas unidades"
@@ -12,6 +13,7 @@ export default function ProductCard({ producto }) {
   const { tr, trCat } = useSettings();
   const { add } = useCart();
   const { esFav, toggleFav } = useFavs();
+  const { enComparador, toggleComparar } = useComparador();
 
   const agotado = producto.stock <= 0;
   const pocas = !agotado && producto.stock <= STOCK_BAJO;
@@ -35,6 +37,10 @@ export default function ProductCard({ producto }) {
         </div>
       </Link>
       {/* Corazón de favoritos (no navega: detiene el clic) */}
+      <button className={`hf-compare ${enComparador(producto.id) ? "on" : ""}`} aria-label="Comparar"
+              onClick={(e) => { e.preventDefault(); toggleComparar(producto.id); }}>
+        <i className="ti ti-arrows-diff" />
+      </button>
       <button className={`hf-fav ${esFav(producto.id) ? "on" : ""}`} aria-label="Favorito"
               onClick={(e) => { e.preventDefault(); toggleFav(producto); }}>
         <i className={`ti ${esFav(producto.id) ? "ti-heart-filled" : "ti-heart"}`} />

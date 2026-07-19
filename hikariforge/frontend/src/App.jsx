@@ -21,6 +21,8 @@ import PedidosPage from "./pages/PedidosPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import RecuperarPage from "./pages/RecuperarPage";
 import RestablecerPage from "./pages/RestablecerPage";
+import CompararPage from "./pages/CompararPage";
+import CompareBar from "./components/CompareBar";
 import FavoritosPage from "./pages/FavoritosPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
@@ -45,6 +47,7 @@ export default function App() {
         <Route path="/restablecer" element={<RestablecerPage />} />
         <Route path="/soporte" element={<SoportePage />} />
         <Route path="/favoritos" element={<FavoritosPage />} />
+        <Route path="/comparar" element={<CompararPage />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/perfil" element={<PerfilPage />} />
           <Route path="/pedidos" element={<PedidosPage />} />
@@ -56,6 +59,8 @@ export default function App() {
         {/* Cualquier otra ruta: página 404 */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+
+      <CompareBar />
 
       <Footer />
       <SearchDrawer open={searchOpen} onClose={() => setSearchOpen(false)} />

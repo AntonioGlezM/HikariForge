@@ -7,6 +7,7 @@ import { ProductosProvider } from "./context/ProductosContext";
 import { CartProvider } from "./context/CartContext";
 import { FavsProvider } from "./context/FavsContext";
 import { ToastProvider } from "./context/ToastContext";
+import { ComparadorProvider } from "./context/ComparadorContext";
 import App from "./App";
 import "./styles/theme.css";
 
@@ -20,7 +21,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <CartProvider>
               <ToastProvider>
                 <FavsProvider>
-                  <App />
+                  <ComparadorProvider>
+                    <App />
+                  </ComparadorProvider>
                 </FavsProvider>
               </ToastProvider>
             </CartProvider>

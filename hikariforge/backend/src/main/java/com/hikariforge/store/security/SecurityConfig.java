@@ -38,6 +38,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/productos/**", "/api/categorias/**").permitAll()
+                // Aviso "disponible de nuevo": los invitados también pueden apuntarse.
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/productos/*/avisar-stock").permitAll()
                 // El resumen de valoraciones es público (la ficha lo muestra a cualquiera).
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/productos/*/valoraciones").permitAll()
                 // Consultar el catálogo de atributos de una categoría es público

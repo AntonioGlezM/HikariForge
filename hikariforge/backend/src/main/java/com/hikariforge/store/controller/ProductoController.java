@@ -17,9 +17,12 @@ import java.util.UUID;
 public class ProductoController {
 
     private final ProductoService productoService;
+    private final com.hikariforge.store.service.AvisoStockService avisoStockService;
 
-    public ProductoController(ProductoService productoService) {
+    public ProductoController(ProductoService productoService,
+                              com.hikariforge.store.service.AvisoStockService avisoStockService) {
         this.productoService = productoService;
+        this.avisoStockService = avisoStockService;
     }
 
     // GET /api/productos?page=0&size=10 -> catálogo paginado.
@@ -99,5 +102,12 @@ public class ProductoController {
     public java.util.List<String> guardarGaleria(@PathVariable UUID id,
                                                  @RequestBody java.util.List<String> urls) {
         return productoService.guardarGaleria(id, urls);
+    }
+
+    // Aviso "disponible de nuevo" (Fase 5): apuntarse (invitados incluidos).
+    @PostMapping("/{id}/avisar-stock")
+    public void avisarStock(@PathVariable UUID id,
+                            @jakarta.validation.Valid @RequestBody com.hikariforge.store.dto.AvisoStockRequest req) {
+        avisoStockService.registrar(id, req.email());
     }
 }

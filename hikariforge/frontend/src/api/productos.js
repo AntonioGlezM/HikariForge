@@ -21,3 +21,6 @@ export const reactivarProducto = (id) => api.put(`/productos/${id}/activar`);
 // Galería de imágenes (Fase 4): URLs adicionales del producto.
 export const obtenerGaleria = (id) => api.get(`/productos/${id}/galeria`);
 export const guardarGaleria = (id, urls) => api.put(`/productos/${id}/galeria`, urls);
+
+// Aviso "disponible de nuevo" (Fase 5): apuntarse a la vuelta de stock.
+export const avisarStock = (id, email) => api.post(`/productos/${id}/avisar-stock`, { email });

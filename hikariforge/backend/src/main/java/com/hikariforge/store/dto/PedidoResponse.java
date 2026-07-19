@@ -19,6 +19,8 @@ public record PedidoResponse(
         String codigoPostal,
         String telefono,
         String notas,
+        String cuponCodigo,
+        Integer descuentoPct,
         List<Linea> lineas) {
 
     public record Linea(String productoNombre, Integer cantidad, BigDecimal precioUnitario) {}

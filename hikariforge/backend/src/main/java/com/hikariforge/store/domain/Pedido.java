@@ -54,6 +54,13 @@ public class Pedido {
     @Column(length = 300)
     private String notas;
 
+    // --- Cupón aplicado (Fase 5): código y descuento congelados al comprar ---
+    @Column(name = "cupon_codigo", length = 30)
+    private String cuponCodigo;
+
+    @Column(name = "descuento_pct")
+    private Integer descuentoPct;
+
     // --- Pago con Stripe (Fase 3) ---
     @Column(name = "stripe_session_id", length = 120)
     private String stripeSessionId;

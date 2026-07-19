@@ -21,12 +21,16 @@ public class PedidoService {
     private final UsuarioRepository usuarioRepository;
     private final EmailService emailService;
 
+    private final CuponService cuponService;
+
     public PedidoService(PedidoRepository pedidoRepository, ProductoRepository productoRepository,
-                         UsuarioRepository usuarioRepository, EmailService emailService) {
+                         UsuarioRepository usuarioRepository, EmailService emailService,
+                         CuponService cuponService) {
         this.pedidoRepository = pedidoRepository;
         this.productoRepository = productoRepository;
         this.usuarioRepository = usuarioRepository;
         this.emailService = emailService;
+        this.cuponService = cuponService;
     }
 
     // Crea un pedido del usuario autenticado a partir de las líneas del carrito.
@@ -49,6 +53,15 @@ public class PedidoService {
                 .telefono(req.telefono().trim())
                 .notas(req.notas() != null && !req.notas().isBlank() ? req.notas().trim() : null)
                 .build();
+
+        // Cupón (Fase 5): se valida y consume en esta misma transacción; el código
+        // y el porcentaje quedan congelados en el pedido (si el cupón cambia después,
+        // este pedido no se ve afectado).
+        if (req.cupon() != null && !req.cupon().isBlank()) {
+            var cupon = cuponService.consumir(req.cupon());
+            pedido.setCuponCodigo(cupon.getCodigo());
+            pedido.setDescuentoPct(cupon.getPorcentaje());
+        }
 
         for (CrearPedidoRequest.Linea linea : req.lineas()) {
             Producto producto = productoRepository.findById(linea.productoId())
@@ -159,9 +172,16 @@ public class PedidoService {
         BigDecimal total = p.getLineas().stream()
                 .map(l -> l.getPrecioUnitario().multiply(BigDecimal.valueOf(l.getCantidad())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+        // Descuento del cupón (Fase 5): se resta del subtotal, redondeado a céntimos.
+        if (p.getDescuentoPct() != null && p.getDescuentoPct() > 0) {
+            BigDecimal descuento = total.multiply(BigDecimal.valueOf(p.getDescuentoPct()))
+                    .divide(BigDecimal.valueOf(100), 2, java.math.RoundingMode.HALF_UP);
+            total = total.subtract(descuento);
+        }
         return new PedidoResponse(p.getId(), p.getFecha(), p.getEstado().name(),
                 p.getUsuario().getEmail(), total,
                 p.getDestinatario(), p.getDireccion(), p.getCiudad(), p.getProvincia(),
-                p.getCodigoPostal(), p.getTelefono(), p.getNotas(), lineas);
+                p.getCodigoPostal(), p.getTelefono(), p.getNotas(),
+                p.getCuponCodigo(), p.getDescuentoPct(), lineas);
     }
 }

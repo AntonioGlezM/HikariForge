@@ -5,6 +5,7 @@ import { useCart } from "../context/CartContext";
 import { useToast } from "../context/ToastContext";
 import { crearPedido } from "../api/pedidos";
 import { crearSesionPago } from "../api/pagos";
+import { validarCupon } from "../api/cupones";
 import { precioEfectivo } from "../utils/precio";
 import Spinner from "../components/Spinner";
 import EmptyState from "../components/EmptyState";
@@ -24,6 +25,22 @@ export default function CheckoutPage() {
   });
   const [error, setError] = useState(null);
   const [procesando, setProcesando] = useState(false);
+  // Cupón (Fase 5): código escrito, cupón validado y su error propio.
+  const [cuponTxt, setCuponTxt] = useState("");
+  const [cupon, setCupon] = useState(null);      // { codigo, porcentaje } validado
+  const [cuponError, setCuponError] = useState(null);
+
+  const aplicarCupon = async () => {
+    setCuponError(null);
+    if (!cuponTxt.trim()) return;
+    try {
+      const { data } = await validarCupon(cuponTxt.trim());
+      setCupon(data);
+    } catch (err) {
+      setCupon(null);
+      setCuponError(err.response?.data?.mensaje ?? tr.couponError);
+    }
+  };
 
   const campo = (k) => (e) => setEnvio((f) => ({ ...f, [k]: e.target.value }));
   // CP internacional: dígitos y letras (Reino Unido, Países Bajos…), más
@@ -39,7 +56,7 @@ export default function CheckoutPage() {
     setProcesando(true);
     const lineas = items.map((l) => ({ productoId: l.producto.id, cantidad: l.cantidad }));
     try {
-      const { data: pedido } = await crearPedido(lineas, envio);
+      const { data: pedido } = await crearPedido(lineas, { ...envio, cupon: cupon?.codigo ?? null });
       clear();
       // Si Stripe está configurado, vamos directos a la página de pago.
       // Si no (o falla), el pedido queda PENDIENTE y se puede pagar desde Mis pedidos.
@@ -127,7 +144,32 @@ export default function CheckoutPage() {
               </li>
             ))}
           </ul>
-          <div className="hf-co-total"><span>Total</span><span>{total.toFixed(2)} €</span></div>
+          {/* Cupón de descuento */}
+          <div className="hf-co-coupon">
+            {cupon ? (
+              <div className="hf-coupon-ok">
+                <span><i className="ti ti-ticket" /> {cupon.codigo} · −{cupon.porcentaje}%</span>
+                <button type="button" onClick={() => { setCupon(null); setCuponTxt(""); }}>{tr.couponRemove}</button>
+              </div>
+            ) : (
+              <div className="hf-coupon-row">
+                <input className="hf-input" placeholder={tr.couponPh} value={cuponTxt}
+                       onChange={(e) => setCuponTxt(e.target.value.toUpperCase())} />
+                <button type="button" className="hf-btn" onClick={aplicarCupon}>{tr.couponApply}</button>
+              </div>
+            )}
+            {cuponError && <p className="hf-error" style={{ margin: "6px 0 0" }}>{cuponError}</p>}
+          </div>
+
+          {cupon && (
+            <div className="hf-co-discount">
+              <span>{tr.couponDiscount}</span>
+              <span>−{(total * cupon.porcentaje / 100).toFixed(2)} €</span>
+            </div>
+          )}
+          <div className="hf-co-total"><span>Total</span>
+            <span>{(cupon ? total * (100 - cupon.porcentaje) / 100 : total).toFixed(2)} €</span>
+          </div>
 
           {error && <p className="hf-error">{error}</p>}
 
