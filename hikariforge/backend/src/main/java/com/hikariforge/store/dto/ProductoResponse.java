@@ -19,7 +19,8 @@ public record ProductoResponse(
         Boolean ofertaHastaAgotar,
         Boolean ofertaVigente,
         Boolean ofertaProgramada,
-        Integer stock,
+        Integer stock,               // solo endpoints de admin; en los públicos viaja null
+        String disponibilidad,       // AGOTADO | POCAS | DISPONIBLE (lo que ve el cliente)
         Boolean activo,
         String imagenUrl,
         UUID categoriaId,

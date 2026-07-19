@@ -55,7 +55,7 @@ public class ProductoService {
                 ProductoSpecs.pesoMaximo(filtro.pesoMax()),
                 ProductoSpecs.color(filtro.color()),
                 ProductoSpecs.conRgb(filtro.rgb()));
-        return productoRepository.findAll(spec, pageable).map(this::aResponse);
+        return productoRepository.findAll(spec, pageable).map(this::aResponse).map(this::ocultarStock);
     }
 
     // Marcas distintas de los productos activos, para poblar el filtro de marca.
@@ -87,7 +87,7 @@ public class ProductoService {
             throw new RecursoNoEncontradoException("Producto no encontrado: " + id);
         }
         // En la ficha sí calculamos el mínimo de 30 días (dato Omnibus).
-        return aResponse(p, precioMinimo30dias(id));
+        return ocultarStock(aResponse(p, precioMinimo30dias(id)));
     }
 
     @Transactional
@@ -260,6 +260,24 @@ public class ProductoService {
         }
     }
 
+    // Estado de disponibilidad que ve el cliente (el número exacto es dato de negocio).
+    private String disponibilidadDe(Producto p) {
+        int s = p.getStock() == null ? 0 : p.getStock();
+        if (s <= 0) return "AGOTADO";
+        if (s <= 5) return "POCAS";   // mismo umbral que usa la web
+        return "DISPONIBLE";
+    }
+
+    // Versión pública de la respuesta: idéntica pero SIN el número de stock.
+    private ProductoResponse ocultarStock(ProductoResponse r) {
+        return new ProductoResponse(r.id(), r.nombre(), r.descripcion(), r.marca(), r.precio(),
+                r.precioOferta(), r.ofertaDesde(), r.ofertaHasta(), r.ofertaHastaAgotar(),
+                r.ofertaVigente(), r.ofertaProgramada(), null, r.disponibilidad(), r.activo(),
+                r.imagenUrl(), r.categoriaId(), r.categoriaNombre(),
+                r.conexion(), r.pesoG(), r.rgb(), r.color(), r.specs(),
+                r.precioMinimo30d());
+    }
+
     // Versión usada en el listado: sin el mínimo de 30 días (evita una consulta por producto).
     private ProductoResponse aResponse(Producto p) {
         return aResponse(p, null);
@@ -270,7 +288,7 @@ public class ProductoService {
         return new ProductoResponse(
                 p.getId(), p.getNombre(), p.getDescripcion(), p.getMarca(),
                 p.getPrecio(), p.getPrecioOferta(), p.getOfertaDesde(), p.getOfertaHasta(), p.getOfertaHastaAgotar(),
-                p.isOfertaVigente(), p.isOfertaProgramada(), p.getStock(), p.getActivo(), p.getImagenUrl(),
+                p.isOfertaVigente(), p.isOfertaProgramada(), p.getStock(), disponibilidadDe(p), p.getActivo(), p.getImagenUrl(),
                 p.getCategoria().getId(), p.getCategoria().getNombre(),
                 p.getConexion(), p.getPesoG(), p.getRgb(), p.getColor(), p.getSpecs(),
                 precioMinimo30d);

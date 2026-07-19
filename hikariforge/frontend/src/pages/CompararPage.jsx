@@ -99,7 +99,11 @@ export default function CompararPage() {
             <tr>
               <td className="k">Stock</td>
               {productos.map((p) => (
-                <td key={p.id}>{p.stock > 0 ? `${p.stock} ${tr.compareUnits}` : tr.out}</td>
+                <td key={p.id}>
+                  {p.disponibilidad === "AGOTADO" ? tr.out
+                    : p.disponibilidad === "POCAS" ? tr.stockFew
+                    : tr.stockOk}
+                </td>
               ))}
             </tr>
             {claves.map((clave) => (

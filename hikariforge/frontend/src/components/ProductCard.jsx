@@ -15,8 +15,10 @@ export default function ProductCard({ producto }) {
   const { esFav, toggleFav } = useFavs();
   const { enComparador, toggleComparar } = useComparador();
 
-  const agotado = producto.stock <= 0;
-  const pocas = !agotado && producto.stock <= STOCK_BAJO;
+  // El público recibe 'disponibilidad' (el número de stock ya no viaja en la API
+  // pública); el fallback con stock mantiene compatible la vista de admin.
+  const agotado = producto.disponibilidad ? producto.disponibilidad === "AGOTADO" : producto.stock <= 0;
+  const pocas = !agotado && (producto.disponibilidad ? producto.disponibilidad === "POCAS" : producto.stock <= STOCK_BAJO);
 
   // Estado de disponibilidad mostrado en las specs (texto + estilo).
   const disponibilidad = agotado

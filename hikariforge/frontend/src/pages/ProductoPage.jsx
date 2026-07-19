@@ -40,8 +40,8 @@ export default function ProductoPage() {
   if (error) return <main className="hf-wrap hf-section"><p className="hf-error">{tr.loadError}</p></main>;
   if (!p) return <main className="hf-wrap hf-section"><p className="hf-sub">{tr.loading}</p></main>;
 
-  const agotado = p.stock <= 0;
-  const pocas = !agotado && p.stock <= 5;   // mismo umbral que la tarjeta del catálogo
+  const agotado = p.disponibilidad ? p.disponibilidad === "AGOTADO" : p.stock <= 0;
+  const pocas = !agotado && (p.disponibilidad ? p.disponibilidad === "POCAS" : p.stock <= 5);
 
   return (
     <main className="hf-wrap">
